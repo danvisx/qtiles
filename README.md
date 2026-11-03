@@ -26,4 +26,4 @@ This needs Node and Python 3. It bundles `app/` into `dist/qtiles.html` and runs
 The site is the `app/` folder as it stands, and nothing else is served.
 
 - **Netlify:** `netlify.toml` already sets this up. There is no build command and the publish directory is `app`.
-- **Cloudflare Pages:** in the project's settings, leave the build command empty and set the build output directory to `app`.
+- **Cloudflare Workers:** `wrangler.jsonc` already sets this up. Name the Worker `qtiles`, leave the build command empty and keep the deploy command `npx wrangler deploy`.
