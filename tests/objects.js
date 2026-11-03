@@ -49,9 +49,9 @@ module.exports = async t => {
   const chars = () => fn(`T.reset(128, 128); const L = T.l0; L.name = 'Hero'; L.kind = 'character'; beginStroke(L); for (let y = 40; y < 60; y++) for (let x = 50; x < 58; x++) plotLayer(x, y, packHex('#ff0000')); plotLayer(61, 45, packHex('#0000ff')); endStroke(); L.pivot = { x: 56, y: 60 }; resetHistory(); hooks.layers();`);
   chars(); $('charMirror').click();
   { const flipped = ev(`S.layers[1].mirrorOf === T.l0.id && S.layers[1].px[45 * S.w + (2 * 56 - 1 - 61)] === packHex('#0000ff')`); $('charMirror').click(); check('a mirrored layer flips on the pivot corner, and back again', flipped && ev('S.layers[2].px.every((v, i) => v === T.l0.px[i])')); }
-  chars(); ev(`resizeDoc(100, 100, 1, 1);`); { const a = ev('T.l0.pivot.x') === 28 && ev('T.l0.pivot.y') === 32; ev('undo();'); check('a pivot moves with a crop, and back on undo', a && ev('T.l0.pivot.x') === 56); }
+  chars(); ev(`resizeDoc(100, 100, 1, 1);`); { const a = ev('T.l0.pivot.x === 28 && T.l0.pivot.y === 32'); ev('undo();'); check('a pivot moves with a crop, and back on undo', a && ev('T.l0.pivot.x') === 56); }
   chars(); ev(`addLayer('Next'); S.active = 0; hooks.layers();`); $('ghostFrom').click();
-  check('a ghost is out of the composite and can never be active', ev('S.active') === 1 && ev('flatten()[45 * S.w + 52]') === 0 && (ev('S.active = 0; hooks.layers();'), ev('S.active') === 1));
+  check('a ghost is out of the composite and can never be active', ev('S.active === 1 && !flatten()[45 * S.w + 52]') && ev('S.active = 0; hooks.layers(); S.active === 1'));
 
   const G = () => fn(`newDoc(32, 32, 'groups'); setDirty(false); T.l0.name = 'A'; addLayer('B'); addLayer('C'); addLayer('D'); S.layers.forEach((L, k) => { L.px.fill(packHex(['#ff0000', '#00ff00', '#0000ff', '#ffff00'][k]), k * 2, 32 * 32 - k); flush(L); }); S.active = 1; LG.marks = new Set([S.layers[1].id, S.layers[2].id]); hooks.layers(); groupMake(); resetHistory();`);
   G();

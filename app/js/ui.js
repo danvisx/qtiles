@@ -10,7 +10,7 @@ function toast(msg, act) {
   clearTimeout(toastTimer); toastTimer = setTimeout(() => { t.hidden = true; }, act ? 6000 : 3200);
 }
 function press(el, on) { el.setAttribute('aria-pressed', on ? 'true' : 'false'); }
-const exportOpts = { layerOnly: false, crop: false, sel: false, mode: 'image', solid: false, tile: 256, overlap: false, skip: false };
+const exportOpts = { layerOnly: false, crop: false, sel: false, mode: 'image', solid: false, tile: 256, overlap: false, skip: false, share: false };
 const ICON = {
   eye: '<svg viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>',
   eyeOff: '<svg viewBox="0 0 24 24"><path d="M3 3l18 18"/><path d="M10.6 6.2A9.6 9.6 0 0112 6c6 0 10 6 10 6a17 17 0 01-3.2 3.9M6.5 7.6A17 17 0 002 12s4 7 10 7c1.5 0 2.9-.4 4.1-1"/></svg>',
@@ -903,4 +903,6 @@ function initUI() {
   };
   renderPalette(); hooks.color(); setBrush(1); setTool('pencil'); setMode(S.mode); setLight(S.light); syncShade(); syncOpts(); syncOrigin(); hooks.sel(); hooks.layers(); hooks.history(); hooks.zoom(); canvasSync();
   initScene(); initExport(); initAbout();
+  document.querySelectorAll('[data-view]').forEach(b => { b.onclick = () => viewSet(b.dataset.view); });
+  $('silOne').onclick = () => viewSet('one'); viewSync();
 }

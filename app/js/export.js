@@ -3,7 +3,7 @@
    Pixels come from the layers' arrays and PNGs from one short-lived canvas. Many files go in one zip, because a browser stops a long run of downloads and an iPad has nowhere to put them. */
 
 const XP_STOP = new Error('stopped'), XP_ROWS = 64, XP_YIELD_MS = 32, XP_SHOW_MS = 1000, XP_SIDE = MAX_DIM, XP_AREA = 268e6, XP_SCALES = [1, 2, 3, 4, 6, 8, 12, 16, 24, 32, 64], XP_TILES = [64, 128, 256, 512, 1024];
-const XP = { job: null, scale: 1, cv: null };
+const XP = { job: null, scale: 1, cv: null, colors: '' }, SHARE_MIN = 512, SHARE_COLORS = 256, SHARE_COUNT_MAX = 4194304;
 
 /* ---------- running ---------- */
 function xpShow(job) { if (XP.job !== job) return; $('busyBox').hidden = false; $('busy').classList.add('show'); xpBar(job); }
@@ -48,6 +48,19 @@ function scaleChips(box, cur, w, h, pick) {
   return use;
 }
 const scaleWhy = (w, h) => w && !XP_SCALES.every(n => xpScaleOk(n, w, h)) ? ' Grayed scales would be over ' + XP_SIDE + ' px a side.' : '';
+/* Share size (045): the smallest whole scale that makes the long side at least SHARE_MIN, as sites shrink or blur anything smaller, and never past XP_SIDE. */
+const shareScale = (w, h) => { const m = Math.max(w, h); return Math.max(1, Math.min(Math.ceil(SHARE_MIN / m), Math.floor(XP_SIDE / m))); };
+/* Whether the image has more colors than a site keeps as they are. Counted once per change to the art, a row at a time, and not at all on an image too big for a quick count. */
+function shareMany(list, b) {
+  const key = docVer + ' ' + list.map(L => L.id).join() + ' ' + [b.x, b.y, b.w, b.h];
+  if (XP.colors.startsWith(key + '=')) return XP.colors.endsWith('y');
+  let many = false;
+  if (b.w * b.h <= SHARE_COUNT_MAX) {
+    const seen = new Set(), row = new Uint32Array(b.w);
+    rows: for (let y = 0; y < b.h; y++) { row.fill(0); layRows(row, list, b.x, b.y + y, b.w, 0, 0); for (const v of row) if (v >>> 24) { seen.add(v); if (seen.size > SHARE_COLORS) { many = true; break rows; } } }
+  }
+  XP.colors = key + '=' + (many ? 'y' : 'n'); return many;
+}
 /* Pixels outside a selection's shape are not exported, though its box may hold them. */
 function xpMask(d, b, w, h, opts, bg) {
   if (!opts.sel || !SEL.mask) return;
@@ -102,6 +115,7 @@ const jsonEntry = (name, o) => zipEntry(name, new Blob([JSON.stringify(o, null, 
 async function exportPng(scale, opts = exportOpts) {
   const list = xpList(opts), box = xpBox(list, opts);
   if (!box) { toast('Nothing to export: those layers are empty.'); return; }
+  if (opts.share) scale = shareScale(box.w, box.h);   // a crop's size is known only now
   if (!xpFits(box.w * scale, box.h * scale)) { toast('That is too big for one image. Try a smaller scale, or Tiles.'); return; }
   const blob = await xpJob('Exporting PNG', async job => pngBlob(await xpFlat(list, box, opts, job), box.w, box.h, scale));
   if (blob === undefined) return;
@@ -169,9 +183,12 @@ function xpSync() {
   $('expScaleField').hidden = tiles; $('expTileOpts').hidden = !tiles; press($('expOverlap'), o.overlap); press($('expSkip'), o.skip); $('expTile').value = o.tile;
   /* Cropping scans the pixels, so the note gives the canvas size for it and the real size comes in the toast. */
   const b = o.sel ? xpBox([], o) : { w: S.w, h: S.h }, w = b.w, h = b.h, cropped = o.crop && !o.sel, cut = cropped ? ', before cropping' : '';
-  const s = XP.scale = scaleChips($('expScales'), XP.scale, cropped ? 0 : w, cropped ? 0 : h, n => { XP.scale = n; xpSync(); }), why = tiles || cropped ? '' : scaleWhy(w, h);
+  const share = o.share && !tiles && !layers; $('expShare').hidden = tiles || layers; press($('expShare'), share);
+  if (share && !cropped) XP.scale = shareScale(w, h);
+  const s = XP.scale = scaleChips($('expScales'), XP.scale, cropped ? 0 : w, cropped ? 0 : h, n => { XP.scale = n; o.share = false; xpSync(); }), why = tiles || cropped ? '' : scaleWhy(w, h);
   if (tiles) { const n = tileSlices(w, h, o.tile, false).length; $('expNote').textContent = n + (n === 1 ? ' tile' : ' tiles') + ' of up to ' + o.tile + ' × ' + o.tile + ' px in one .zip, with tiles.json listing where each goes' + cut + '.'; }
   else if (layers) $('expNote').textContent = 'One PNG per visible layer in one .zip, with layers.json listing offsets. Crop to content keeps the files small.' + why;
+  else if (share) $('expNote').textContent = (cropped ? 'The scale is picked after cropping, to make the long side at least ' + SHARE_MIN + ' px.' : w + ' × ' + h + ' at ' + s + '× = ' + w * s + ' × ' + h * s + ' px.') + ' Always PNG, as JPEG smears pixel art.' + (shareMany(xpList(o), o.sel ? b : { x: 0, y: 0, w, h }) ? ' It has more than ' + SHARE_COLORS + ' colors, so some sites will compress it.' : '');
   else $('expNote').textContent = w * s + ' × ' + h * s + ' px' + cut + '.' + (xpFits(w * s, h * s) ? '' : ' That is too big for one image: use a smaller scale, or Tiles.') + why;
   $('expOk').disabled = !tiles && !layers && !o.crop && !xpFits(w * s, h * s);
 }
@@ -188,4 +205,5 @@ function initExport() {
   for (const n of XP_TILES) { const q = document.createElement('option'); q.value = n; q.textContent = n + ' × ' + n + ' px'; $('expTile').appendChild(q); }
   $('expTile').onchange = e => { o.tile = +e.target.value; xpSync(); };
   $('expOk').onclick = xpRun;
+  $('expShare').onclick = () => { o.share = !o.share; if (!o.share) XP.scale = XP_SCALES.filter(n => n <= XP.scale).pop(); xpSync(); };   // back on a scale with a chip
 }

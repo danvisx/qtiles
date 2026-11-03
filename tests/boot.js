@@ -56,12 +56,10 @@ async function boot() {
   };`);
 
   /* Undo gives back the state before, redo the state after, and it is left undone. Returns false rather than throwing. */
-  t.undoExact = (run, opts = {}) => {
-    const a = ev('T.doc()'), h = ev('H.pos'); if (typeof run === 'function') run(); else ev(run); const b = ev('T.doc()');
-    if (a === b || ev('H.pos') !== h + (opts.steps || 1)) return false;
-    for (let k = 0; k < (opts.steps || 1); k++) ev('undo()'); if (ev('T.doc()') !== a) return false;
-    for (let k = 0; k < (opts.steps || 1); k++) ev('redo()'); if (ev('T.doc()') !== b) return false;
-    for (let k = 0; k < (opts.steps || 1); k++) ev('undo()'); return ev('T.doc()') === a;
+  const D = t.doc = () => ev('T.doc()');
+  t.undoExact = (run, { steps: n = 1 } = {}) => {
+    const a = D(), h = ev('H.pos'), go = (s, want) => { for (let k = 0; k < n; k++) ev(s); return D() === want; }; if (typeof run === 'function') run(); else ev(run); const b = D();
+    return a !== b && ev('H.pos') === h + n && go('undo()', a) && go('redo()', b) && go('undo()', a);
   };
   t.fn = s => ev('(() => { ' + s + ' })()');
   t.load = o => ev('(o => loadProject(JSON.parse(o)))')(JSON.stringify(o));

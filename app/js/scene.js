@@ -4,44 +4,87 @@
 
 const MM_W = 200, MM_H = 160, MM_BUDGET_MS = 3, MM_EVERY_MS = 120, MM_KEY = 'qtiles.minimap', VIEW_MAX = 9, SEAM_PX = 4, SEAM_REACH = 16, SEAM_OPACITY = 0.55, NOTE_MAX = 200, MEM_WARN = 1e9, MEM_TILE = CP_T * CP_T * 16;
 const SEC_SIZES = [128, 256, 512, 1024];
-/* box is the art rectangle still to redraw. job is the part being worked through now, which runs a few rows a frame, so the map never costs more than a sliver of one. */
-const MM = { on: false, w: 0, h: 0, k: 1, px: null, img: null, ctx: null, box: null, job: null, at: 0, grab: null, key: '', ver: 0, warned: false };
+/* box is the art rectangle still to redraw. job is the part being worked through now, in map pixels, which runs a few rows a frame, so the map never costs more than a sliver of one.
+   Whole shows the canvas scaled to the map; Follow (045) shows art pixels at a whole scale, from fx, fy, around fp, the point it follows. k is screen px per art pixel, bk map pixels per art pixel. */
+const MM = { on: false, w: 0, h: 0, cw: 0, ch: 0, k: 1, bk: 1, fol: false, fx: 0, fy: 0, fp: null, fk: '', big: 1, drag: null, px: null, img: null, ctx: null, box: null, job: null, at: 0, grab: null, key: '', ver: 0, warned: false };
 
 /* ---------- minimap ---------- */
 function miniAll() { MM.box = { x0: 0, y0: 0, x1: S.w - 1, y1: S.h - 1 }; MM.job = null; }
 function miniTouch(x, y, w, h) { MM.box = joinBox(MM.box, { x0: x, y0: y, x1: x + w - 1, y1: y + h - 1 }); }
 function miniShow(on) { MM.on = on; $('mini').hidden = !on; $('miniBtn').hidden = on; press($('miniOpt'), on); MM.key = ''; requestRender(); }
-/* Runs when the canvas changes size or a project opens. Until someone chooses, the map opens by itself only for a canvas too big to see at a glance, and not on a phone, where it covers the art. */
+const miniBox = () => [Math.round(MM_W * MM.big), Math.round(MM_H * MM.big)];
+/* A canvas that fits the map at 1x is a design to watch at its real size, so Follow is its default until someone picks. */
+const miniFits = () => { const [w, h] = miniBox(); return S.w <= w && S.h <= h; };
+const miniFol = () => (prefGet('mapMode') || (miniFits() ? 'follow' : 'whole')) === 'follow';
+/* Runs when the canvas changes size or a project opens. Until someone chooses, the map opens by itself for a canvas too big to see at a glance or small enough to show whole at 1x, and not on a phone, where it covers the art. */
 function miniFit() {
-  const k = Math.min(MM_W / S.w, MM_H / S.h), w = Math.max(1, Math.round(S.w * k)), h = Math.max(1, Math.round(S.h * k)), cv = $('miniCv'), top = $('miniTop');
-  if (w !== MM.w || h !== MM.h) {
-    cv.width = w; cv.height = h; top.width = Math.round(w * dpr); top.height = Math.round(h * dpr);
-    for (const c of [cv, top]) { c.style.width = w + 'px'; c.style.height = h + 'px'; }
-    MM.ctx = cv.getContext('2d'); MM.img = MM.ctx.createImageData(w, h); MM.px = new Uint32Array(MM.img.data.buffer); MM.w = w; MM.h = h;
-  }
-  MM.k = k; miniAll(); MM.key = '';
-  if (prefGet('mapAuto')) miniShow(Math.max(S.w, S.h) > 1024 && window.innerWidth > 600);
+  MM.fp = null; miniLayout();
+  if (prefGet('mapAuto')) miniShow((Math.max(S.w, S.h) > 1024 || miniFits()) && window.innerWidth > 600);
   viewsUi(); secUi();
+}
+/* In Follow the map's buffer holds art pixels and CSS scales them up by a whole number, so its cost is the map's size and never the canvas's. */
+function miniLayout() {
+  const [BW, BH] = miniBox(), fol = MM.fol = miniFol(), s = prefGet('mapScale'), cv = $('miniCv'), top = $('miniTop');
+  const k = fol ? s : Math.min(BW / S.w, BH / S.h), w = fol ? Math.ceil(BW / s) : Math.max(1, Math.round(S.w * k)), h = fol ? Math.ceil(BH / s) : Math.max(1, Math.round(S.h * k)), cw = fol ? w * s : w, ch = fol ? h * s : h;
+  if (w !== MM.w || h !== MM.h) { cv.width = w; cv.height = h; MM.ctx = cv.getContext('2d'); MM.img = MM.ctx.createImageData(w, h); MM.px = new Uint32Array(MM.img.data.buffer); MM.w = w; MM.h = h; }
+  if (cw !== MM.cw || ch !== MM.ch) { top.width = Math.round(cw * dpr); top.height = Math.round(ch * dpr); for (const c of [cv, top]) { c.style.width = cw + 'px'; c.style.height = ch + 'px'; } MM.cw = cw; MM.ch = ch; }
+  MM.k = k; MM.bk = fol ? 1 : k; [MM.fx, MM.fy] = fol ? miniCorner() : [0, 0]; MM.fk = ''; MM.job = null; MM.px.fill(0); MM.ctx.putImageData(MM.img, 0, 0);
+  miniAll(); MM.key = '';
+  press($('miniWhole'), !fol); press($('miniFollow'), fol); $('miniScale').hidden = !fol; for (const b of $('miniScale').children) press(b, +b.dataset.mscale === s);
+  $('miniGrip').setAttribute('aria-valuenow', Math.round(MM.big * 100));
+  $('miniMap').dataset.hint = fol ? 'The art at its real size around the pointer. Tap to move the view there.' : 'The whole canvas. Tap to jump there, or drag the rectangle to move the view.';
+}
+/* The point Follow follows: the pointer, or for a Pencil or finger with no hover the last point drawn or tapped, which it keeps between strokes. On an axis where the canvas fits it is shown whole and centered; where it does not, the map stays inside it. */
+function miniCorner() {
+  const f = MM.fp || { x: S.w >> 1, y: S.h >> 1 }, at = (n, B, c) => n <= B ? -((B - n) >> 1) : Math.max(0, Math.min(n - B, c - (B >> 1)));
+  return [at(S.w, MM.w, f.x), at(S.h, MM.h, f.y)];
+}
+function miniAim() {
+  if (!MM.fol || !MM.px) return;
+  const p = (drawId !== null ? lastArt : null) || hover; if (p) MM.fp = { x: p.x, y: p.y };
+  miniShift(...miniCorner());
+  const f = MM.fp, key = f ? f.x + ',' + f.y : ''; if (MM.on && key !== MM.fk) { MM.fk = key; miniOver(); }
+}
+/* Moves what the map holds rather than drawing it again, so following the pointer costs only the strip it uncovers. */
+function miniShift(nx, ny) {
+  const dx = nx - MM.fx, dy = ny - MM.fy, w = MM.w, h = MM.h, p = MM.px; if (!dx && !dy) return;
+  MM.fx = nx; MM.fy = ny;
+  if (Math.abs(dx) >= w || Math.abs(dy) >= h) { p.fill(0); MM.ctx.putImageData(MM.img, 0, 0); miniAll(); return; }
+  const old = p.slice(); p.fill(0);
+  for (let y = Math.max(0, -dy), e = Math.min(h, h - dy); y < e; y++) p.set(old.subarray((y + dy) * w + Math.max(0, dx), (y + dy) * w + Math.min(w, w + dx)), y * w + Math.max(0, -dx));
+  const j = MM.job;
+  if (j) { j.x0 = Math.max(0, j.x0 - dx); j.x1 = Math.min(w - 1, j.x1 - dx); j.y = Math.max(0, j.y - dy); j.y1 = Math.min(h - 1, j.y1 - dy); if (j.x0 > j.x1 || j.y > j.y1) MM.job = null; }
+  const rows = (y0, y1) => { for (let y = y0; y <= y1; y++) miniRow(y, 0, w - 1); };
+  if (dx) for (let y = 0; y < h; y++) dx > 0 ? miniRow(y, w - dx, w - 1) : miniRow(y, 0, -dx - 1);
+  if (dy > 0) rows(h - dy, h - 1); else if (dy < 0) rows(0, -dy - 1);
+  MM.ctx.putImageData(MM.img, 0, 0);
+}
+/* One row of map pixels, x0 to x1. Whole stretches the canvas over the map; Follow reads art pixels from its corner, and past the canvas is empty. */
+function miniRow(y, x0, x1) {
+  const k = MM.bk, fol = MM.fol, ay = fol ? y + MM.fy : Math.min(S.h - 1, Math.floor((y + 0.5) / k)), sy = ay * S.w, inY = ay >= 0 && ay < S.h;
+  for (let x = x0, i = y * MM.w + x0; x <= x1; x++, i++) {
+    const ax = fol ? x + MM.fx : Math.min(S.w - 1, Math.floor((x + 0.5) / k));
+    MM.px[i] = inY && ax >= 0 && ax < S.w ? pxAt(sy + ax) : 0;
+  }
 }
 function miniAuto(on) { prefSet('mapAuto', on); if (on) miniFit(); }
 function miniTick(t) {
   if (!MM.on || !MM.px || (!MM.box && !MM.job)) return;
   if (!MM.job) {
-    if (t - MM.at < MM_EVERY_MS) return;
-    const b = MM.box, k = MM.k, y0 = Math.floor(b.y0 * k); MM.box = null;
-    MM.job = { x0: Math.floor(b.x0 * k), x1: Math.min(MM.w - 1, Math.ceil((b.x1 + 1) * k) - 1), y: y0, y1: Math.min(MM.h - 1, Math.ceil((b.y1 + 1) * k) - 1) };
+    if (!MM.fol && t - MM.at < MM_EVERY_MS) return;   // Follow is small and shows a stroke as it is drawn
+    const b = MM.box, k = MM.bk, fx = MM.fx, fy = MM.fy; MM.box = null;
+    const j = { x0: Math.max(0, Math.floor((b.x0 - fx) * k)), x1: Math.min(MM.w - 1, Math.ceil((b.x1 + 1 - fx) * k) - 1), y: Math.max(0, Math.floor((b.y0 - fy) * k)), y1: Math.min(MM.h - 1, Math.ceil((b.y1 + 1 - fy) * k) - 1) };
+    if (j.x0 > j.x1 || j.y > j.y1) return;
+    MM.job = j;
   }
-  const j = MM.job, y0 = j.y, end = performance.now() + MM_BUDGET_MS, k = MM.k;
-  do {
-    const sy = Math.min(S.h - 1, Math.floor((j.y + 0.5) / k)) * S.w;
-    for (let x = j.x0, i = j.y * MM.w + x; x <= j.x1; x++, i++) MM.px[i] = pxAt(sy + Math.min(S.w - 1, Math.floor((x + 0.5) / k)));
-    j.y++;
-  } while (j.y <= j.y1 && performance.now() < end);
+  const j = MM.job, y0 = j.y, end = performance.now() + MM_BUDGET_MS;
+  do { miniRow(j.y, j.x0, j.x1); j.y++; } while (j.y <= j.y1 && performance.now() < end);
   if (j.y > y0) MM.ctx.putImageData(MM.img, 0, 0, j.x0, y0, j.x1 - j.x0 + 1, j.y - y0);
   if (j.y > j.y1) { MM.job = null; MM.at = t; }
 }
 function miniOver() {
-  const c = $('miniTop').getContext('2d'), k = MM.k; c.setTransform(dpr, 0, 0, dpr, 0, 0); c.clearRect(0, 0, MM.w, MM.h);
+  const c = $('miniTop').getContext('2d'), k = MM.k; c.setTransform(dpr, 0, 0, dpr, 0, 0); c.clearRect(0, 0, MM.cw, MM.ch);
+  if (MM.fol) { miniMark(c); return; }
   if (S.secOn) {
     const r = secRange(); c.fillStyle = TH.accent; c.globalAlpha = 0.28;
     for (const q of secList()) if ((S.sections[secKey(q.x, q.y)] || {}).done) { const b = secBox(q.x, q.y); c.fillRect(b.x * k, b.y * k, b.w * k, b.h * k); }
@@ -53,13 +96,21 @@ function miniOver() {
   const a = viewArt(), x0 = Math.max(0, a.x * k), y0 = Math.max(0, a.y * k), x1 = Math.min(MM.w, (a.x + a.w) * k), y1 = Math.min(MM.h, (a.y + a.h) * k);
   c.strokeStyle = TH.accent; c.lineWidth = 1.5; c.strokeRect(x0 + 0.75, y0 + 0.75, Math.max(2, x1 - x0 - 1.5), Math.max(2, y1 - y0 - 1.5));
 }
+/* The pixel Follow follows: a ring and four ticks, so it shows on any color at 1x. */
+function miniMark(c) {
+  const f = MM.fp, s = MM.k; if (!f || f.x < 0 || f.y < 0 || f.x >= S.w || f.y >= S.h) return;
+  const x = (f.x - MM.fx) * s, y = (f.y - MM.fy) * s, m = x + s / 2, n = y + s / 2;
+  c.lineWidth = 1; c.beginPath(); c.rect(x - 1.5, y - 1.5, s + 3, s + 3);
+  for (const [u, v] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) { const r = s / 2 + 3; c.moveTo(m + u * r, n + v * r); c.lineTo(m + u * (r + 4), n + v * (r + 4)); }
+  c.strokeStyle = TH.panel; c.lineWidth = 3; c.stroke(); c.strokeStyle = TH.accent; c.lineWidth = 1; c.stroke();
+}
 /* What the main view shows, in art coordinates. */
 const viewArt = () => ({ x: -S.ox / S.z, y: -S.oy / S.z, w: vw / S.z, h: vh / S.z });
 function viewOn(x, y) { S.ox = Math.round(vw / 2 - x * S.z); S.oy = Math.round(vh / 2 - y * S.z); requestRender(); }
-function miniAt(e) { const r = $('miniMap').getBoundingClientRect(); return { x: (e.clientX - r.left - ($('miniMap').clientLeft || 0)) / MM.k, y: (e.clientY - r.top - ($('miniMap').clientTop || 0)) / MM.k }; }
+function miniAt(e) { const r = $('miniMap').getBoundingClientRect(); return { x: (e.clientX - r.left - ($('miniMap').clientLeft || 0)) / MM.k + MM.fx, y: (e.clientY - r.top - ($('miniMap').clientTop || 0)) / MM.k + MM.fy }; }
 /* Dragging the rectangle keeps the spot it was picked up by under the pointer. A tap outside it jumps there, and the drag carries on from the middle. */
 function miniDown(e) {
-  e.preventDefault(); const p = miniAt(e), a = viewArt(), inside = p.x >= a.x && p.x < a.x + a.w && p.y >= a.y && p.y < a.y + a.h;
+  e.preventDefault(); const p = miniAt(e), a = viewArt(), inside = !MM.fol && p.x >= a.x && p.x < a.x + a.w && p.y >= a.y && p.y < a.y + a.h;
   MM.grab = inside ? { x: p.x - (a.x + a.w / 2), y: p.y - (a.y + a.h / 2) } : { x: 0, y: 0 };
   try { $('miniMap').setPointerCapture(e.pointerId); } catch (_) {}
   viewOn(p.x - MM.grab.x, p.y - MM.grab.y);
@@ -151,6 +202,7 @@ function seamCells(ax, ay) {
 }
 const seamTool = t => brushed(t) || shapeTool(t);
 function sceneDraw(c, x, y, z) {
+  if (MM.on) miniAim();
   if (!S.secOn) return;
   const r = { x0: Math.max(0, Math.floor(-x / z)), y0: Math.max(0, Math.floor(-y / z)), x1: Math.min(S.w - 1, Math.floor((vw - x) / z)), y1: Math.min(S.h - 1, Math.floor((vh - y) / z)) }, a = secAt(r.x0, r.y0), b = secAt(r.x1, r.y1);
   c.strokeStyle = TH.accent; c.globalAlpha = 0.55; c.lineWidth = 1; c.beginPath();
@@ -299,6 +351,14 @@ function initScene() {
   const toggle = on => { prefSet('mapAuto', false); miniShow(on); try { localStorage.setItem(MM_KEY, on ? '1' : '0'); } catch (_) {} };
   $('miniBtn').onclick = () => toggle(true); $('miniClose').onclick = () => toggle(false); $('miniOpt').onclick = () => toggle(!MM.on);
   const map = $('miniMap'); map.onpointerdown = miniDown; map.onpointermove = miniMove; map.onpointerup = map.onpointercancel = () => { MM.grab = null; };
+  MM.big = prefGet('mapBig');
+  $('miniWhole').onclick = () => { prefSet('mapMode', 'whole'); miniLayout(); }; $('miniFollow').onclick = () => { prefSet('mapMode', 'follow'); miniLayout(); };
+  [...$('miniScale').children].forEach(b => { b.onclick = () => { prefSet('mapScale', +b.dataset.mscale); miniLayout(); }; });
+  const grip = $('miniGrip'), size = big => { big = Math.round(Math.max(1, Math.min(2, big)) * 20) / 20; if (big !== MM.big) { MM.big = big; miniLayout(); } };
+  grip.onpointerdown = e => { e.preventDefault(); try { grip.setPointerCapture(e.pointerId); } catch (_) {} MM.drag = { x: e.clientX, y: e.clientY, big: MM.big }; };
+  grip.onpointermove = e => { const d = MM.drag; if (d) size(d.big + (window.innerWidth <= 600 ? (d.y - e.clientY) / MM_H : Math.max((d.x - e.clientX) / MM_W, (d.y - e.clientY) / MM_H))); };   // the map grows up and to the left from its corner, and a phone's sheet only up
+  grip.onpointerup = grip.onpointercancel = () => { if (MM.drag) prefSet('mapBig', MM.big); MM.drag = null; };
+  grip.onkeydown = e => { const n = { ArrowUp: 1, ArrowRight: 1, ArrowDown: -1, ArrowLeft: -1 }[e.key]; if (n) { e.preventDefault(); size(MM.big + n / 10); prefSet('mapBig', MM.big); } };
   $('viewSave').onclick = viewSave;
   $('secOn').onclick = () => secShow(!S.secOn);
   for (const n of SEC_SIZES) { const o = document.createElement('option'); o.value = n; o.textContent = n + ' × ' + n + ' px'; $('secSize').insertBefore(o, $('secSize').lastElementChild); }

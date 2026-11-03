@@ -12,7 +12,9 @@ module.exports = async t => {
   tool('picker'); { const want = ev(`packedHex(T.l0.px[45 * S.w + 45])`); ev(`setColor('#123456');`); tap(45, 45); check('tool: picker reads the color under it', ev('S.color') === want); }
   ev(`SEL.wandAll = false;`); tool('wand'); tap(5, 5); check('tool: wand selects by color', ev('SEL.mask !== null')); ev('selectNone();');
   tool('hand'); { const n = steps(), x = ev('S.ox'), h = ev('T.hash(T.l0.px)'); drag(100, 100, 140, 120); check('tool: hand pans and draws nothing', ev('S.ox') !== x && steps() === n && ev('T.hash(T.l0.px)') === h); }
-  fresh(); tool('shadow'); { const n = ev('S.layers.length'); drag(120, 120, 128, 120); check('tool: shadow ellipse makes a linked layer below', ev('S.layers.length') === n + 1 && ev('S.layers[S.active - 1].kind') === 'shadow'); }
+  ev(`T.reset(32, 32, 'flat'); Object.assign(S, { z: 10, ox: 240 }); viewSet('flip');`); tap(5, 9);
+  check('Flip view paints the pixel shown under the pointer; gray is Rec. 709 luma, a silhouette keeps the alpha', fn(`viewSet('flip'); return T.l0.px[314] && T.painted() === 1 && grayPx(0xff0000ff) === 0xff363636 && grayPx(0xff00ff00) === 0xffb6b6b6 && !silPx(0, 5) && silPx(0x80aabbcc, 0x123456) === 0x80123456;`));
+  fresh(); tool('shadow'); { const n = ev('S.layers.length'); drag(120, 120, 128, 120); check('tool: shadow ellipse makes a linked layer below', ev(`S.layers.length === ${n + 1} && S.layers[S.active - 1].kind === 'shadow'`)); }
   fresh(); ev(`Object.assign(S, { tileTex: 'plain', tileRim: 'none', tileH: 0 }); addLayer(); setTool('tile');`); tap(...cell(3, 2)); check('tool: tile stamps one diamond', count() === 256);
   fresh(); ev(`addObjectLayer(); pickShape('box'); S.objH = 16; setTool('place');`); tap(...cell(3, 2)); check('tool: place adds an object', ev('T.L().objects.length') === 1);
   tool('pick'); { const [x, y] = fn(`const L = T.L(); for (let i = 0; i < L.ids.length; i++) if (L.ids[i]) return [i % S.w, Math.floor(i / S.w) + 8];`); ev('objSelect(null);'); tap(x, y); check('tool: select picks an object', ev('OB.sel') === ev('T.L().objects[0].id')); }

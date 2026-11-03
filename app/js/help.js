@@ -180,6 +180,12 @@ const HELP = [
   ['#sizeChip', 'Canvas size, grid and brush at a glance. Tap to see how they fit together and change them.'], ['#szCv', 'The canvas, grid and brush to scale.'], ['#szResize', 'Sets an exact canvas size.'],
   ['#szBrushDown, #szBrushUp, #szBrushN', 'How many pixels wide the brush is, or how many cells with Snap on Cell.', '[ and ]'], ['#szGridDown, #szGridUp, #szGridN', 'The size of one cell or tile. Pixels already drawn stay put.'], ['#sizesPop [data-pop-close]', 'Closes the sizes.', 'Esc'],
   ['#miniBtn, #miniOpt, #miniClose', 'Shows or hides the map of the whole canvas.'],
+  ['#miniWhole', 'The map shows the whole canvas, with a rectangle for the view. Tap to jump there, or drag the rectangle.'], ['#miniFollow', 'The map shows the art at its real size around the pointer, or the whole design when it fits, so you can watch it at 1x while you draw zoomed in. A tap moves the view there.'],
+  ['[data-mscale]', 'How many screen pixels each art pixel takes in Follow.'], ['#miniGrip', 'Drag to make the map larger or smaller, up to twice its size.'],
+  ['[data-view="flip"]', 'Shows the canvas mirrored left to right, to catch lopsided shapes. Drawing lands where you point on the mirrored picture. The art itself is not flipped.', 'K'],
+  ['[data-view="gray"]', 'Shows the art in gray by its lightness (Rec. 709), to check that the values read. The palette stays in color, and the art is unchanged.', 'Y'],
+  ['[data-view="sil"]', 'Fills every painted pixel with one color, to check that the shape reads on its own. The art is unchanged.', 'J'],
+  ['#silOne', 'Silhouette for the active layer only, to check one sprite in a scene.'],
   ['.refrow .vname', 'Chooses this reference for the controls below.'], ['.refrow [aria-label^="Hide"], .refrow [aria-label^="Show"]', 'Turns this reference off without removing it, or on again.'], ['.refrow [aria-label^="Lock"], .refrow [aria-label^="Unlock"]', 'A locked reference cannot be moved, scaled or turned by accident.'], ['.refrow [aria-label^="Remove"]', 'Takes this reference out of the project. The toast can bring it back.'],
   ['#refAbove', 'Draws the reference over the art, to trace it. The picker takes its color wherever it shows.'], ['#refBelow', 'Draws the reference under the art, so what you paint covers it. The picker takes its color only where the art is empty.'],
   ['#refOp', 'How strongly the reference shows, 10 to 100 percent.'], ['#refPix', 'Shows the reference as the art grid would hold it: one color per pixel of the canvas.'],
@@ -194,7 +200,7 @@ const HELP = [
   ['#secPrev', 'Goes to the section before this one, in reading order.'], ['#secNext', 'Goes to the next section, in reading order.'], ['#secTodo', 'Goes to the next section not marked done.'], ['#secX', 'The section\'s number across.'], ['#secY', 'The section\'s number down.'], ['#secGo', 'Goes to that section and zooms to fit it.'],
   ['[data-xp-mode="image"]', 'One PNG of what is chosen below.'], ['[data-xp-mode="layers"]', 'One PNG per visible layer in a .zip, with a list of offsets.'], ['[data-xp-mode="tiles"]', 'Cuts the picture into square tiles named column_row.png, in a .zip.'],
   ['#expLayerOnly', 'Exports the active layer, not all that show.'], ['#expCrop', 'Trims away the empty space around the art.'], ['#expSel', 'Exports only the selected pixels.'],
-  ['#expClear', 'Empty pixels stay transparent.'], ['#expSolid', 'Empty pixels take the second color.'], ['#expScales .chip', 'Each pixel becomes this many pixels across.'],
+  ['#expClear', 'Empty pixels stay transparent.'], ['#expSolid', 'Empty pixels take the second color.'], ['#expScales .chip', 'Each pixel becomes this many pixels across.'], ['#expShare', 'Picks the smallest whole scale that makes the long side at least 512 px, for posting online. It is always a PNG, which keeps every pixel sharp.'],
   ['#expTile', 'The width and height of each tile.'], ['#expOverlap', 'Each tile repeats 1 px of its neighbors, which hides seams in game engines. Stitched by tiles.json, the tiles still line up.'], ['#expSkip', 'Leaves out tiles with nothing on them. tiles.json lists the ones that are there.'],
   ['#expOk', 'Starts the export. A long one shows its progress and can be canceled.'], ['#busyStop', 'Stops this export. Nothing is saved.', 'Esc']
 ];
@@ -338,7 +344,7 @@ function helpEscape() {
 }
 
 function initHelp() {
-  document.querySelectorAll('#tools .btn').forEach(b => { const s = document.createElement('span'), t = TOOL_HELP[b.dataset.tool]; s.className = 'tlabel'; s.textContent = t ? t[0] : ''; b.appendChild(s); });
+  document.querySelectorAll('#tools .btn').forEach(b => { const s = document.createElement('span'), t = TOOL_HELP[b.dataset.tool]; s.className = 'tlabel'; s.textContent = t ? t[0] : VIEW_WORDS[b.dataset.view] || ''; b.appendChild(s); });
   fingerStart(); syncToolHelp(); labelsStart();
   document.addEventListener('pointerdown', lpDown, true);
   document.addEventListener('pointermove', lpMove, true);

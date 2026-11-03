@@ -123,11 +123,16 @@ function cpCompose(t, b) {
 }
 /* Grayscale and Silhouette are applied here, on the way to the tile's canvas, and the composite stays as it was, so turning one off or on costs one put per tile on screen and nothing per stroke. */
 function cpPut(t, b) {
-  const f = viewFilter(), w = b.x1 - b.x0 + 1, h = b.y1 - b.y0 + 1; t.vk = VW.key;
-  if (!f) { t.ctx.putImageData(t.img, 0, 0, b.x0, b.y0, w, h); return; }
+  const w = b.x1 - b.x0 + 1, h = b.y1 - b.y0 + 1; t.vk = VW.key;
+  if (!VW.key) { t.ctx.putImageData(t.img, 0, 0, b.x0, b.y0, w, h); return; }
   if (!t.fimg) { t.fimg = t.ctx.createImageData(CP_T, CP_T); t.fpx = new Uint32Array(t.fimg.data.buffer); }
-  const d = t.fpx, s = t.px;
-  for (let y = b.y0; y <= b.y1; y++) for (let i = y * CP_T + b.x0, e = i + w; i < e; i++) d[i] = f(s[i]);
+  const d = t.fpx, s = t.px, gray = VW.gray, sil = VW.sil && !VW.one, c = VW.silV;   // inline rather than f per pixel: this runs on a whole screen when a view is turned on
+  for (let y = b.y0; y <= b.y1; y++) for (let i = y * CP_T + b.x0, e = i + w; i < e; i++) {
+    let v = s[i]; if (!(v >>> 24)) { d[i] = 0; continue; }
+    if (sil) v = (v & 0xff000000 | c) >>> 0;
+    if (gray) { const g = (0.2126 * (v & 255) + 0.7152 * (v >>> 8 & 255) + 0.0722 * (v >>> 16 & 255) + 0.5) | 0; v = (v & 0xff000000 | g << 16 | g << 8 | g) >>> 0; }
+    d[i] = v;
+  }
   t.ctx.putImageData(t.fimg, 0, 0, b.x0, b.y0, w, h);
 }
 /* Brings a tile up to date. A dirty rectangle is always done, as that is the pen. Rebuilding a whole tile can wait for a later frame when `may` is false; the tile keeps its old picture until then. */

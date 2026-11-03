@@ -1,6 +1,4 @@
 'use strict';
-/* qtiles About: what it is, who made it and what it is built on. The sections are data, and an empty one stays out, so filling ABOUT is all it takes to show Made by, License or Ko-fi.
-   A link opens a new tab and nothing here loads from anywhere, so the app still makes no network requests. */
 
 const ABOUT = {
   madeBy: { name: 'Dan V', link: 'https://danv.is/' },   // name, then an optional link
@@ -47,7 +45,6 @@ function aboutCredits() {
     abEl('h4', 'Palettes'),
     abList(PALETTES.filter(p => p.credit).map(p => p.credit + '.')),
     abEl('p', 'Made for qtiles: ' + made + '.'),
-    ...abFile('Palette sources', 'palettes/CREDITS.md'),
     abEl('h4', 'Reading behind the tips'),
     abList(ABOUT.reading.map(r => abLink(r.name, r.url)))
   ];

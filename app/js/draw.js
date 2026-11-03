@@ -512,21 +512,17 @@ function hatchOut(c, src, dx, dy, dw, dh, x, y, W, Ht) {
    Flip mirrors the whole stage, and `local` mirrors the pointer to match, so everything drawn in art coordinates, from the grid to the cursor, agrees with it for free.
    Grayscale and Silhouette act where a tile's composite is put on its canvas (`cpPut`), or for Silhouette of the active layer only, where that layer is laid in (`cpCompose`). key names what the tiles were put with. */
 const VW = { flip: false, gray: false, sil: false, one: false, key: '', silV: 0 };
+const VIEW_WORDS = { flip: 'Flip', gray: 'Grayscale', sil: 'Silhouette' };
 /* Rec. 709 luma of the stored sRGB values, so the gray is the one a value check in any other editor gives. */
 function grayPx(v) { const g = Math.round(0.2126 * (v & 255) + 0.7152 * (v >>> 8 & 255) + 0.0722 * (v >>> 16 & 255)); return (v & 0xff000000 | g << 16 | g << 8 | g) >>> 0; }
 const silPx = (v, c) => v >>> 24 ? (v & 0xff000000 | c) >>> 0 : 0;
-/* What a tile's pixel shows as, or null when no view changes it. */
-function viewFilter() {
-  const sil = VW.sil && !VW.one, c = VW.silV;
-  return VW.gray && sil ? v => grayPx(silPx(v, c)) : VW.gray ? grayPx : sil ? v => silPx(v, c) : null;
-}
 /* The silhouette is the text color, which stands out from the checker in either theme, so a theme change puts the tiles again. */
 function viewKeys() { VW.silV = packHex(TH.fg) & 0xffffff; VW.key = (VW.gray ? 'g' : '') + (VW.sil && !VW.one ? 's' + VW.silV : ''); }
 function viewSync() {
   viewKeys();
   document.querySelectorAll('[data-view]').forEach(b => press(b, VW[b.dataset.view]));
   const on = ['flip', 'gray', 'sil'].filter(k => VW[k]);
-  $('viewBadge').hidden = !on.length; $('viewWords').textContent = on.map(k => ({ flip: 'Flipped', gray: 'Grayscale', sil: 'Silhouette' })[k]).join(' · ');
+  $('viewBadge').hidden = !on.length; $('viewWords').textContent = on.map(k => k === 'flip' ? 'Flipped' : VIEW_WORDS[k]).join(' · ');
   $('silOne').hidden = !VW.sil; press($('silOne'), VW.one);
   hooks.view && hooks.view(); requestRender();
 }
