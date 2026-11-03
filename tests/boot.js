@@ -26,6 +26,7 @@ async function boot() {
     t.every = (name, items, fn) => { let bad; for (const x of items) { let ok = false; try { ok = fn(x); } catch (e) { ok = false; } if (!ok) { bad = x; break; } } t.check(name + (bad === undefined ? '' : ', first failing: ' + bad), bad === undefined); };
 
   const ptr = (type, x, y, extra) => { const e = new w.MouseEvent(type, Object.assign({ clientX: x, clientY: y, button: 0, buttons: type === 'pointerup' ? 0 : 1, bubbles: true }, extra)); Object.defineProperty(e, 'pointerId', { value: 1 }); Object.defineProperty(e, 'pointerType', { value: 'pen' }); return e; };
+  t.ptr = ptr;
   const view = () => $('view'), scr = (x, y) => [ev('S.ox') + x * ev('S.z') + ev('S.z') / 2, ev('S.oy') + y * ev('S.z') + ev('S.z') / 2];
   t.path = (pts, extra) => { const q = pts.map(p => scr(...p)), v = view(); v.dispatchEvent(ptr('pointerdown', ...q[0], extra)); q.slice(1).forEach(p => v.dispatchEvent(ptr('pointermove', ...p, extra))); v.dispatchEvent(ptr('pointerup', ...q[q.length - 1], extra)); };
   t.tap = (x, y, extra) => t.path([[x, y]], extra);
@@ -41,9 +42,11 @@ async function boot() {
 
   /* Helpers inside the page. T.doc() is everything undo must put back; hashes keep comparing it cheap. */
   ev(`window.T = {
+    L: () => activeLayer(), get l0() { return S.layers[0]; },
     hash(a) { let h = 7; for (let i = 0; i < a.length; i++) h = (Math.imul(h, 31) + a[i] + i) | 0; return h; },
     recs(L) { return L.objects ? JSON.stringify(L.objects, (k, v) => k === 'fit' ? undefined : v) : null; },
     doc() { return JSON.stringify({ w: S.w, h: S.h, gox: S.gox, goy: S.goy, groups: S.groups, layers: S.layers.map(L => [L.id, L.name, L.kind, L.visible, L.locked, L.opacity, L.group, L.tag, L.shadowFor, L.outlineFor, L.mirrorOf, L.pivot, L.px.length, T.hash(L.px), T.recs(L)]) }); },
+    near(p) { return p.every((q, k) => !k || Math.max(Math.abs(q[0] - p[k - 1][0]), Math.abs(q[1] - p[k - 1][1])) <= 1); },
     painted(L) { L = L || activeLayer(); let n = 0; for (const v of L.px) if (v >>> 24) n++; return n; },
     fill(x0, y0, x1, y1, hex, L) { L = L || activeLayer(); beginStroke(L); rectP(x0, y0, x1, y1, true, plotLayer, packHex(hex)); endStroke(); },
     reset(w, h, mode) { closeSheets(); selectNone(); newDoc(w, h, 'test'); setMode(mode || 'iso'); Object.assign(S, { mirrorX: false, mirrorY: false, tile: 32, edgeRun: 2, level: 0, sizeLock: false, snap: 'pixel', fillAll: true }); S.gox = Math.floor(w / 2) & ~15; S.goy = 0; usePalette(PALETTES[0]); setLight('left'); setColor('#3f8a4f'); S.color2 = '#24593f'; setBrush(1); setTool('pencil'); fitView(); setDirty(false); },
@@ -60,6 +63,7 @@ async function boot() {
     for (let k = 0; k < (opts.steps || 1); k++) ev('redo()'); if (ev('T.doc()') !== b) return false;
     for (let k = 0; k < (opts.steps || 1); k++) ev('undo()'); return ev('T.doc()') === a;
   };
+  t.fn = s => ev('(() => { ' + s + ' })()');
   t.load = o => ev('(o => loadProject(JSON.parse(o)))')(JSON.stringify(o));
   t.saved = async () => JSON.parse(await ev('serialize().then(o => JSON.stringify(o))'));
   return t;

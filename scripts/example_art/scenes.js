@@ -70,4 +70,32 @@ const harbour = {
     { title: 'Gulls are five pixels.', text: 'Small sprites scattered over open water give the picture scale and life, for almost no work. Try a few more.', show: { layer: 'Gulls' } }
   ]
 };
-module.exports = [street, harbour];
+/* The welcome's cover: an isometric corner on the left, a row of 2D pieces on the right, on a quiet ground. It is not in the catalogue. */
+const corner = (i, j) => i >= 0 && i <= 6 && j >= 0 && j <= 5, lane = (i, j) => corner(i, j) && j === 5;
+const cover = {
+  id: 'cover', title: 'qtiles cover', order: 90, palette: 'qtiles', w: 480, h: 200, tile: 32, gox: 124, goy: 46, light: 'left', cover: true,
+  lesson: 'Isometric and 2D pieces from the examples, side by side.', skills: ['composition'],
+  fill: [[0, 0, 479, 199, '#c9ccd6'], [0, 164, 479, 199, '#9a9fb5']],
+  ground: [
+    { color: '#7bb661', tex: 'grass', tile: { tileRim: 'lower', tileH: 6 }, cells: cells((i, j) => corner(i, j) && !lane(i, j), 0, 6) },
+    { color: '#c9ccd6', tex: 'flat', tile: { tileRim: 'lower', tileH: 6 }, cells: cells(lane, 0, 6) }
+  ],
+  objects: [['house', 0, 0]],
+  parts: [
+    { of: 'tree', name: 'Tree', at: [5, 1], stand: [1, 1, 34] },
+    { of: 'street-lamp', name: 'Lamp', at: [4, 4], stand: [1, 1, 36] },
+    { of: 'cat', name: 'Cat', kind: 'character', at: [5, 3], stand: [1, 1, 12] },
+    { of: 'walker', name: 'Walker', kind: 'character', at: [2, 5], stand: [1, 1, 26] },
+    { of: 'potted-plant', name: 'Potted plant', xy: [262, 164] },
+    { of: 'cat-face', name: 'Cat face', xy: [296, 164] },
+    { of: 'apple', name: 'Apple', xy: [338, 164] },
+    { of: 'mug', name: 'Mug', xy: [362, 164] },
+    { of: 'umbrella', name: 'Umbrella', xy: [388, 164] },
+    { of: 'heart', name: 'Heart', xy: [428, 164] },
+    { of: 'leaf', name: 'Leaf', xy: [452, 164] }
+  ],
+  tips: [
+    { title: 'Two grids, one canvas.', text: 'The corner on the left stands on the isometric grid. The pieces on the right are 2D examples, placed on a line. Open any of them from the catalogue to see how it was made.', show: {} }
+  ]
+};
+module.exports = [street, harbour, cover];

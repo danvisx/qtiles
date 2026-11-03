@@ -3,16 +3,16 @@
    PREFS is the list of every setting. A row's control is made from its entry, or is a `part`: markup in index.html that moves into the row and keeps its id, handlers and sync function. */
 
 const PREFS_KEY = 'qtiles.prefs', OLD_KEYS = 'isopic.', THEMES = ['system', 'light', 'dark'], AUTOSAVE_SECS = [15, 30, 60, 120, 300], HEIGHT_UNITS = ['both', 'levels', 'pixels'];
-const PREF_DEVICE = { labels: null, theme: 'system', fingers: null, tipsOff: false, mapAuto: true, memShown: true, autosave: 30, edgeGrow: 'auto', guides: 'lines', heights: 'both', onboarded: false, animTools: false, animTold: false, startScreen: true, startMode: 'flat', newLast: null };   // labels and fingers are null until someone chooses, so a laptop, an iPad and a phone each get their own default
-const PREF_OK = { labels: v => v === null || typeof v === 'boolean', fingers: v => v === null || typeof v === 'boolean', theme: v => THEMES.includes(v), autosave: v => AUTOSAVE_SECS.includes(v), edgeGrow: v => v === 'auto' || v === 'ask', guides: v => HG_LEVELS.includes(v), heights: v => HEIGHT_UNITS.includes(v), startMode: v => v === 'flat' || v === 'iso' };
-const PF = { v: null, cat: 'interface', open: new Set(['interface']), from: null };
+const PREF_DEVICE = { labels: null, theme: 'system', fingers: null, tipsOff: false, mapAuto: true, memShown: true, autosave: 30, edgeGrow: 'auto', guides: 'lines', heights: 'both', onboarded: false, animTools: false, animTold: false, startScreen: true, startMode: 'flat', newLast: null, welcomeSeen: 0, perfect: { flat: true, iso: false } };   // labels and fingers are null until someone chooses, so a laptop, an iPad and a phone each get their own default
+const PREF_OK = { labels: v => v === null || typeof v === 'boolean', fingers: v => v === null || typeof v === 'boolean', theme: v => THEMES.includes(v), autosave: v => AUTOSAVE_SECS.includes(v), edgeGrow: v => v === 'auto' || v === 'ask', guides: v => HG_LEVELS.includes(v), heights: v => HEIGHT_UNITS.includes(v), startMode: v => v === 'flat' || v === 'iso', perfect: v => !!v && typeof v.flat === 'boolean' && typeof v.iso === 'boolean' };
+const PF = { v: null, cat: 'interface', open: new Set(['interface']), from: null, had: false };   // had: this browser held something of qtiles, or Isopic, before this page load
 
 /* ---------- device settings ---------- */
 /* Once, on the first start under this name. A key already here wins, and a key that will not fit stays to try again. The old recovery key is left to recoveryMigrate: it can be larger than the room that is left. */
 function keysMove() {
   try {
     const old = [];
-    for (let k = 0; k < localStorage.length; k++) { const key = localStorage.key(k); if (key.startsWith(OLD_KEYS) && !OLD_AUTOSAVE_KEYS.includes(key)) old.push(key); }
+    for (let k = 0; k < localStorage.length; k++) { const key = localStorage.key(k); if (key.startsWith(OLD_KEYS) || key.startsWith('qtiles.') || OLD_AUTOSAVE_KEYS.includes(key)) PF.had = true; if (key.startsWith(OLD_KEYS) && !OLD_AUTOSAVE_KEYS.includes(key)) old.push(key); }
     for (const key of old) {
       const to = 'qtiles.' + key.slice(OLD_KEYS.length);
       if (localStorage.getItem(to) === null) localStorage.setItem(to, localStorage.getItem(key));
@@ -99,6 +99,7 @@ const PREFS = [
   { key: 'history', cat: 'saving', scope: DEVICE, label: 'Undo history', desc: 'When this fills, the oldest steps are dropped. Clear history is under File, Undo history.', kind: 'read', id: 'prefHistory', get: () => historyLine(), used: '#fileBtn' },
   Object.assign(onOff('prefTips', () => EX.off || !!S.tipsDismissed, v => exTipsOff(v)), { key: 'tipsOff', cat: 'help', scope: DEVICE, label: 'Example tips off', desc: 'Hides the tip strip on example projects.', def: false }),
   { key: 'replay', cat: 'help', scope: DEVICE, label: 'Tour', desc: 'A short tour of the tools, gestures and layers.', kind: 'action', id: 'prefReplay', text: 'Take the tour', run: () => { closeSheets(); coachStart(); } },
+  { key: 'welcome', cat: 'help', scope: DEVICE, label: 'Welcome', desc: 'The first screen a new visitor sees: what qtiles makes, and where to begin.', kind: 'action', id: 'prefWelcome', text: 'Show the welcome again', run: () => welcomeAgain() },
   { key: 'gestures', cat: 'help', scope: DEVICE, label: 'Gestures', desc: 'Lists what fingers, the Pencil and a mouse do.', kind: 'action', id: 'prefGestures', text: 'Show gestures', run: () => { closeSheets(); openSheet('sheetGestures'); } },
   Object.assign(onOff('prefAnim', () => prefGet('animTools'), v => { prefSet('animTools', v); animToolsSync(); }), { key: 'animTools', cat: 'labs', scope: DEVICE, label: 'Animation and sprite sheets', desc: 'Shows the Animation section, Onion skin, Sprite sheet and Frame as PNG. A project keeps its animations either way.', def: false })
 ];

@@ -3299,5 +3299,43 @@
     "mode": "2d",
     "layers": 5,
     "objects": 0
+  },
+  {
+    "id": "cover",
+    "title": "qtiles cover",
+    "tier": "Scene",
+    "category": "scenery",
+    "size": "scene",
+    "order": 90,
+    "lesson": "Isometric and 2D pieces from the examples, side by side.",
+    "summary": "Isometric and 2D pieces from the examples, side by side.",
+    "skills": [
+      "composition"
+    ],
+    "author": "claude",
+    "parts": [
+      "tree",
+      "street-lamp",
+      "cat",
+      "walker",
+      "potted-plant",
+      "cat-face",
+      "apple",
+      "mug",
+      "umbrella",
+      "heart",
+      "leaf"
+    ],
+    "file": "cover.qtiles.json",
+    "tips": [
+      {
+        "title": "Two grids, one canvas.",
+        "text": "The corner on the left stands on the isometric grid. The pieces on the right are 2D examples, placed on a line. Open any of them from the catalogue to see how it was made.",
+        "show": {}
+      }
+    ],
+    "cover": true,
+    "layers": 16,
+    "objects": 10
   }
 ]

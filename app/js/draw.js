@@ -56,6 +56,94 @@ function rectP(x0, y0, x1, y1, filled, plot, v) {
   for (let x = ax; x <= bx; x++) { plot(x, ay, v); plot(x, by, v); }
   for (let y = ay; y <= by; y++) { plot(ax, y, v); plot(bx, y, v); }
 }
+/* Pixel-perfect (044): a 1 px pencil or eraser stroke leaves no doubled corner. When its last three points make an L, the middle one goes back to what it was before the stroke, through the stroke's own record, so the screen shows the result and undo stays one step.
+   Points are pixels, or cells under Snap = Cell. The rule runs ahead of the mirror, so both sides lose the same corner, and a pixel another point of the stroke also painted stays. */
+const perfectOn = () => prefGet('perfect')[S.mode === 'iso' ? 'iso' : 'flat'];
+function perfectP(plot, unplot) {
+  const pts = [], hits = new Map(), c = cellBrush() ? S.cell : 1, key = (x, y) => (y + OUT_OFF) * OUT_ROW + x + OUT_OFF;
+  const put = mirrored((x, y, v) => { const k = key(x, y); hits.set(k, (hits.get(k) || 0) + 1); plot(x, y, v); });
+  const take = mirrored((x, y) => { const k = key(x, y), n = hits.get(k) - 1; if (n > 0) hits.set(k, n); else { hits.delete(k); unplot(x, y); } });
+  return (x, y, v) => {
+    const p = [Math.floor(x / c), Math.floor(y / c), x, y], b = pts[pts.length - 1], a = pts[pts.length - 2];
+    if (b && b[0] === p[0] && b[1] === p[1]) return;
+    brushP(x, y, 1, put, v);
+    if (a && Math.abs(a[0] - p[0]) === 1 && Math.abs(a[1] - p[1]) === 1) { brushP(b[2], b[3], 1, take); pts[pts.length - 1] = p; }
+    else { pts.push(p); if (pts.length > 2) pts.shift(); }
+  };
+}
+/* ---------- ellipse (044) ---------- */
+/* Circles pixel artists draw differently from what the runs below give, as the right end of each row of the top right quarter, top row first. */
+const OVAL_HAND = { 3: [0, 1], 4: [0, 1], 7: [1, 2, 3, 3], 8: [1, 2, 3, 3], 10: [2, 3, 4, 4, 4], 15: [2, 4, 5, 6, 6, 7, 7, 7] };
+const OVAL = new Map();
+/* A w x h ellipse as its top right quarter: R[t] is the last column of row t, counted from the middle column, from the top row to the middle one.
+   The quarter is two octants meeting at P = (ub, tb), near where the curve runs at 45 degrees. Above P each row steps out by a run and the runs only shrink; below it each column steps down by a run and they only grow. A run of one meets P from each side, so no corner is doubled, and the top and side flats are no shorter than the run beside them, so there is no spur.
+   The runs share out what the ideal curve asks for (a pixel is inside if its center is), and the P whose shape lies closest to that curve wins. A circle also keeps its diagonal symmetry. */
+function ovalRows(w, h) {
+  const id = w + 'x' + h; let R = OVAL.get(id); if (R) return R;
+  const U = (w + 1) >> 1, T = (h + 1) >> 1;
+  if (w === h && OVAL_HAND[w]) R = OVAL_HAND[w];
+  else if (U < 2 || T < 2) R = new Array(T).fill(U - 1);
+  else {
+    const a = w / 2, b = h / 2, ox = w & 1 ? 0 : 0.5, oy = h & 1 ? 0 : 0.5, odd = h & 1;
+    const X = t => a * Math.sqrt(Math.max(0, 1 - ((T - 1 - t + oy) / b) ** 2)) - ox, Y = u => T - 1 + oy - b * Math.sqrt(Math.max(0, 1 - ((u + ox) / a) ** 2));
+    const k = Math.hypot(a, b), xs = a * a / k - ox, ys = T - 1 + oy - b * b / k, R0 = Math.max(0, Math.floor(X(0))), Bs = Math.min(T - 1, Math.ceil(Y(U - 1)));
+    const all = U * T <= 1024, near = (c, n) => all ? [0, n - 1] : [Math.max(0, Math.round(c) - 4), Math.min(n - 1, Math.round(c) + 4)], [t0, t1] = near(ys, T), [u0, u1] = near(xs, U);
+    let be = Infinity;
+    for (let tb = t0; tb <= t1; tb++) for (let ub = u0; ub <= u1; ub++) {
+      const m = U - 1 - ub, r = !m && tb === 1 && !(odd && tb === T - 1) ? ub - 1 : tb ? Math.min(R0, ub - tb) : ub, s = m ? Math.max(Bs, tb + m) : tb;
+      if (r < 0 || s > T - 1) continue;
+      const q = ovalBuild(U, T, w & 1, odd, r, s, tb, ub, X, Y); let e = 0;
+      for (let t = 0, u = 0; t < T; t++) { e += Math.abs(q[t] - X(t)); for (; u <= q[t]; u++) e += Math.abs(t - Y(u)); }
+      if (w === h && !ovalSym(q)) e += 1e6;
+      if (e < be - 1e-9) { be = e; R = q; }
+    }
+  }
+  if (OVAL.size > 64) OVAL.clear();
+  OVAL.set(id, R); return R;
+}
+/* The flats are R0 (the top row's last column) and Bs (the side column's first row), and either moves in by one while it is shorter than the run beside it. */
+function ovalBuild(U, T, oddW, odd, R0, Bs, tb, ub, X, Y) {
+  const m = U - 1 - ub, end = !m && tb > 0 && !(odd && tb === T - 1);   // P on the side flat: its own row's run must be one
+  for (;;) {
+    const up = !tb ? [] : end ? ovalRuns(ub - R0 - 1, tb - 1, i => X(i + 1) - (i ? X(i) : R0)).concat(1) : ovalRuns(ub - R0, tb, i => (i + 1 === tb ? ub : X(i + 1)) - (i ? X(i) : R0));
+    const down = m > 1 ? ovalRuns(Bs - tb - 1, m - 1, i => { const u = ub + 1 + i; return (u + 1 === U - 1 ? Bs : Y(u + 1)) - (i ? Y(u) : tb + 1); }).reverse() : [];
+    const F = 2 * R0 + (oddW ? 1 : 2), S = 2 * (T - 1 - Bs) + (odd ? 1 : 2);
+    if (tb && F < up[0] && ub - R0 - 1 >= tb) { R0++; continue; }
+    if (m > 1 && S < down[down.length - 1] && Bs - tb - 2 >= m - 1) { Bs--; continue; }
+    const R = new Array(T); R[0] = R0;
+    for (let t = 1; t <= tb; t++) R[t] = R[t - 1] + up[t - 1];
+    for (let t = tb + 1, u = ub, top = tb + 1, i = 0; t < T; t++) {   // column ub + 1 starts a row below P, and each next one a run lower
+      while (u < U - 1 && top <= t) { u++; top += down[i++] || T; }
+      R[t] = u;
+    }
+    return R;
+  }
+}
+/* n runs of at least one that add up to total, shared out as ideal(i) asks, longest first. */
+function ovalRuns(total, n, ideal) {
+  const out = new Array(n).fill(1), want = [], frac = []; let s = 0, left = total - n;
+  for (let i = 0; i < n; i++) { want[i] = Math.max(0, ideal(i) - 1); s += want[i]; }
+  const extra = left;
+  for (let i = 0; i < n; i++) { const q = want[i] / (s || 1) * extra, f = Math.floor(q); out[i] += f; left -= f; frac.push([q - f, i]); }
+  frac.sort((p, q) => q[0] - p[0] || p[1] - q[1]);
+  for (let i = 0; i < left; i++) out[frac[i % n][1]]++;
+  return out.sort((p, q) => q - p);
+}
+/* True when a circle's quarter mirrors across its diagonal: column u's first row answers row T - 1 - u's last column. */
+function ovalSym(R) {
+  const T = R.length;
+  for (let u = 0, t = 0; u < T; u++) { while (R[t] < u) t++; if (t !== T - 1 - R[T - 1 - u]) return false; }
+  return true;
+}
+/* Plots a w x h ellipse in the box from (x0, y0) to (x1, y1), its outline or filled. The middle row and column of an odd size are plotted twice, which costs nothing. */
+function ovalP(x0, y0, x1, y1, filled, plot, v) {
+  const ax = Math.min(x0, x1), ay = Math.min(y0, y1), w = Math.abs(x1 - x0) + 1, h = Math.abs(y1 - y0) + 1, U = (w + 1) >> 1, R = ovalRows(w, h);
+  const four = (u, t) => { plot(ax + w - U + u, ay + t, v); plot(ax + U - 1 - u, ay + t, v); plot(ax + w - U + u, ay + h - 1 - t, v); plot(ax + U - 1 - u, ay + h - 1 - t, v); };
+  for (let t = 0; t < R.length; t++) {
+    if (filled) { for (let x = ax + U - 1 - R[t]; x <= ax + w - U + R[t]; x++) { plot(x, ay + t, v); plot(x, ay + h - 1 - t, v); } continue; }
+    for (let u = t ? Math.min(R[t], R[t - 1] + 1) : 0; u <= R[t]; u++) four(u, t);
+  }
+}
 /* Symmetry: every tool plots through mirrored(), so previews, commits and canvas growth always agree. */
 function mirrored(plot) {
   const mx = S.mirrorX, my = S.mirrorY, ax = S.axisX, ay = S.axisY;
@@ -287,13 +375,15 @@ function zoomGlide(nz, cx, cy) {
   if (still) step(t0); else glide = requestAnimationFrame(step);
 }
 
-function brushed(t) { return t === 'pencil' || t === 'eraser' || t === 'line' || t === 'shade' || (t === 'dither' && S.ditherMode === 'brush'); }
+function brushed(t) { return t === 'pencil' || t === 'eraser' || t === 'line' || t === 'ellipse' || t === 'shade' || (t === 'dither' && S.ditherMode === 'brush'); }
+/* Drawn on the preview layer while the pointer is down and painted on release. */
+const shapeTool = t => t === 'line' || t === 'rect' || t === 'ellipse';
 /* These read a point rather than paint, so symmetry and clipping mean nothing to them. */
 const pointTool = t => t === 'picker' || t === 'pivot' || selTool(t);
 /* The pixels a press paints with the pointer on `a`, keyed "x,y". It runs the stroke's own path, so the outline cannot disagree with the paint. What cuts a stroke cuts this too: shade and fill never grow the canvas, the size lock stops the rest, and a selection limits all of it. */
 function brushPixels(a, t) {
   const n = brushed(t) ? S.brush : 1, out = new Map(), put = (x, y) => out.set(x + ',' + y, [x, y]), stays = S.sizeLock || t === 'shade' || t === 'fill';
-  if (t === 'line' || t === 'rect') { const e = shapeEnds(a.x, a.y, a.x, a.y, t); a = { x: e[0], y: e[1] }; }
+  if (shapeTool(t)) { const e = shapeEnds(a.x, a.y, a.x, a.y, t); a = { x: e[0], y: e[1] }; }
   else if (t === 'shadow') a = { x: cornerSnap(a.x), y: cornerSnap(a.y) };
   if (pointTool(t)) { strokeP(a.x, a.y, a.x, a.y, n, put); return out; }
   strokeP(a.x, a.y, a.x, a.y, n, mirrored((x, y) => {
@@ -335,7 +425,7 @@ function brushTag(c, a, x, y, z, t) {
 }
 function brushCursor(c, x, y, z) {
   const t = drawId !== null && drawTool === 'eraser' ? 'eraser' : S.tool, finger = drawId !== null && drawFinger && (brushed(t) || S.mode !== 'iso'), a = finger ? lastArt : hover;   // a Pencil's eraser end erases whatever tool is chosen
-  if (!a || objTool(t) || t === 'terrain' || t === 'scatter' || t === 'hand') return;
+  if (!a || objTool(t) || t === 'terrain' || t === 'scatter' || t === 'hand' || RF.adjust) return;
   const big = cellBrush() && brushed(t) && (S.brush * S.cell) ** 2 > CURSOR_MAX;
   if (big && SEL.mask) return;   // its shape under a selection cannot be had in a frame. The cell tint stays
   const px = big ? null : brushPixels(a, t); if (px && !px.size) return;
@@ -379,7 +469,7 @@ function isoPass(c, x, y, z, step, skip, line, halo) {
 /* The cell or tile under a hovering pen or mouse, or a finger that is down. Off the canvas there is none. A tile is the one the Tile tool would stamp. */
 function cellHover() {
   const a = drawId !== null && drawFinger ? lastArt : hover;
-  if (!a || !S.guideHover || S.gridShow === 'off' || S.tool === 'hand' || a.x < 0 || a.y < 0 || a.x >= S.w || a.y >= S.h) return null;
+  if (!a || !S.guideHover || S.gridShow === 'off' || S.tool === 'hand' || RF.adjust || a.x < 0 || a.y < 0 || a.x >= S.w || a.y >= S.h) return null;
   return S.mode === 'iso' ? tileCell(a.x, a.y) : { i: Math.floor(a.x / S.cell), j: Math.floor(a.y / S.cell) };
 }
 function cellTint(c, x, y, z) {
@@ -426,8 +516,10 @@ function render() {
   const ax = pxSnap(x), ay = pxSnap(y), aw = pxSnap(x + W) - ax, ah = pxSnap(y + Ht) - ay, sq = checkPx(z) * z;
   c.save(); c.beginPath(); c.rect(ax, ay, aw, ah); c.clip();
   TH.check.setTransform({ a: sq, b: 0, c: 0, d: sq, e: ax, f: ay }); c.fillStyle = TH.check; c.fillRect(ax, ay, aw, ah);
+  refDraw(c, x, y, z, false);
   cpDraw(c, x, y, z);
   drawGhosts(c, x, y, z); c.globalAlpha = 1;
+  refDraw(c, x, y, z, true);
   const g = gridSteps(z);
   if (g.pixel) gridPass(c, x, y, z, W, Ht, 1, g.cell, TH.grid, TH.gridHalo);
   if (g.cell) gridPass(c, x, y, z, W, Ht, g.cell, g.major, TH.grid, TH.gridHalo);
@@ -458,6 +550,7 @@ function render() {
   }
   if (PV.outBox) { const b = PV.outBox; hatchOut(c, pvOutImage(), x + b.x0 * z, y + b.y0 * z, (b.x1 - b.x0 + 1) * z, (b.y1 - b.y0 + 1) * z, x, y, W, Ht); }
   c.strokeStyle = TH.canvasEdge; c.lineWidth = 1; c.strokeRect(ax - 0.5, ay - 0.5, aw + 1, ah + 1);   // after what sticks out, so the edge shows across it
+  refFrame(c);
   if (SEL.edges || SEL.rect || OB.edges) {
     const ex = x + (FL ? FL.x * z : 0), ey = y + (FL ? FL.y * z : 0), e = SEL.edges || [], o = OB.edges || [], ox = x + OB.x * z, oy = y + OB.y * z;
     c.beginPath(); c.lineWidth = 1;

@@ -133,15 +133,18 @@ function inScene(sc, parts) {
     if (!near.has(hex)) { const c = hexToRgb(hex), d = h => hexToRgb(h).reduce((n, v, k) => n + (v - c[k]) ** 2, 0); near.set(hex, S.palette.reduce((a, b) => d(b) < d(a) ? b : a)); }
     return near.get(hex);
   };
+  if (sc.fill) { beginStroke(ground); for (const [x0, y0, x1, y1, hex] of sc.fill) for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x++) plotLayer(x, y, packHex(hex)); endStroke(); flush(ground); }
   for (const t of sc.ground) tiles(ground, t.cells, { color: t.color, tex: t.tex, tile: t.tile || {} });
   if (sc.marks) { beginStroke(ground); for (const m of sc.marks) for (const [x, y] of m.pixels) plotLayer(x, y, packHex(m.color)); endStroke(); flush(ground); }
   if (sc.objects) { objectLayer('Buildings', 'prop'); for (const [id, i, j, turn] of sc.objects) put(id, i, j, turn); }
   const stand = objectLayer('Shadow shapes', 'prop', true), look = lookFrom(S.palette[0]), boxes = [];
   for (const q of sc.parts) if (q.stand) { const [w, d, h] = q.stand; boxes.push(objNew({ id: objSeq++, i: Math.round(2 * q.at[0] + 1 - w / 2) / 2, j: Math.round(2 * q.at[1] + 1 - d / 2) / 2, z: q.z || 0, w, d, h, look, outline: 'none', shadow: true })); }
   objCommit(stand, boxes, boxes);
-  const order = sc.parts.map((q, k) => [q, k]).sort((a, b) => a[0].at[0] + a[0].at[1] - b[0].at[0] - b[0].at[1] || (a[0].z || 0) - (b[0].z || 0) || a[1] - b[1]).map(a => a[0]);
+  const deep = q => q.at ? q.at[0] + q.at[1] : Infinity;   // a part placed by `xy` stands off the grid, in front of it
+  const order = sc.parts.map((q, k) => [q, k]).sort((a, b) => deep(a[0]) - deep(b[0]) || (a[0].z || 0) - (b[0].z || 0) || a[1] - b[1]).map(a => a[0]);
   for (const q of order) {
-    const p = parts[q.of], L = layerOf(q.name, q.kind || 'prop'), c = cellCorner(q.at[0], q.at[1]), [footX, footY] = q.foot || [p.anchor[0], p.anchor[1] + p.tile / 4];
+    const p = parts[q.of], L = layerOf(q.name, q.kind || 'prop'), xs = p.pixels.map(r => r.x), ys = p.pixels.map(r => r.y);
+    const c = q.xy ? { x: q.xy[0], y: q.xy[1] - S.tile / 4 } : cellCorner(q.at[0], q.at[1]), [footX, footY] = q.xy ? [Math.min(...xs), Math.max(...ys) + 1] : q.foot || [p.anchor[0], p.anchor[1] + p.tile / 4];   // xy: the left edge and the row the art stands on
     const x0 = c.x + (q.dx || 0), y0 = c.y + S.tile / 4 - (q.z || 0) + (q.dy || 0), at = r => [x0 + (q.flip ? footX - 1 - r.x : r.x - footX), y0 + r.y - footY];
     const keep = p.pixels.filter(r => !(q.drop || '').includes(r.letter)), put1 = list => { for (const r of list) { const [x, y] = at(r); plotLayer(x, y, packHex(inPalette(r.color))); } };
     beginStroke(L); put1(keep.filter(r => !r.after)); endStroke(); flush(L);
@@ -158,7 +161,7 @@ function buildScene(w, sc, parts) {
   w.eval('(' + inScene + ')')(sc, parts);
   const read = s => w.eval(s);
   return { id: sc.id, title: sc.title, tier: 'Scene', category: 'scenery', size: 'scene', order: sc.order, lesson: sc.lesson, summary: sc.lesson, skills: sc.skills, author: sc.author || 'claude',
-    parts: [...new Set(sc.parts.map(q => q.of))], file: sc.id + '.qtiles.json', tips: sc.tips, layers: read('S.layers.length'), objects: read('S.layers.reduce((n, L) => n + (L.objects ? L.objects.length : 0), 0)') };
+    parts: [...new Set(sc.parts.map(q => q.of))], file: sc.id + '.qtiles.json', tips: sc.tips, ...(sc.cover ? { cover: true } : {}), layers: read('S.layers.length'), objects: read('S.layers.reduce((n, L) => n + (L.objects ? L.objects.length : 0), 0)') };
 }
 
 /* Leaves the project open in the app and returns its manifest entry. */

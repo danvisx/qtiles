@@ -25,7 +25,7 @@ async function decodeLayer(o, n) {
 async function serialize(opt = {}) {
   const list = S.layers.map(L => ({ L, px: L.px, ver: L.ver | 0, d: { id: L.id, shadowFor: L.shadowFor, outlineFor: L.outlineFor, name: L.name, visible: L.visible, opacity: L.opacity, locked: L.locked, kind: L.kind, objectLayer: L.objectLayer, objects: L.objects, shadows: L.shadows, live: L.live, pivot: L.pivot, onTile: L.onTile || undefined, mirrorOf: L.mirrorOf, ghost: L.ghost || undefined, group: L.group, tag: L.tag } }));
   const groups = S.groups.filter(g => S.layers.some(L => L.group === g.id)).map(({ solo, ...g }) => g);   // an undo step may keep a record whose layers are gone
-  const out = { app: FORMAT, version: FORMAT_VERSION, name: S.name, sizeLock: S.sizeLock || undefined, projectId: S.projectId || undefined, revision: (opt.revision === undefined ? S.revision : opt.revision) || undefined, savedAt: opt.savedAt || S.savedAt || undefined, w: S.w, h: S.h, gox: S.gox, goy: S.goy, mirrorX: S.mirrorX, mirrorY: S.mirrorY, axisX: S.axisX, axisY: S.axisY, mode: S.mode, tile: S.tile, level: S.level || undefined, edgeRun: S.edgeRun, tileSeed: S.tileSeed, scatterSeed: S.scatterSeed, example: S.example || undefined, tipsDismissed: S.tipsDismissed || undefined, checklist: S.checklist.length ? S.checklist : undefined, animations: S.anims.length ? S.anims : undefined, groups: groups.length ? groups : undefined, ...sceneSaved(), library: S.library.length ? S.library.map(({ mine, ...x }) => x) : undefined, nudgeX: S.nudgeX, nudgeY: S.nudgeY, cell: S.cell, major: S.major, snap: S.snap === 'pixel' ? undefined : S.snap,
+  const out = { app: FORMAT, version: FORMAT_VERSION, name: S.name, sizeLock: S.sizeLock || undefined, projectId: S.projectId || undefined, revision: (opt.revision === undefined ? S.revision : opt.revision) || undefined, savedAt: opt.savedAt || S.savedAt || undefined, w: S.w, h: S.h, gox: S.gox, goy: S.goy, mirrorX: S.mirrorX, mirrorY: S.mirrorY, axisX: S.axisX, axisY: S.axisY, mode: S.mode, tile: S.tile, level: S.level || undefined, edgeRun: S.edgeRun, tileSeed: S.tileSeed, scatterSeed: S.scatterSeed, example: S.example || undefined, tipsDismissed: S.tipsDismissed || undefined, checklist: S.checklist.length ? S.checklist : undefined, animations: S.anims.length ? S.anims : undefined, groups: groups.length ? groups : undefined, ...sceneSaved(), refs: refSaved(!!opt.cache), library: S.library.length ? S.library.map(({ mine, ...x }) => x) : undefined, nudgeX: S.nudgeX, nudgeY: S.nudgeY, cell: S.cell, major: S.major, snap: S.snap === 'pixel' ? undefined : S.snap,
     palette: S.palette, ramps: S.pal.ramps, paletteId: S.pal.id, paletteName: S.pal.name, paletteCredit: S.pal.credit, myPalettes: S.myPalettes, color: S.color, color2: S.color2, light: S.light, active: S.active, layers: [], saved: new Date().toISOString() };
   for (let k = 0; k < list.length; k++) {
     const e = list[k];
@@ -37,7 +37,7 @@ async function serialize(opt = {}) {
 const projectLike = o => !!o && (o.app === FORMAT || OLD_FORMAT.includes(o.app)) && Array.isArray(o.layers) && sizeOk(o.w, o.h);
 async function loadProject(o) {
   if (!projectLike(o)) throw new Error('This is not a qtiles project file.');
-  const layers = [];
+  const layers = [], refs = await refsRead(o.refs);
   for (const d of o.layers) {
     const px = await decodeLayer(d, o.w * o.h);
     const kinds = LAYER_KINDS.map(k => k[0]);
@@ -47,7 +47,7 @@ async function loadProject(o) {
   // Files without ids get fresh ones, numbered past any id the file does use, dangling links included.
   for (const d of layers) for (const n of [d.id, d.shadowFor, d.outlineFor, d.mirrorOf, d.group]) if (Number.isInteger(n) && n >= layerSeq) layerSeq = n + 1;
   selReset(); S.w = o.w; S.h = o.h; S.layers = layers.map(d => { const L = makeLayer(d.name, d.px); if (Number.isInteger(d.id)) L.id = d.id; if (Number.isInteger(d.shadowFor)) L.shadowFor = d.shadowFor; if (Number.isInteger(d.outlineFor)) L.outlineFor = d.outlineFor; L.visible = d.visible; L.opacity = d.opacity; L.locked = d.locked; L.kind = d.kind; L.shadows = d.shadows; L.live = d.live; L.pivot = d.pivot; L.onTile = d.onTile; L.ghost = d.ghost; L.tag = d.tag; if (Number.isInteger(d.group)) L.group = d.group; if (Number.isInteger(d.mirrorOf)) L.mirrorOf = d.mirrorOf; flush(L); if (d.objects) { L.objectLayer = true; L.objects = cleanObjects(d.objects); L.ids = new Uint32Array(S.w * S.h); L.faces = new Uint8Array(S.w * S.h); } return L; });
-  cleanGroups(o.groups); charLoaded(o); sceneLoad(o);
+  cleanGroups(o.groups); charLoaded(o); sceneLoad(o); refsPut(refs);
   S.gox = Number.isFinite(o.gox) ? o.gox : Math.floor(o.w / 2); S.goy = Number.isFinite(o.goy) ? o.goy : 0;
   S.mirrorX = !!o.mirrorX; S.mirrorY = !!o.mirrorY; S.axisX = Number.isFinite(o.axisX) ? o.axisX : o.w - 1; S.axisY = Number.isFinite(o.axisY) ? o.axisY : o.h - 1;
   S.active = Math.max(0, Math.min(S.layers.length - 1, o.active | 0)); S.name = String(o.name || 'untitled');
@@ -183,7 +183,7 @@ async function exportPalette(ext, text) {
 
 /* ---------- opening ---------- */
 async function importPng(file) {
-  const bmp = await createImageBitmap(file), box = { x0: 0, y0: 0, x1: bmp.width - 1, y1: bmp.height - 1 }, ow = S.w, oh = S.h;
+  const h0 = H.pos, bmp = await createImageBitmap(file), box = { x0: 0, y0: 0, x1: bmp.width - 1, y1: bmp.height - 1 }, ow = S.w, oh = S.h;
   if (!await new Promise(r => fitGate(box, file.name, () => null, () => r(true), () => r(false)))) return;
   if (pastEdge(box)) growToInclude(box.x0, box.y0, box.x1, box.y1, 0);
   const c = document.createElement('canvas'); c.width = S.w; c.height = S.h;
@@ -191,7 +191,8 @@ async function importPng(file) {
   const L = makeLayer(file.name.replace(/\.png$/i, '').slice(0, 30) || 'Imported', new Uint32Array(x.getImageData(0, 0, S.w, S.h).data.buffer));
   L.group = activeLayer().group; const idx = aboveFamily(activeLayer()); insertLayer(L, idx);
   pushHistory({ bytes: S.w * S.h * 4, undo: () => removeLayer(S.layers.indexOf(L)), redo: () => insertLayer(L, idx) });
-  toast(bmp.width > S.w || bmp.height > S.h ? 'Imported as a new layer, cropped to the canvas.' : S.w > ow || S.h > oh ? 'Imported as a new layer. Canvas extended by ' + (S.w - ow) + ' x ' + (S.h - oh) + ' px.' : 'Imported as a new layer at the top left.');
+  const asRef = { label: 'Use as reference', run: () => { while (H.pos > h0) undo(); refAddFile(file); } };   // the growth too, as a reference needs no room
+  toast(bmp.width > S.w || bmp.height > S.h ? 'Imported as a new layer, cropped to the canvas.' : S.w > ow || S.h > oh ? 'Imported as a new layer. Canvas extended by ' + (S.w - ow) + ' x ' + (S.h - oh) + ' px.' : 'Imported as a new layer at the top left.', asRef);
 }
 /* A warning that lands on a project the artist is about to lose has to come first, which is why this waits for the file: only a project replaces anything, a PNG does not. */
 async function openProject(o, file, handle) {
@@ -206,13 +207,14 @@ async function openProject(o, file, handle) {
     await loadProject(o);
     S.revision = Math.max(S.revision, known);   // revisions only climb, so a save from here still outranks what came before
     saveBind(handle, file);
-    const told = animTell(); toast('Opened ' + S.name + '.' + (told ? ' Its animations are kept. Preferences, Labs shows them.' : ''), told ? { label: 'Preferences', run: () => prefsOpen('labs') } : undefined);
+    const told = animTell(); toast('Opened ' + S.name + '.' + refNote() + (told ? ' Its animations are kept. Preferences, Labs shows them.' : ''), told ? { label: 'Preferences', run: () => prefsOpen('labs') } : undefined);
   } catch (e) { toast(e.message || 'Could not open that file.'); }
 }
 async function openFile(file, handle) {
   newTaken(); commitFloat();
   try {
-    if (/\.png$/i.test(file.name) || file.type === 'image/png') { await importPng(file); return; }
+    if (refPng(file)) { await importPng(file); return; }
+    if (refImage(file)) { await refAddFile(file); return; }   // a photo is never a layer here; Make a pixel layer does that from the reference
     const o = JSON.parse(await file.text());
     if (libLike(o)) { libImport(o); return; }
     if (!projectLike(o)) throw new Error('This is not a qtiles project file.');
@@ -230,6 +232,6 @@ function initFiles() {
   $('openInput').onchange = e => { const f = e.target.files[0]; e.target.value = ''; if (f) openFile(f); };
   for (const st of [$('stage'), $('sheetNew')]) {   // a file let go over the start screen would otherwise replace the page
     st.addEventListener('dragover', e => e.preventDefault());
-    st.addEventListener('drop', e => { e.preventDefault(); const f = e.dataTransfer.files[0]; if (f) openFile(f); });
+    st.addEventListener('drop', e => { e.preventDefault(); const f = e.dataTransfer.files[0]; if (f && e.altKey && refImage(f)) refAddFile(f); else if (f) openFile(f); });
   }
 }

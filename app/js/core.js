@@ -22,7 +22,7 @@ const S = {
   name: 'untitled', w: 352, h: 224, layers: [], active: 0,
   mode: 'flat', tile: 32, cell: 8, major: 4, snap: 'pixel', gridShow: 'cells', rulers: true, guideHover: true, guideMirror: true,   // cell is in pixels and major in cells or tiles (0 is off). snap is pixel, cell or corner in 2D, pixel or tile in Iso. How the grid and its guides show is not saved, except rulers
   color: '#3f8a4f', color2: '#24593f', tool: 'pencil', toolBefore: 'pencil', brush: 1,
-  lineSnap: true, rectFill: false, fillAll: true,
+  lineSnap: true, rectFill: false, ovalFill: false, ovalCircle: false, ovalCenter: false, fillAll: true,
   light: 'left', shadeDir: -1,
   objType: 'box', objFacing: 0, objP: {}, objW: 4, objD: 4, objH: 0, objMat: {}, objOutline: 'dark', objShadow: true, objHalf: false, objFree: false, objAdd: false, objDrag: 'move', objFoot: false, objGap: '', level: 0,   // objH 0 is the shape's default height; level 0 means the default, half the tile width
   library: [], libPick: null, libPose: { turn: 0, flip: false }, placeTab: 'shapes',   // the project's own library items, and the item on the pen
@@ -222,9 +222,17 @@ function plotLayer(x, y, v) {
   if (SEL.mask && !SEL.mask[i]) return;   // a selection limits every painting tool
   if (o === v) return;
   if (!stroke.map.has(i)) stroke.map.set(i, o);
-  L.px[i] = v;
+  L.px[i] = v; strokeGrow(x, y);
+}
+function strokeGrow(x, y) {
   if (x < stroke.px0) stroke.px0 = x; if (x > stroke.px1) stroke.px1 = x;
   if (y < stroke.py0) stroke.py0 = y; if (y > stroke.py1) stroke.py1 = y;
+}
+/* Puts a pixel back as it was before this stroke and drops it from the record, so a corner pixel-perfect takes out leaves no trace in undo. */
+function unplotLayer(x, y) {
+  if (x < 0 || y < 0 || x >= S.w || y >= S.h) return;
+  const i = y * S.w + x; if (!stroke.map.has(i)) return;
+  stroke.L.px[i] = stroke.map.get(i); stroke.map.delete(i); strokeGrow(x, y);
 }
 function flushStroke() {
   if (!stroke || stroke.px1 < 0) return;
@@ -300,7 +308,7 @@ function mergeDown() {
 function newDoc(w, h, name) {
   S.w = w; S.h = h; S.layers = []; S.groups = []; S.active = 0; S.library = []; S.libPick = null; S.example = null; S.tipsDismissed = false; S.checklist = []; S.anims = []; S.animAt = 0; S.sizeLock = false; S.brush = 1; S.cell = cellDefault(w, h); S.major = majorDefault(S.cell, w, h); S.snap = 'pixel';
   hooks.unbind && hooks.unbind();   // a new project must not save over the last one's file
-  selReset(); sceneReset(); S.layers.push(makeLayer('Layer 1')); S.gox = Math.floor(w / 2); S.goy = 0; S.nudgeX = 0; S.nudgeY = 0; S.axisX = w - 1; S.axisY = h - 1;
+  selReset(); sceneReset(); refReset(); S.layers.push(makeLayer('Layer 1')); S.gox = Math.floor(w / 2); S.goy = 0; S.nudgeX = 0; S.nudgeY = 0; S.axisX = w - 1; S.axisY = h - 1;
   if (name) S.name = name;
   resetHistory(); hooks.layers && hooks.layers(); hooks.canvas && hooks.canvas(); hooks.tips && hooks.tips(); requestRender();
 }
@@ -326,7 +334,7 @@ function applyResize(nw, nh, dx, dy) {
   const put = (layers, w, h, sign) => {
     const pw = sign > 0 ? ow : nw, ph = sign > 0 ? oh : nh;
     const act = S.layers[S.active], at = act ? layers.findIndex(L => L.id === act.id) : -1;   // a live shadow may have come or gone since, so the list can be shorter than the index
-    S.layers = layers; S.active = at >= 0 ? at : Math.min(S.active, layers.length - 1); S.w = w; S.h = h; selResized(pw, ph, sign * dx, sign * dy); S.ox -= sign * dx * S.z; S.oy -= sign * dy * S.z; S.gox += sign * dx; S.goy += sign * dy; S.axisX += sign * 2 * dx; S.axisY += sign * 2 * dy; sceneShift(sign * dx, sign * dy); pvOutClear();
+    S.layers = layers; S.active = at >= 0 ? at : Math.min(S.active, layers.length - 1); S.w = w; S.h = h; selResized(pw, ph, sign * dx, sign * dy); S.ox -= sign * dx * S.z; S.oy -= sign * dy * S.z; S.gox += sign * dx; S.goy += sign * dy; S.axisX += sign * 2 * dx; S.axisY += sign * 2 * dy; sceneShift(sign * dx, sign * dy); refShift(sign * dx, sign * dy); pvOutClear();
     hooks.layers && hooks.layers(); hooks.canvas && hooks.canvas(); requestRender();
   };
   put(newL, nw, nh, 1);

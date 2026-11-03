@@ -48,6 +48,12 @@ A tip has a `title`, a `text` and usually a `show`, which Show me plays in this 
 | `region` | `[x, y, w, h]`: zooms to that part of the art |
 | `mark` | A CSS selector: outlines that control for a moment, opening the side panel if needed |
 
+## Covers
+
+`covers.json` lists what the welcome shows at the top, in order, and the start screen's band shows one of them. Each entry names an `example` by its `id`, an optional `title` for the caption (the example's own title without it), and a `crop` of `[x, y, w, h]` in art pixels. A crop wider than it is tall pans best. `"band": false` keeps a short crop out of the start screen's band, which shows only a strip of it. Add, remove or reorder entries freely and run the build; an entry whose example is gone is skipped.
+
+`cover` is starter art made for this: an isometric corner and a row of 2D pieces, built from `scripts/example_art/scenes.js` like the other scenes. It has `cover: true` in its entry, which keeps it out of the catalogue. To redraw it, save your own project here as `cover.qtiles.json` and remove `cover` from `scenes.js`, or the next build of the scenes replaces it.
+
 ## Adding a small example
 
 Add `scripts/example_art/<id>.px` and run `python3 scripts/build_artifact.py`. The build sees the new or changed source, runs `scripts/make_examples.js --px`, writes `<id>.qtiles.json` here and the entry in `index.json`, and embeds them. It needs Node and jsdom, only when a source has changed. It stops with the file and line if something is wrong, and prints the pixel and color count of each example.

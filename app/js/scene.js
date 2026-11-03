@@ -149,7 +149,7 @@ function seamCells(ax, ay) {
   axis(ay, S.secOy, S.secH, ax, S.h, S.w, (a, u) => [u, a]);
   return out;
 }
-const seamTool = t => brushed(t) || t === 'line' || t === 'rect';
+const seamTool = t => brushed(t) || shapeTool(t);
 function sceneDraw(c, x, y, z) {
   if (!S.secOn) return;
   const r = { x0: Math.max(0, Math.floor(-x / z)), y0: Math.max(0, Math.floor(-y / z)), x1: Math.min(S.w - 1, Math.floor((vw - x) / z)), y1: Math.min(S.h - 1, Math.floor((vh - y) / z)) }, a = secAt(r.x0, r.y0), b = secAt(r.x1, r.y1);

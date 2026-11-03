@@ -4,7 +4,7 @@
 
 const ptrs = new Map();
 let drawId = null, drawTool = null, drawFinger = false, panId = null, panLast = null, gesture = null;
-let shadeNow = null, dith = null, gradFrame = 0;
+let shadeNow = null, dith = null, gradFrame = 0, penPP = null, shapeKeys = { shift: false, alt: false };
 let penDown = false, lastPenUp = 0, spaceDown = false, tabbing = false, shape = null, lastArt = null, tap = null, lastWheel = 0, placingAxis = false;
 
 function local(e) { const r = view.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; }
@@ -43,12 +43,21 @@ function endGesture() {
 
 function previewShape() {
   if (!shape) return;
-  [shape.ax, shape.ay, shape.ex, shape.ey] = shapeEnds(shape.x0, shape.y0, shape.x1, shape.y1, drawTool);
+  const e = shapeEnds(shape.x0, shape.y0, shape.x1, shape.y1, drawTool);
+  [shape.ax, shape.ay, shape.ex, shape.ey] = drawTool === 'ellipse' ? ovalEnds(e) : e;
   pvDraw(plot => shapeP(plot, inkV()));
 }
 function shapeP(plot, v) {
   const m = mirrored(plot);
-  if (drawTool === 'line') (S.mode === 'iso' && S.lineSnap ? edgeLineP : lineP)(shape.ax, shape.ay, shape.ex, shape.ey, stamper(S.brush, m), v); else rectP(shape.ax, shape.ay, shape.ex, shape.ey, S.rectFill, m, v);
+  if (drawTool === 'line') (S.mode === 'iso' && S.lineSnap ? edgeLineP : lineP)(shape.ax, shape.ay, shape.ex, shape.ey, stamper(S.brush, m), v);
+  else if (drawTool === 'ellipse') { if (S.ovalFill) ovalP(shape.ax, shape.ay, shape.ex, shape.ey, true, m, v); ovalP(shape.ax, shape.ay, shape.ex, shape.ey, false, stamper(S.brush, m), v); }
+  else rectP(shape.ax, shape.ay, shape.ex, shape.ey, S.rectFill, m, v);
+}
+/* Shift keeps the ellipse a circle and Alt draws it out from the pixel it started on, as Circle and From center do for a finger. From the center the size is odd, as the middle is a pixel. */
+function ovalEnds(e) {
+  let [ax, ay, ex, ey] = e, dx = ex - ax, dy = ey - ay;
+  if (S.ovalCircle || shapeKeys.shift) { const n = Math.max(Math.abs(dx), Math.abs(dy)); dx = dx < 0 ? -n : n; dy = dy < 0 ? -n : n; }
+  return S.ovalCenter || shapeKeys.alt ? [ax - Math.abs(dx), ay - Math.abs(dy), ax + Math.abs(dx), ay + Math.abs(dy)] : [ax, ay, ax + dx, ay + dy];
 }
 /* Dragging out from the center. Either axis sets the size, so a drag straight down works as well as one across. */
 function ellipseP(plot) { shadowEllipseP(mirrored(plot), shape.x0, shape.y0, shape.rx, shape.v, S.shadowEdge === 'checker'); }
@@ -65,6 +74,7 @@ function commitEllipse() {
   bakeLayer(t.L, next, t.list); shape = null;
 }
 function pickAt(a) {
+  if (refPickArt(a)) return;
   if (a.x < 0 || a.y < 0 || a.x >= S.w || a.y >= S.h) return;
   const v = flatAt(a.y * S.w + a.x); if (v >>> 24) setColor(rgbToHex(v & 255, (v >>> 8) & 255, (v >>> 16) & 255));
 }
@@ -132,14 +142,14 @@ function startStroke(e, p) {
   if (lockedOf(L)) { toast('This layer is locked. Unlock it in the Layers panel.'); return; }
   if (L.objectLayer) { toast(OBJ_MSG); return; }
   const box = mirrorBox(a.x, a.y, brushed(drawTool) ? S.brush : 0);
-  if (['pencil', 'eraser', 'line', 'rect'].includes(drawTool) && pastEdge(box)) {
+  if ((drawTool === 'pencil' || drawTool === 'eraser' || shapeTool(drawTool)) && pastEdge(box)) {
     const g = growToInclude(box.x0, box.y0, box.x1, box.y1, 32);
     if (g) { a.x += g.dx; a.y += g.dy; L = activeLayer(); } else toast('The canvas is at its size limit.');
   }
   drawId = e.pointerId;
   if (drawTool === 'pencil' || drawTool === 'eraser') {
-    beginStroke(L); strokeP(a.x, a.y, a.x, a.y, S.brush, mirrored(plotLayer), drawTool === 'eraser' ? 0 : inkV()); flushStroke();
-  } else if (drawTool === 'line' || drawTool === 'rect') {
+    beginStroke(L); penPP = null; penSeg(a, a); flushStroke();
+  } else if (shapeTool(drawTool)) {
     shape = { x0: a.x, y0: a.y, x1: a.x, y1: a.y }; previewShape();
   } else if (drawTool === 'fill') { floodFill(a.x, a.y); drawId = null; }
   else if (drawTool === 'shade') {
@@ -150,15 +160,15 @@ function startStroke(e, p) {
 }
 function moveStroke(a) {
   if (lastArt && a.x === lastArt.x && a.y === lastArt.y) return;
-  if (cellBrush() && lastArt && drawTool !== 'line' && brushed(drawTool) && Math.floor(a.x / S.cell) === Math.floor(lastArt.x / S.cell) && Math.floor(a.y / S.cell) === Math.floor(lastArt.y / S.cell)) { lastArt = a; return; }   // the cell is painted already, and a big one costs a stamp per move
+  if (cellBrush() && lastArt && !shapeTool(drawTool) && brushed(drawTool) && Math.floor(a.x / S.cell) === Math.floor(lastArt.x / S.cell) && Math.floor(a.y / S.cell) === Math.floor(lastArt.y / S.cell)) { lastArt = a; return; }   // the cell is painted already, and a big one costs a stamp per move
   if (drawTool === 'pencil' || drawTool === 'eraser') {
     const box = mirrorBox(a.x, a.y, S.brush);
     if (pastEdge(box)) {   // drawing past the edge, on either side of a mirror, grows the canvas; the stroke carries on in a second undo step
       const g = growToInclude(box.x0, box.y0, box.x1, box.y1, 32, endStroke);
-      if (g && !g.locked) { a.x += g.dx; a.y += g.dy; lastArt.x += g.dx; lastArt.y += g.dy; beginStroke(activeLayer()); }
+      if (g && !g.locked) { a.x += g.dx; a.y += g.dy; lastArt.x += g.dx; lastArt.y += g.dy; beginStroke(activeLayer()); penPP = null; }
     }
-    strokeP(lastArt.x, lastArt.y, a.x, a.y, S.brush, mirrored(plotLayer), drawTool === 'eraser' ? 0 : inkV()); flushStroke();
-  } else if (drawTool === 'line' || drawTool === 'rect') { shape.x1 = a.x; shape.y1 = a.y; previewShape(); }
+    penSeg(lastArt, a); flushStroke();
+  } else if (shapeTool(drawTool)) { shape.x1 = a.x; shape.y1 = a.y; previewShape(); }
   else if (drawTool === 'place') placeMove(a);
   else if (drawTool === 'pick') pickMove(a);
   else if (drawTool === 'picker') pickAt(a);
@@ -172,6 +182,12 @@ function moveStroke(a) {
   else if (drawTool === 'pivot') pivotMove(a);
   lastArt = a;
 }
+/* Pencil and eraser. At brush 1 with Pixel-perfect on, the path goes through its filter, which starts again with each stroke and after the canvas grows, as the points it holds belong to the stroke before. */
+function penSeg(p, q) {
+  const v = drawTool === 'eraser' ? 0 : inkV();
+  if (S.brush === 1 && perfectOn()) { penPP = penPP || perfectP(plotLayer, unplotLayer); lineP(p.x, p.y, q.x, q.y, penPP, v); }
+  else strokeP(p.x, p.y, q.x, q.y, S.brush, mirrored(plotLayer), v);
+}
 function commitStroke() {
   if (drawTool === 'axis') { placingAxis = false; syncMirror(); }
   else if (drawTool === 'pencil' || drawTool === 'eraser' || drawTool === 'shade') endStroke();
@@ -179,7 +195,7 @@ function commitStroke() {
   else if (drawTool === 'shadow' && shape) commitEllipse();
   else if (drawTool === 'tile' && TL.drag) tileCommit();
   else if (selTool(drawTool)) selEnd();
-  else if ((drawTool === 'line' || drawTool === 'rect') && shape) {
+  else if (shapeTool(drawTool) && shape) {
     pvClear(); growForShape(plot => shapeP(plot, 0));
     const L = activeLayer(); beginStroke(L); shapeP(plotLayer, inkV());
     endStroke(); pvClear(); shape = null;
@@ -205,6 +221,7 @@ function abortStroke() { cancelStroke(); pivotAbort(); pvClear(); shape = null; 
 view.addEventListener('pointerdown', e => {
   e.preventDefault(); const p = local(e), t = e.pointerType;
   try { view.setPointerCapture(e.pointerId); } catch (_) {}
+  if (RF.adjust && refDown(e, p)) return;   // the reference takes every pointer, and touch moves it rather than the view
   if (t === 'touch') {
     if (penDown || performance.now() - lastPenUp < 250) return;
     ptrs.set(e.pointerId, { x: p.x, y: p.y, sx: p.x, sy: p.y, type: t });
@@ -215,12 +232,13 @@ view.addEventListener('pointerdown', e => {
   if (t === 'pen') { penDown = true; for (const [id, q] of ptrs) if (q.type === 'touch') ptrs.delete(id); gesture = null; if (drawId !== null && drawFinger) abortStroke(); panId = null; }
   if (t === 'mouse' && (e.button === 1 || e.button === 2 || spaceDown)) { ptrs.set(e.pointerId, { x: p.x, y: p.y, type: t }); startPan(e.pointerId); return; }
   if (t === 'mouse' && e.button !== 0) return;
-  ptrs.set(e.pointerId, { x: p.x, y: p.y, type: t });
+  ptrs.set(e.pointerId, { x: p.x, y: p.y, type: t }); shapeKeys = { shift: e.shiftKey, alt: e.altKey };
   if (S.tool === 'hand') startPan(e.pointerId); else startStroke(e, p);
 });
 view.addEventListener('pointermove', e => {
   const p = local(e), a = toArt(p);
   if (e.pointerType !== 'touch') { hover = a; updateStatus(a); } else if (e.pointerId === drawId) updateStatus(a);
+  if (RF.adjust && refMove(e, p)) { requestRender(); return; }
   const q = ptrs.get(e.pointerId);
   if (q) {
     if (tap && q.type === 'touch' && Math.hypot(p.x - q.sx, p.y - q.sy) > 12) tap.moved = true;
@@ -231,7 +249,7 @@ view.addEventListener('pointermove', e => {
   else if (e.pointerId === drawId && drawTool === 'axis') axisAt(p);
   else if (e.pointerId === drawId) {
     const list = (e.getCoalescedEvents && e.getCoalescedEvents()) || [];
-    PK.alt = e.altKey;
+    PK.alt = e.altKey; shapeKeys = { shift: e.shiftKey, alt: e.altKey };
     for (const ce of (list.length ? list : [e])) moveStroke(toArt(local(ce)));
     if (e.pointerType !== 'touch') hover = toArt(p);   // growing the canvas shifts art coordinates
   } else if ((S.tool === 'place' || S.tool === 'terrain') && S.mode === 'iso' && drawId === null && !placingAxis && e.pointerType !== 'touch') (S.tool === 'place' ? placeHover : terrainHover)(a);
@@ -240,6 +258,7 @@ view.addEventListener('pointermove', e => {
 function pointerEnd(e, cancelled) {
   const t = e.pointerType;
   if (t === 'pen') { penDown = false; lastPenUp = performance.now(); }
+  if (refUp(e)) { requestRender(); return; }
   if (e.pointerId === drawId) { if (cancelled) abortStroke(); else commitStroke(); }
   if (e.pointerId === panId) { panId = null; view.classList.remove('panning'); }
   if (ptrs.delete(e.pointerId) && t === 'touch') {
@@ -267,7 +286,7 @@ view.addEventListener('wheel', e => {
 ['gesturestart', 'gesturechange', 'gestureend'].forEach(n => document.addEventListener(n, e => e.preventDefault()));
 
 /* ---------- keyboard ---------- */
-const KEYS = { b: 'pencil', e: 'eraser', l: 'line', r: 'rect', g: 'fill', i: 'picker', c: 'place', a: 'pick', h: 'shade', d: 'dither', o: 'shadow', t: 'tile', n: 'terrain', q: 'scatter', v: 'marquee', w: 'wand', p: 'pivot', f: 'hand' };
+const KEYS = { b: 'pencil', e: 'eraser', l: 'line', r: 'rect', u: 'ellipse', g: 'fill', i: 'picker', c: 'place', a: 'pick', h: 'shade', d: 'dither', o: 'shadow', t: 'tile', n: 'terrain', q: 'scatter', v: 'marquee', w: 'wand', p: 'pivot', f: 'hand' };
 document.addEventListener('keydown', e => {
   const tg = e.target.tagName; if (tg === 'INPUT' || tg === 'SELECT' || tg === 'TEXTAREA') return;
   if (XP.job || !$('sheetNew').hidden) return;   // the art must hold still under an export; Esc cancels it in help.js
@@ -305,7 +324,8 @@ document.addEventListener('keydown', e => {
 document.addEventListener('paste', async e => {
   const tg = e.target.tagName; if (tg === 'INPUT' || tg === 'TEXTAREA' || !$('sheetNew').hidden) return;
   const at = hover ? { x: hover.x, y: hover.y } : null, file = [...((e.clipboardData && e.clipboardData.files) || [])].find(f => f.type.startsWith('image/'));
-  if (file && (!clip || clipStale)) { const b = await imageBuf(file); if (b) pasteBuf(b, at); }
+  if (file && refSecOpen()) refAddFile(file);
+  else if (file && (!clip || clipStale)) { const b = await imageBuf(file); if (b) pasteBuf(b, at); }
   else if (clip) pasteBuf(clip, at);
   else toast('Nothing to paste.');
 });

@@ -48,6 +48,7 @@
     <button class="btn ico" data-tool="eraser" aria-label="Eraser (E)" title="Eraser (E)"><svg viewBox="0 0 24 24"><path d="M4 15l9-9 6 6-6 6H8z"/><path d="M9 20h11"/></svg></button>
     <button class="btn ico" data-tool="line" aria-label="Line (L)" title="Line (L)"><svg viewBox="0 0 24 24"><path d="M5 19L19 5"/><circle cx="5" cy="19" r="1.5"/><circle cx="19" cy="5" r="1.5"/></svg></button>
     <button class="btn ico" data-tool="rect" aria-label="Rectangle (R)" title="Rectangle (R)"><svg viewBox="0 0 24 24"><rect x="5" y="6" width="14" height="12"/></svg></button>
+    <button class="btn ico" data-tool="ellipse" aria-label="Ellipse (U)" title="Ellipse (U)"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="12" rx="8" ry="6"/></svg></button>
     <button class="btn ico" data-tool="fill" aria-label="Fill (G)" title="Fill (G)"><svg viewBox="0 0 24 24"><path d="M5 12l7-7 7 7-6 6z"/><path d="M19 15c1 1.5 1.5 2.5 1.5 3.2a1.5 1.5 0 01-3 0c0-.7.5-1.7 1.5-3.2z"/></svg></button>
     <button class="btn ico" data-tool="picker" aria-label="Color picker (I)" title="Color picker (I)"><svg viewBox="0 0 24 24"><path d="M15 5l4 4-9 9-4 1 1-4z"/><path d="M13 7l4 4"/></svg></button>
     <button class="btn ico" data-tool="place" aria-label="Place object (C)" title="Place object (C)"><svg viewBox="0 0 24 24"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M12 12l8-4.5M12 12v9M12 12L4 7.5"/></svg></button>
@@ -91,6 +92,10 @@
     <div class="mini island" id="mini" role="region" aria-label="Minimap" hidden>
       <div class="pophead"><span>Map</span><button class="btn ico" id="miniClose" aria-label="Hide minimap"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
       <div class="minimap" id="miniMap" role="group" aria-label="Map of the whole canvas" data-hint="The whole canvas. Tap to jump there, or drag the rectangle to move the view."><canvas id="miniCv" width="1" height="1" role="img" aria-label="Whole canvas"></canvas><canvas id="miniTop" width="1" height="1" aria-hidden="true"></canvas></div>
+    </div>
+    <div class="refwin island" id="refWin" role="region" aria-label="Reference window" hidden>
+      <div class="pophead"><span class="refwinname" id="refWinName"></span><button class="btn sm" id="refWinFitBtn">Whole</button><button class="btn ico" id="refWinClose" aria-label="Close the reference window"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+      <canvas id="refWinCv" width="1" height="1" role="img" aria-label="Reference picture"></canvas>
     </div>
     <div class="asmbar island" id="asmBar" hidden><span>Editing inside an assembly</span><button class="chip" id="asmDone">Done</button></div>
     <div class="fitbar island" id="fitBar" role="region" aria-label="Does it fit" hidden><p id="fitText"></p><button class="btn pri" id="fitGo">Extend now</button><button class="btn pri" id="fitIn" hidden>Fit inside</button></div>
@@ -209,19 +214,22 @@
         <button class="btn sm" id="palEdit" aria-pressed="false">Remove colors</button>
         <button class="btn sm" id="palTools">Ramps and files&hellip;</button>
       </div>
+      <div class="row gap-top" id="refPicked" hidden><span class="refsw" id="refPickedSw"></span><span class="muted">From the photo</span><span class="mono" id="refPickedHex"></span><button class="btn sm" id="refPickedAdd">Use exact color</button></div>
     </section>
 
     <section class="sec" id="optSec">
       <div class="secbody" id="optBody">
       <div class="opts">
-        <div id="brushOpt" data-for="pencil eraser line shade dither">
+        <div id="brushOpt" data-for="pencil eraser line ellipse shade dither">
           <div class="field"><span>Brush size (<span id="brushUnit">px</span>)</span>
             <span class="stepper wide"><button class="btn sm" id="brushDown" aria-label="Brush size down">&minus;</button><input id="brushN" type="number" min="1" max="8" aria-label="Brush size in pixels"><button class="btn sm" id="brushUp" aria-label="Brush size up">+</button></span>
             <div id="brushRow" role="group" aria-label="Brush size in pixels"></div>
           </div>
         </div>
         <div data-for="line" hidden><button class="chip" id="lineSnap" aria-pressed="true">Snap to iso angles</button></div>
+        <div data-for="pencil eraser" hidden><button class="chip" id="perfect" aria-pressed="true">Pixel-perfect</button></div>
         <div data-for="rect" hidden><button class="chip" id="rectFill" aria-pressed="false">Filled</button></div>
+        <div data-for="ellipse" hidden><div class="row wrap"><button class="chip" id="ovalFill" aria-pressed="false">Filled</button><button class="chip" id="ovalCircle" aria-pressed="false">Circle</button><button class="chip" id="ovalCenter" aria-pressed="false">From center</button></div></div>
         <div data-for="fill" hidden>
           <div class="field">Fill reads
             <div class="row"><button class="chip" id="fillAll" aria-pressed="true">All layers</button><button class="chip" id="fillOne" aria-pressed="false">This layer</button></div>
@@ -580,6 +588,23 @@
       </div>
     </section>
 
+    <section class="sec" id="refSec">
+      <h3 class="h">Reference</h3>
+      <div class="frames" id="refList"></div>
+      <p class="hint" id="refNone">A photo or picture to trace over, or to look at in a window beside the work. It is never part of the art, its exports or its undo. Drop one on the canvas with Alt held, or paste one while this section is open.</p>
+      <div class="row gap-top"><button class="btn" id="refAdd">Add reference&hellip;</button><button class="chip" id="refSnap" aria-pressed="true">Snap to palette</button></div>
+      <div id="refMore" hidden>
+        <div class="field gap-top">Show it
+          <div class="seg wide" role="group" aria-label="Show the reference"><button id="refAbove" aria-pressed="true">Above art</button><button id="refBelow" aria-pressed="false">Below art</button></div>
+        </div>
+        <div class="field gap-top"><span class="row between"><span>Opacity</span><span class="mono" id="refOpRead">40%</span></span><input id="refOp" type="range" min="10" max="100" value="40" aria-label="Reference opacity"></div>
+        <div class="row wrap gap-top"><button class="chip" id="refPix" aria-pressed="false">Pixelated</button><button class="chip" id="refWinOn" aria-pressed="false">Window</button><button class="chip" id="refKeep" aria-pressed="true">Keep with project</button></div>
+        <div class="row wrap gap-top"><button class="chip" id="refAdjust" aria-pressed="false">Adjust</button><button class="btn" id="refFit">Fit to canvas</button><button class="btn" id="refUnturn">Reset</button></div>
+        <p class="hint" id="refAdjustNote" hidden></p>
+        <button class="btn gap-top" id="refMakeBtn">Make a pixel layer from this reference&hellip;</button>
+      </div>
+    </section>
+
     <section class="sec" id="canvasSec">
       <h3 class="h">Canvas</h3>
       <div class="row between"><span class="muted">Size</span><span class="mono" id="cvSize">352 x 224 px</span></div>
@@ -713,12 +738,30 @@
 </div>
 
 <div class="scrim" id="sheetNew" hidden>
-  <div class="sheet start" id="startBox" role="dialog" aria-modal="true" aria-label="New" tabindex="-1">
+  <div class="sheet start" id="startBox" role="dialog" aria-modal="true" aria-label="New" tabindex="-1" data-phase="start">
+    <div class="stcover" id="stCover">
+      <div class="cvart" id="cvArt"></div>
+      <img class="cvmark" src="assets/layers-48.png" alt="" width="48" height="48">
+      <div class="cvfade"></div>
+      <button class="btn cvback" id="stBack" hidden>Back</button>
+      <button class="btn ico cvclose" id="newClose" aria-label="Close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+      <p class="cvcap"><span id="cvName"></span><button class="plink" id="cvOpen">Open this example</button></p>
+    </div>
+    <div class="cvdots" id="cvDots" role="group" aria-label="Covers"></div>
+    <div class="stwelcome" id="stWelcome">
+      <span id="wcBrand"></span>
+      <p>Pixel art in 2D and isometric. Your work stays in your own files.</p>
+      <div class="wccards">
+        <button class="wccard" id="wcNew"><svg viewBox="0 0 24 24"><path d="M4 20l1-4L16 5l3 3L8 19z M14 7l3 3"/></svg><b>Start drawing</b><span>A blank canvas in 2D or isometric.</span></button>
+        <button class="wccard" id="wcEx"><svg viewBox="0 0 24 24"><path d="M4 5h16v14H4z M4 15l5-5 4 4 2-2 5 5"/></svg><b>Explore examples</b><span>Open a finished piece and see how it was made.</span></button>
+        <button class="wccard" id="wcCont" hidden><svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 2.3-5.7 M4 4v4h4 M12 8v4l3 2"/></svg><b>Resume</b><span>Pick up where you left off.</span></button>
+      </div>
+      <div class="wclinks"><button class="plink" id="wcTour">Take the tour</button><button class="plink" id="wcOpen">Open a file</button><button class="plink" id="wcAbout">About</button></div>
+    </div>
     <div class="sthead">
       <span id="stBrand"></span>
       <p>Pixel art in 2D and isometric. Your work stays in your own files.</p>
       <span class="mono muted" id="stVer"></span>
-      <button class="btn ico" id="newClose" aria-label="Close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
     </div>
     <div class="stphone" id="stPhone" hidden>
       <p>qtiles works best on a computer, or with a mouse, touchpad or Pencil.</p>
@@ -736,15 +779,19 @@
       <section class="stcol" id="stNew" data-col="new" aria-label="New">
         <h3>New</h3>
         <div class="seg wide" role="group" aria-label="Mode"><button id="newFlat" aria-pressed="true">2D</button><button id="newIso" aria-pressed="false">Isometric</button></div>
-        <div class="newgroups" id="newGroups"></div>
-        <div class="field">Custom
-          <div class="row newcustom">
-            <label class="field grow">Width px<input id="newW" type="number" min="1" max="4096" value="352"></label>
-            <label class="field grow">Height px<input id="newH" type="number" min="1" max="4096" value="224"></label>
-            <div class="newpv"><div id="newPv"></div></div>
+        <div class="newbig" id="newBig"></div>
+        <button class="plink" id="newMoreBtn" aria-expanded="false">More sizes</button>
+        <div class="newmore" id="newMore" hidden>
+          <div class="newgroups" id="newGroups"></div>
+          <div class="field">Custom
+            <div class="row newcustom">
+              <label class="field grow">Width px<input id="newW" type="number" min="1" max="4096" value="352"></label>
+              <label class="field grow">Height px<input id="newH" type="number" min="1" max="4096" value="224"></label>
+              <div class="newpv"><div id="newPv"></div></div>
+            </div>
           </div>
-          <p class="mono" id="newRead"></p>
         </div>
+        <p class="mono" id="newRead"></p>
         <div class="row wrap" id="newRow"><button class="btn pri" id="newOk">Create</button></div>
       </section>
       <section class="stcol" id="exWrap" data-col="ex" aria-label="Examples">
@@ -828,6 +875,7 @@
         <button class="mitem" role="menuitem" id="fNew"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4"/></svg>New&hellip;</button>
         <button class="mitem" role="menuitem" id="fOpen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 19V5h6l2 3h8v3"/><path d="M3 19l3-8h17l-3 8z"/></svg>Open&hellip;</button>
         <button class="mitem" role="menuitem" id="fReopen" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 11-9-9 9 9 0 016.4 2.6L21 8"/><path d="M21 3v5h-5"/><path d="M12 7v5l3 2"/></svg><span class="mlabel" id="fReopenName"></span></button>
+        <button class="mitem" role="menuitem" id="fRef"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="7" width="14" height="12" rx="1.5"/><path d="M17 15l-3-3-8 7"/><path d="M20 3v6M17 6h6"/></svg>Add reference&hellip;</button>
         <button class="mitem" role="menuitem" id="fSave"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h11l3 3v13H5z"/><path d="M8 4v5h7V4"/><path d="M8 20v-7h8v7"/></svg>Save<kbd class="mkey">Ctrl+S</kbd></button>
         <button class="mitem" role="menuitem" id="fSaveCopy"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h7l4 4v11H9z"/><path d="M16 3v4h4"/><path d="M5 7v14h11"/></svg>Save as copy&hellip;</button>
       </div>
@@ -1073,6 +1121,28 @@
   </div>
 </div>
 
+<div class="scrim" id="sheetRefMake" hidden>
+  <div class="sheet" role="dialog" aria-labelledby="rmTitle">
+    <h2 id="rmTitle">Make a pixel layer</h2>
+    <p>A starting point to paint over, not finished pixel art. It goes on a new layer, and one undo takes it away.</p>
+    <div class="field">Size
+      <div class="seg wide" role="group" aria-label="Size"><button id="rmCanvas" aria-pressed="true">The canvas</button><button id="rmShape" aria-pressed="false">The picture's shape</button></div>
+    </div>
+    <div class="row">
+      <label class="field grow">Width px<input id="rmW" type="number" min="1" max="4096"></label>
+      <label class="field grow">Height px<input id="rmH" type="number" min="1" max="4096"></label>
+    </div>
+    <div class="field">Colors
+      <div class="seg wide" role="group" aria-label="Colors"><button id="rmPal" aria-pressed="true">Project palette</button><button id="rmPhoto" aria-pressed="false">From the photo</button></div>
+    </div>
+    <label class="field" id="rmNField" hidden>Up to this many colors<input id="rmN" type="number" min="2" max="32" value="8"></label>
+    <label class="field">Dither<select id="rmDither"><option value="0">None</option><option value="2">Bayer 2x2</option><option value="4">Bayer 4x4</option></select></label>
+    <div class="row rmpvs" id="rmPvs"><canvas id="rmPv1" width="1" height="1" role="img" aria-label="Preview at 1x"></canvas><canvas id="rmPv4" width="1" height="1" role="img" aria-label="Preview of the middle at 4x"></canvas></div>
+    <p class="mono muted" id="rmNote"></p>
+    <div class="row"><button class="btn pri" id="rmOk">Make layer</button><button class="btn" data-close>Cancel</button></div>
+  </div>
+</div>
+
 <div class="busy" id="busy" hidden>
   <div class="sheet" id="busyBox" role="status" hidden>
     <h2 id="busyLabel"></h2>
@@ -1083,6 +1153,7 @@
 
 <input id="openInput" type="file" accept=".qtiles.json,.isopic.json,.isopolis.json,.json,.png,application/json,image/png" hidden>
 <input id="palInput" type="file" hidden>
+<input id="refInput" type="file" accept="image/png,image/jpeg,image/webp,image/gif" hidden>
 <div class="toast" id="toast" role="status" hidden></div>
 <div class="hintpop island" id="hintPop" role="status" hidden></div>
 
@@ -1114,6 +1185,7 @@
 <script src="js/characters.js"></script>
 <script src="js/groups.js"></script>
 <script src="js/scene.js"></script>
+<script src="js/ref.js"></script>
 <script src="js/input.js"></script>
 <script src="js/tips.js"></script>
 <script src="js/help.js"></script>

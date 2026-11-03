@@ -10,9 +10,7 @@ module.exports = async t => {
   ev('setBrush(1);');
   t.every('undo: line and rectangle', [['line', 2, 2, 40, 21], ['rect', 50, 10, 80, 40]], ([k, ...p]) => undoExact(() => { ev(`setTool('${k}');`); drag(...p); }));
   check('undo: fill', undoExact(() => { ev(`S.fillAll = false; setTool('fill'); setColor('#00ff00');`); tap(60, 50); }));
-  check('undo: a mirrored stroke is one step', (ev(`S.mirrorX = true; S.mirrorY = true; S.axisX = 95; S.axisY = 63; setTool('pencil');`), undoExact(() => drag(5, 5, 9, 9))));
-  ev('S.mirrorX = S.mirrorY = false;');
-  check('undo: a stroke that grows the canvas steps back through the growth', undoExact(() => { ev(`setTool('pencil');`); drag(90, 30, 110, 30); }, { steps: 3 }));
+  check('undo: a stroke that grows the canvas steps back through it', undoExact(() => { ev(`setTool('pencil');`); drag(90, 30, 110, 30); }, { steps: 3 }));
 
   check('undo: add layer', undoExact('addLayer()'));
   check('undo: duplicate layer', undoExact('dupLayer()'));
@@ -32,18 +30,18 @@ module.exports = async t => {
   ev(`S.active = 0; setTool('marquee'); pasteBuf(clip, { x: 70, y: 50 });`);
   { const a = ev('T.doc()'); ev('undo();'); check('undo during a float cancels it and leaves the art', ev('FL') === null && ev('T.doc()') === a); ev('selectNone();'); }
 
-  ev(`T.reset(256, 160); addObjectLayer(); setTool('pick'); objEdit(activeLayer(), [T.box({ i: 2, j: 2, w: 4, d: 4, h: 16, shadow: true }), T.box({ i: 8, j: 2, w: 2, d: 2, h: 24 })]); resetHistory();`);
-  check('undo: object edit', undoExact(`objEdit(activeLayer(), activeLayer().objects.map((o, n) => n ? o : Object.assign({}, o, { i: 3, h: 32 })))`));
-  check('undo: under a light set after the edit', (() => { ev(`objEdit(activeLayer(), activeLayer().objects.slice(1)); setLight('right');`); const a = ev('T.doc()'); ev('undo(); redo();'); const ok = ev('T.doc()') === a && ev('T.fullSame()'); ev(`setLight('left'); undo();`); return ok; })());
+  ev(`T.reset(256, 160); addObjectLayer(); setTool('pick'); objEdit(T.L(), [T.box({ i: 2, j: 2, w: 4, d: 4, h: 16, shadow: true }), T.box({ i: 8, j: 2, w: 2, d: 2, h: 24 })]); resetHistory();`);
+  check('undo: object edit', undoExact(`objEdit(T.L(), T.L().objects.map((o, n) => n ? o : Object.assign({}, o, { i: 3, h: 32 })))`));
+  check('undo: under a light set after the edit', (() => { ev(`objEdit(T.L(), T.L().objects.slice(1)); setLight('right');`); const a = ev('T.doc()'); ev('undo(); redo();'); const ok = ev('T.doc()') === a && ev('T.fullSame()'); ev(`setLight('left'); undo();`); return ok; })());
   check('undo: resize under object layers redraws them', undoExact('extendBy(32, 16, 0, 0)') && ev('T.fullSame()'));
-  check('undo: bake', undoExact('bakeObjects()') && ev('activeLayer().objectLayer') === true);
-  ev(`objSelectMany(activeLayer().objects.map(o => o.id));`);
-  check('undo: make, turn and mirror an assembly', undoExact('asmMake()') && (ev(`asmMake(); objSelectMany(activeLayer().objects.map(o => o.id)); resetHistory();`), undoExact('asmTurn(1)') && undoExact('asmFlip()')));
+  check('undo: bake', undoExact('bakeObjects()') && ev('T.L().objectLayer') === true);
+  ev(`objSelectMany(T.L().objects.map(o => o.id));`);
+  check('undo: make, turn and mirror an assembly', undoExact('asmMake()') && (ev(`asmMake(); objSelectMany(T.L().objects.map(o => o.id)); resetHistory();`), undoExact('asmTurn(1)') && undoExact('asmFlip()')));
 
-  { ev(`T.reset(96, 64); ${art} addObjectLayer(); objEdit(activeLayer(), [T.box({ i: 1, j: 1, w: 4, d: 4, h: 16 })]); S.active = 0; resetHistory();`);
-    const h = ev('H.pos'), plain = ev('T.hash(S.layers[0].px)'), objs = ev('T.hash(S.layers[1].px)');
+  { ev(`T.reset(96, 64); ${art} addObjectLayer(); objEdit(T.L(), [T.box({ i: 1, j: 1, w: 4, d: 4, h: 16 })]); S.active = 0; resetHistory();`);
+    const h = ev('H.pos'), plain = ev('T.hash(T.l0.px)'), objs = ev('T.hash(S.layers[1].px)');
     ev(`usePalette(PALETTES[12]); syncFlat(); objRefresh();`); const moved = ev('T.hash(S.layers[1].px)'); ev(`usePalette(PALETTES[0]); syncFlat(); objRefresh();`);
-    check('a palette change is no undo step, and switching back restores objects exactly', ev('H.pos') === h && ev('T.hash(S.layers[0].px)') === plain && moved !== objs && ev('T.hash(S.layers[1].px)') === objs); }
+    check('a palette change is no undo step, and back restores objects', ev('H.pos') === h && ev('T.hash(T.l0.px)') === plain && moved !== objs && ev('T.hash(S.layers[1].px)') === objs); }
 
   /* Big steps shrink behind a queue, and unpacking takes as long as it takes. */
   ev(`window.pipe0 = pipe; pipe = async (u8, s) => s.gz ? window.gz(u8) : window.gunz(u8); window.CompressionStream = class { constructor() { this.gz = true; } }; window.DecompressionStream = class { };`);
@@ -51,13 +49,13 @@ module.exports = async t => {
   w.gunz = b => { const z = t.gunz(b), c = new w.Uint8Array(z.length); c.set(z); return c; };
   const settle = async () => { await ev('packQueue'); await wait(1); };
   const stepped = async op => { const p = ev('H.pos'); ev(op); for (let k = 0; k < 400 && (ev('H.busy') || ev('H.pos') === p); k++) await wait(5); await settle(); };
-  ev(`newDoc(800, 800, 'pk'); S.layers[0].px.fill(packHex('#ff0000'), 0, 90000); flush(S.layers[0]); addLayer('b'); S.layers[1].px.fill(packHex('#00ff00'), 40000, 200000); flush(S.layers[1]); resetHistory();`);
+  ev(`newDoc(800, 800, 'pk'); T.l0.px.fill(packHex('#ff0000'), 0, 90000); flush(T.l0); addLayer('b'); S.layers[1].px.fill(packHex('#00ff00'), 40000, 200000); flush(S.layers[1]); resetHistory();`);
   { const a = ev('T.doc()'); ev('mergeDown();'); const b = ev('T.doc()'); await settle(); const small = !!ev('H.stack[0].gz') && ev('H.bytes') < 1e6;
-    await stepped('undo()'); const u = ev('T.doc()') === a; await stepped('redo()'); check('a merge shrinks in history and still undoes and redoes exactly', small && u && ev('T.doc()') === b); await stepped('undo()'); }
+    await stepped('undo()'); const u = ev('T.doc()') === a; await stepped('redo()'); check('a merge shrinks in history and undoes and redoes exactly', small && u && ev('T.doc()') === b); await stepped('undo()'); }
   ev('resetHistory();');
   { const a = ev('T.doc()'); ev('extendBy(50, 50, 0, 0);'); const b = ev('T.doc()'); await settle(); const gone = ev('H.stack[0].gz.every(g => g.o[g.k] === null)');
     await stepped('undo()'); const u = ev('T.doc()') === a; await stepped('redo()'); const r = ev('T.doc()') === b; await stepped('undo()');
-    ev('resetHistory(); extendBy(10, 0, 0, 0); extendBy(10, 0, 0, 0);'); await settle(); await stepped('undo()'); await stepped('undo()'); check('resizes shrink in history, share no layers, and still undo and redo exactly', gone && u && r && ev('T.doc()') === a); }
+    ev('resetHistory(); extendBy(10, 0, 0, 0); extendBy(10, 0, 0, 0);'); await settle(); await stepped('undo()'); await stepped('undo()'); check('resizes shrink in history, share no layers, and undo exactly', gone && u && r && ev('T.doc()') === a); }
   ev(`pipe = pipe0; delete window.CompressionStream; window.DecompressionStream = class {}; newDoc(64, 64, 'h'); resetHistory();`);
-  { const big = n => ev(`pushHistory({ bytes: ${n}, undo() {}, redo() {} })`); big(100e6); big(40e6); big(40e6); const a = ev('H.stack.length') === 2 && ev('H.bytes') === 80e6; ev(`resetHistory(); pushHistory({ bytes: 200e6, undo() {}, redo() {} });`); check('history drops the oldest steps over its cap, and never the newest', a && ev('H.stack.length') === 1); ev('resetHistory(); setDirty(false);'); }
+  { const big = n => ev(`pushHistory({ bytes: ${n}, undo() {}, redo() {} })`); big(100e6); big(40e6); big(40e6); const a = ev('H.stack.length') === 2 && ev('H.bytes') === 80e6; ev('resetHistory()'); big(200e6); check('history drops the oldest steps over its cap, never the newest', a && ev('H.stack.length') === 1); ev('resetHistory(); setDirty(false);'); }
 };

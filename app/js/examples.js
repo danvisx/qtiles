@@ -2,7 +2,7 @@
 /* qtiles examples: the start screen, which is also the New dialog, the unsaved-changes guard and the tip strip. See app/examples/README.md.
    Projects are kept as JSON text, in a table that a classic script fills, because a page opened from disk cannot fetch. Parsing the text gives a fresh copy each time, so nothing done to an open example can reach its source. */
 
-const EX_DATA = { list: [], files: {} };   // filled by examples/embedded.js, which scripts/build_artifact.py writes from app/examples/
+const EX_DATA = { list: [], files: {}, covers: [] };   // filled by examples/embedded.js, which scripts/build_artifact.py writes from app/examples/
 const EX = { tip: 0, soloed: false, stage: 0, off: false, thumbs: new Map(), after: null, marked: null, markTimer: null, list: null, mode: 'iso', cat: '', query: '' };
 const EX_OFF_KEY = 'qtiles.tipsOff', EX_THUMB = [168, 128], EX_THUMB_START = [240, 160], EX_MARK_MS = 2400, EX_START_N = { '2d': 4, iso: 5 }, EX_ORDER_LAST = 1000;
 const EX_CATS = [['', 'All'], ['scenery', 'Scenery'], ['characters', 'Characters'], ['animals', 'Animals'], ['transport', 'Transport'], ['objects', 'Objects']];
@@ -16,9 +16,14 @@ const NEW_GROUPS = [
   { name: 'Tile', mode: 'iso', tile: true, sizes: [[16, 8], [32, 16], [64, 32], [128, 64]] },
   { name: 'Scene', mode: 'iso', sizes: [[352, 224], [256, 256], [512, 384], [1024, 768], [2048, 2048]] }
 ];
-const NEW_BOX = 44, NEW_PV = 64, STCARD_THUMB = 64, SIZES_TOLD_KEY = 'qtiles.sizesTold';
+const NEW_BOX = 44, NEW_PV = 64, STCARD_THUMB = 64, STCARD_BIG = 96, SIZES_TOLD_KEY = 'qtiles.sizesTold';
+/* What most people start with, ahead of every size. Each is a size of a group above, so it takes that group's lock and mode. */
+const NEW_BIG = [['Sprite', 16, 16, '16 x 16 sprite', 'Icons and tiny items'], ['Sprite', 64, 64, '64 x 64 sprite', 'Characters and props in 2D'], ['Scene', 352, 224, 'Isometric scene', 'Tiles, objects and shadows']];
 const NEW_FIRST = { flat: ['Sprite', 64, 64], iso: ['Scene', 352, 224] };
 const NW = { group: null, mode: 'flat', start: false, back: false, copies: 0 };   // start: the screen is up as the start screen. back: it is waiting behind About, Preferences or Recovery copies
+/* A build with news to tell raises WELCOME_VERSION, and everyone who saw an older welcome sees it once more. */
+const WELCOME_VERSION = 1, COVER_MS = 10000, COVER_PAN_MS = 120, COVER_FADE_MS = 600;
+const WC = { up: false, from: false, at: 0, cv: new Map(), k: 1, room: 0, x: 0, dir: 1, pan: null, turn: null, hold: false, still: false };   // up: the screen is showing. from: it was opened as the welcome, so Back goes there
 
 const exFind = id => EX_DATA.list.find(e => e.id === id) || null;
 const exSource = e => JSON.parse(EX_DATA.files[e.file]);
@@ -32,7 +37,7 @@ function exSizeOf(e) {
 function exMeta(e, k) {
   return { ...e, category: e.category || (e.tier === 'Character' ? 'characters' : 'scenery'), size: exSizeOf(e), mode: e.mode || 'iso', order: e.order === undefined ? EX_ORDER_LAST + k : e.order, lesson: e.lesson || e.summary || '', skills: e.skills || [], author: e.author || (e.id.endsWith('-placeholder') ? 'claude' : 'owner') };
 }
-const exList = () => EX.list || (EX.list = EX_DATA.list.map(exMeta).sort((a, b) => a.order - b.order));
+const exList = () => EX.list || (EX.list = EX_DATA.list.filter(e => !e.cover).map(exMeta).sort((a, b) => a.order - b.order));   // a cover is reached from the welcome, not the catalogue
 function exFiltered() {
   const q = EX.query.trim().toLowerCase();
   return exList().filter(e => e.mode === EX.mode && (!EX.cat || e.category === EX.cat) && (!q || [e.title, e.lesson, ...e.skills].join(' ').toLowerCase().includes(q)));
@@ -128,7 +133,16 @@ function newCards() {
     }
     box.appendChild(row); host.appendChild(box);
   }
+  for (const [name, w, h, title, line] of NEW_BIG) {
+    const g = NEW_GROUPS.find(q => q.name === name), b = document.createElement('button'), fr = document.createElement('span'), out = document.createElement('span'), t = document.createElement('b'), d = document.createElement('span'), k = NEW_BOX / Math.max(w, h);
+    b.className = 'szcard nbcard'; b.dataset.group = name; b.dataset.size = w + 'x' + h; fr.className = 'szframe'; out.className = 'szbox'; out.style.width = Math.round(w * k) + 'px'; out.style.height = Math.round(h * k) + 'px';
+    t.textContent = title; d.textContent = line; fr.appendChild(out); b.append(fr, t, d);
+    b.onclick = () => { if (g.mode !== NW.mode) newMode(g.mode); newPick(g, w, h); };
+    $('newBig').appendChild(b);
+  }
 }
+const newBigPicked = () => NEW_BIG.some(([name, w, h]) => NW.group && NW.group.name === name && numOf('newW') === w && numOf('newH') === h);
+function newMore(on) { $('newMore').hidden = !on; $('newMoreBtn').setAttribute('aria-expanded', on); $('newMoreBtn').textContent = on ? 'Fewer sizes' : 'More sizes'; }
 function newPick(g, w, h) { NW.group = g; $('newW').value = w; $('newH').value = h; newSync(); }
 function newSync() {
   const w = numOf('newW'), h = numOf('newH'), ok = sizeOk(w, h), g = NW.group;
@@ -160,7 +174,7 @@ function sizesTell(w, h) {
 }
 function newFill() {
   EX.query = ''; $('exSearch').value = ''; exShowMode(exModeOf(prefGet('startMode')));
-  $('exWrap').hidden = !EX_DATA.list.length; newPreset(prefGet('startMode'));
+  $('exWrap').hidden = !EX_DATA.list.length; newPreset(prefGet('startMode')); newMore(!newBigPicked());   // a size from last time that is not a big card stays in sight
   document.querySelectorAll('.stcol').forEach(c => { c.scrollTop = 0; });
 }
 function newTab(tab) {
@@ -168,18 +182,18 @@ function newTab(tab) {
   document.querySelectorAll('#stTabs button').forEach(b => press(b, b.dataset.tab === tab));
 }
 function openNew() {
-  newFill(); startCont(null); closeSheets(); startPhone(false);
-  $('startBox').setAttribute('aria-label', 'New'); openSheet('sheetNew'); $('startBox').focus({ preventScroll: true });
+  newFill(); startCont(null); closeSheets(); startPhone(false); WC.from = false; WC.up = true; startPhase('start'); coverPick();
+  openSheet('sheetNew'); $('startBox').focus({ preventScroll: true });
 }
 
 /* ---------- start screen ---------- */
 function startBlank(m) { const a = m || prefGet('startMode'), [name, w, h] = newChoice(a); newBlank(a, NEW_GROUPS.find(g => g.mode === a && g.name === name) || null, w, h); }
-function startCard(h, p) {
+function startCard(h, p, room = STCARD_THUMB) {
   const span = (cls, text) => { const s = document.createElement('span'); s.className = cls; s.textContent = text; return s; };
   const b = document.createElement('button'), thumb = span('stthumb', ''), text = span('sttext', ''), name = document.createElement('b');
   if (h.thumb) {   // a small canvas shows at a whole scale, as an example's thumbnail does
     const img = document.createElement('img'); img.alt = ''; img.src = h.thumb; thumb.appendChild(img);
-    img.onload = () => { const k = Math.max(1, Math.floor(STCARD_THUMB / Math.max(img.naturalWidth, img.naturalHeight))); img.style.width = img.naturalWidth * k + 'px'; img.style.height = img.naturalHeight * k + 'px'; };
+    img.onload = () => { const k = Math.max(1, Math.floor(room / Math.max(img.naturalWidth, img.naturalHeight))); img.style.width = img.naturalWidth * k + 'px'; img.style.height = img.naturalHeight * k + 'px'; };
   }
   b.className = 'stcard'; name.textContent = h.name; text.append(name, span('mono muted', copyInfo(h, p)), span('btn pri', 'Resume'));
   b.append(thumb, text); b.onclick = () => { NW.start = false; recoverRestore(h); }; return b;
@@ -188,24 +202,112 @@ function startCard(h, p) {
 function startCont(can) {
   const cards = can ? can.cards : [], last = can && can.last, has = !!(cards.length || last), re = $('stReopen');
   NW.copies = can ? can.heads.length : 0;
-  $('stCards').replaceChildren(...cards.map(h => startCard(h, can.projects.find(r => r.pid === h.pid))));
+  $('stCards').replaceChildren(...cards.map((h, k) => startCard(h, can.projects.find(r => r.pid === h.pid), k ? STCARD_THUMB : STCARD_BIG)));   // the newest is the likeliest, so it is the largest
   re.hidden = !last; if (last) { re.textContent = 'Reopen ' + last.fileName; re.onclick = () => reopenLast(last); }
   $('stAll').hidden = !NW.copies; $('stCont').hidden = $('stTabCont').hidden = !has; $('stBody').classList.toggle('nocont', !has);
   (has ? $('stCont') : $('newRow')).insertBefore($('stOpen'), has ? $('stAll') : null);
   const seen = coachSeen(), tour = $('stTour'); $('stHello').hidden = seen; tour.textContent = seen ? 'Take the tour' : 'Take the 1-minute tour'; tour.classList.toggle('pri', !seen);
-  newTab(has ? 'cont' : 'new');
+  $('wcCont').hidden = !has; newTab(has ? 'cont' : 'new');
 }
 /* Only on the start screen, and the second line only while a phone's own default is drawing with a finger. */
 function startPhone(on) { $('stPhone').hidden = !(on && PHONE()); $('stFinger').hidden = !(S.fingerDraws && prefGet('fingers') === null); }
-function startShow() { NW.start = true; startPhone(true); $('startBox').setAttribute('aria-label', 'Start'); openSheet('sheetNew'); $('startBox').focus({ preventScroll: true }); }
+/* Keeps the phase it had, so About or Preferences opened from the welcome come back to the welcome. */
+function startShow(start = true) { NW.start = start; WC.up = true; startPhone(true); startPhase($('startBox').dataset.phase); openSheet('sheetNew'); $('startBox').focus({ preventScroll: true }); }
 /* Read each time it shows, as coming back from Recovery copies can find fewer. */
-async function startOpen() { const can = await startHeld(); newFill(); startCont(can); startShow(); }
-/* From closeSheets, which every way of closing goes through. A way out that goes somewhere clears `start` first. */
+async function startOpen(can) { can = can || await startHeld(); newFill(); startCont(can); WC.from = false; $('startBox').dataset.phase = 'start'; coverPick(); startShow(); }
+/* From closeSheets, which every way of closing goes through. A way out that goes somewhere clears `start` first. Any way out of the welcome counts as having seen it. */
 function startShut() {
   const closed = NW.start; NW.start = false; NW.back = false;
+  if (WC.up && $('startBox').dataset.phase === 'welcome') welcomePassed();
+  WC.up = false; coverStop();
   if (closed && NW.copies) toast('Your recovery copies are kept, under File, Recovery copies.');
 }
 function sheetsBack() { const back = NW.back; closeSheets(); if (back) { startShow(); startHeld().then(startCont); } }
+
+/* ---------- the welcome ---------- */
+/* No history means someone new. A later build raises WELCOME_VERSION to show it once more, to those who saw an older one; 0 is someone from before the welcome, who knows qtiles already. */
+const welcomeDue = (had, seen, v = WELCOME_VERSION) => !had || (seen > 0 && seen < v);
+function welcomePassed() { if (prefGet('welcomeSeen') < WELCOME_VERSION) prefSet('welcomeSeen', WELCOME_VERSION); }
+/* The first thing on a page load. Switching the start screen off skips it for someone who has been here, never for someone new: there is nothing to skip to. */
+async function startFirst() {
+  const can = await startHeld(), had = PF.had || RC.old || can.heads.length > 0 || can.projects.length > 0, seen = prefGet('welcomeSeen');
+  if (welcomeDue(had, seen) && (!had || prefGet('startScreen'))) { welcomeOpen(can, true); return; }
+  if (!seen) prefSet('welcomeSeen', WELCOME_VERSION);
+  if (prefGet('startScreen')) await startOpen(can); else await storageResume();
+}
+/* `start` is false from Preferences: the welcome then sits over the open project like File, New, so nothing in it replaces that project. */
+function welcomeOpen(can, start) {
+  newFill(); startCont(can); WC.from = true; $('startBox').dataset.phase = 'welcome'; coverPick(); startShow(start);
+}
+function welcomeAgain() { closeSheets(); startHeld().then(can => welcomeOpen(can, false)); }
+/* A card goes on into the start screen, at the column it named. */
+function welcomeGo(col) {
+  welcomePassed();
+  if (col === 'new') { if (NW.mode !== 'flat') newMode('flat'); newPick(NEW_GROUPS[0], 64, 64); newMore(false); }
+  startPhase('start'); newTab(col);
+  const to = { new: '#newBig [aria-pressed="true"]', ex: '#exStart .excard', cont: '#stCards .stcard, #stReopen:not([hidden]), #stOpen' }[col], el = document.querySelector(to);
+  if (el) { el.focus({ preventScroll: true }); if (el.scrollIntoView) el.scrollIntoView({ block: 'nearest' }); }
+}
+function startPhase(p) {
+  const box = $('startBox'); box.dataset.phase = p; box.setAttribute('aria-label', p === 'welcome' ? 'Welcome' : NW.start ? 'Start' : 'New');
+  $('stBack').hidden = !(WC.from && p === 'start'); coverRun(); coverLay();
+}
+
+/* ---------- the cover ---------- */
+/* Art from the examples, cropped, at a whole scale and moved by whole art pixels, so it never blurs or shimmers. Only the crossfade and the fade at its foot blend, and they are UI. */
+const coverList = () => EX_DATA.covers.filter(c => exFind(c.example));
+async function coverCanvas(c) {
+  if (WC.cv.has(c)) return WC.cv.get(c);
+  const t = await exPixels(exFind(c.example)), [x0, y0, cw, ch] = c.crop || [0, 0, t.w, t.h], w = Math.min(cw, t.w - x0), h = Math.min(ch, t.h - y0);
+  const cv = document.createElement('canvas'), g = cv.getContext('2d'); cv.width = w; cv.height = h;
+  const img = g.createImageData(w, h), px = new Uint32Array(img.data.buffer);
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) px[y * w + x] = t.px[(y0 + y) * t.w + x0 + x];
+  g.putImageData(img, 0, 0); WC.cv.set(c, cv); return cv;
+}
+/* A random first one. The band is short, so a cover with `band: false` is left out of it. */
+function coverPick() {
+  const list = coverList(), band = $('startBox').dataset.phase === 'start', ok = list.map((c, k) => k).filter(k => !band || list[k].band !== false);
+  $('cvDots').hidden = list.length < 2; coverDots();
+  if (ok.length) coverShow(ok[Math.floor(Math.random() * ok.length)]); else $('stCover').classList.add('bare');
+}
+function coverDots() {
+  const list = coverList();
+  if ($('cvDots').children.length !== list.length) $('cvDots').replaceChildren(...list.map((c, k) => { const b = document.createElement('button'); b.className = 'cvdot'; b.setAttribute('aria-label', 'Cover ' + (k + 1) + ': ' + (c.title || exFind(c.example).title)); b.onclick = () => { coverShow(k); coverRun(); }; return b; }));
+  [...$('cvDots').children].forEach((b, k) => press(b, k === WC.at));
+}
+/* Decoded off the first frame: the cover shows its ground color at once and the art fades in over it. */
+async function coverShow(k) {
+  const list = coverList(), at = WC.at = (k + list.length) % list.length, c = list[at], e = exFind(c.example); coverDots();
+  $('cvName').textContent = c.title || e.title;
+  $('cvOpen').onclick = () => { NW.start = false; closeSheets(); guardThen(() => exOpen(e.id)); };
+  let cv; try { cv = await coverCanvas(c); } catch (_) { $('stCover').classList.add('bare'); return; }
+  if (at !== WC.at) return;   // another was chosen while this one decoded
+  const box = $('cvArt'), old = [...box.children].filter(o => o !== cv);
+  $('stCover').classList.remove('bare'); cv.classList.remove('on'); box.appendChild(cv); WC.x = 0; WC.dir = 1; coverLay();
+  if (WC.still || $('startBox').dataset.phase === 'start') { WC.x = Math.floor(WC.room / 2); coverLay(); }   // a cover that stands still shows the middle of its crop
+  void cv.offsetWidth; cv.classList.add('on');
+  setTimeout(() => old.forEach(o => { if (o !== box.lastElementChild) o.remove(); }), WC.still ? 0 : COVER_FADE_MS);
+}
+/* The scale that covers the box both ways; what is left over across is what the pan travels. */
+function coverLay() {
+  const box = $('cvArt'), W = box.clientWidth, H = box.clientHeight, top = box.lastElementChild; if (!W || !top) return;
+  for (const cv of box.children) {
+    const k = Math.max(1, Math.ceil(W / cv.width), Math.ceil(H / cv.height));
+    cv.style.width = cv.width * k + 'px'; cv.style.height = cv.height * k + 'px'; cv.style.marginTop = -Math.floor(cv.height * k / 2) + 'px';
+    if (cv === top) { WC.k = k; WC.room = Math.max(0, Math.floor((cv.width * k - W) / k)); WC.x = Math.min(WC.x, WC.room); cv.style.left = -WC.x * k + 'px'; }
+  }
+}
+function coverStop() { clearInterval(WC.pan); clearInterval(WC.turn); WC.pan = WC.turn = null; }
+/* Only the welcome moves, and never under reduced motion. One small move per step, none per frame. */
+function coverRun() {
+  coverStop(); if (!WC.up || WC.still || $('startBox').dataset.phase !== 'welcome') return;
+  WC.pan = setInterval(() => {
+    if (WC.hold || !WC.room) return;
+    if ((WC.x + WC.dir < 0) || (WC.x + WC.dir > WC.room)) WC.dir = -WC.dir;
+    WC.x += WC.dir; const top = $('cvArt').lastElementChild; if (top) top.style.left = -WC.x * WC.k + 'px';
+  }, COVER_PAN_MS);
+  if (coverList().length > 1) WC.turn = setInterval(() => { if (!WC.hold) coverShow(WC.at + 1); }, COVER_MS);
+}
 /* A file came in: the screen goes, and a preset's lock must not crop a PNG that is the first thing in the project. */
 function newTaken() {
   if ($('sheetNew').hidden) return;
@@ -213,11 +315,17 @@ function newTaken() {
   closeSheets();
 }
 function initStart() {
-  $('stBrand').append(document.querySelector('.topbar .brand').cloneNode(true)); $('stVer').textContent = APP_VERSION;
+  $('stBrand').append(document.querySelector('.topbar .brand').cloneNode(true)); $('wcBrand').append(document.querySelector('.topbar .brand').cloneNode(true)); $('stVer').textContent = APP_VERSION;
   const leave = fn => () => { NW.start = false; closeSheets(); fn(); }, away = open => () => { const on = NW.start; NW.start = false; open(); NW.back = on; };
   $('stTour').onclick = leave(coachStart); $('stTips').onclick = leave(() => tipsShow(true));
   $('stAbout').onclick = away(aboutOpen); $('stPrefs').onclick = away(() => prefsOpen()); $('stFingerPrefs').onclick = away(() => prefsOpen('input')); $('stAll').onclick = away(recoverOpen);
-  $('stOpen').onclick = pickOpen; $('newClose').onclick = closeSheets;
+  $('stOpen').onclick = $('wcOpen').onclick = pickOpen; $('newClose').onclick = closeSheets;
+  $('wcNew').onclick = () => welcomeGo('new'); $('wcEx').onclick = () => welcomeGo('ex'); $('wcCont').onclick = () => welcomeGo('cont');
+  $('wcTour').onclick = leave(coachStart); $('wcAbout').onclick = away(aboutOpen); $('stBack').onclick = () => startPhase('welcome');
+  $('newMoreBtn').onclick = () => newMore($('newMore').hidden);
+  const cover = $('stCover'); WC.still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  cover.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') WC.hold = true; }); cover.addEventListener('pointerleave', () => { WC.hold = false; });
+  if (window.ResizeObserver) new ResizeObserver(coverLay).observe($('cvArt'));
   document.querySelectorAll('#stTabs button').forEach(b => { b.onclick = () => newTab(b.dataset.tab); });
   $('startBox').addEventListener('keydown', e => tabInside(e, $('startBox')));
 }

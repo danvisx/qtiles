@@ -3,7 +3,7 @@
    The project file stays the master copy. What is kept here is a safety net, and the browser may clear it. */
 
 const DB_NAME = 'qtiles', OLD_DB_NAME = 'isopic', SNAP_KEEP = 3, OFFER_MAX = 5, CONT_MAX = 3, THUMB_SIDE = 64, THUMB_BYTES = 4096, PACK_MIN = 4e6;
-const RC = { timer: null, taking: false, ver: -1, at: 0, failed: null, told: null, persisted: false, stuck: false };   // ver: the docVer of the last copy, failed: why the last one did not land
+const RC = { timer: null, taking: false, ver: -1, at: 0, failed: null, told: null, persisted: false, stuck: false, old: false };   // ver: the docVer of the last copy, failed: why the last one did not land
 
 /* ---------- identity ---------- */
 function newProjectId() {
@@ -101,6 +101,7 @@ async function dbMove() {
   let from = null, to = null;
   try {
     from = await oldDbOpen(); if (!from) return;
+    RC.old = true;   // copies made under the old name are history, for the welcome
     to = await idbCreate(); await dbCopy(from, to);
     from.close(); from = null;
     await new Promise(res => { const q = indexedDB.deleteDatabase(OLD_DB_NAME); q.onsuccess = q.onerror = q.onblocked = () => res(); });   // blocked: a tab of the old build still has it, and it goes when that closes
@@ -257,7 +258,7 @@ async function recoveryMigrate() {
   for (const key of OLD_AUTOSAVE_KEYS) {
     let s = null; try { s = localStorage.getItem(key); } catch (_) { return; }
     if (!s) continue;
-    const o = JSON.parse(s);
+    RC.old = true; const o = JSON.parse(s);
     o.projectId = cleanProjectId(o.projectId) || newProjectId();
     await snapPut(o, Date.parse(o.saved) || Date.now());
     localStorage.removeItem(key);

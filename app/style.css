@@ -179,6 +179,19 @@ input[type="range"] { width: 100%; accent-color: var(--accent); }
 .minimap { position: relative; touch-action: none; cursor: pointer; background: var(--check-a); margin: 6px; }
 .minimap canvas { display: block; image-rendering: pixelated; }
 .minimap canvas + canvas { position: absolute; left: 0; top: 0; image-rendering: auto; }
+/* the reference window sits across from the map, so both can be open */
+.refwin { position: absolute; left: 8px; bottom: 8px; z-index: 4; width: 300px; box-shadow: var(--shadow); overflow: hidden; display: flex; flex-direction: column; }
+.refwin .pophead { cursor: default; touch-action: auto; gap: 4px; }
+.refwinname { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#refWinCv { display: block; width: 100%; height: 220px; touch-action: none; cursor: crosshair; background: var(--check-a); }
+.refrow.active { background: var(--sel); }
+.refrow .vname { display: flex; flex-direction: column; justify-content: center; line-height: 1.2; }
+.refsub { font-size: 11px; font-weight: 400; color: var(--muted); }
+.refsw { width: 20px; height: 20px; border-radius: 4px; border: 1px solid var(--line2); flex: none; }
+.rmpvs { align-items: flex-start; }
+.rmpvs canvas { max-width: 100%; image-rendering: pixelated; background: var(--check-a); border: 1px solid var(--line2); }
+#view.refadj { cursor: move; }
+#refMakeBtn { height: auto; min-height: var(--ctl); padding-block: 4px; white-space: normal; text-align: left; }   /* its name is long, and a fixed height cuts the second line */
 .vrow { display: flex; align-items: center; gap: 2px; padding-left: 4px; border-radius: 6px; }
 .vrow .vname { flex: 1; min-width: 0; text-align: left; background: transparent; border: 0; padding: 0 6px; height: var(--ctl); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 500; }
 .vrow:hover { background: var(--hover); }
@@ -372,6 +385,8 @@ input[type="range"] { width: 100%; accent-color: var(--accent); }
   .minibtn { bottom: auto; top: 8px; }
   .mini { position: fixed; left: 0; right: 0; bottom: 0; border-radius: 10px 10px 0 0; z-index: 20; padding-bottom: env(safe-area-inset-bottom, 0px); }
   .minimap { width: fit-content; margin: 8px auto; }
+  .refwin { position: fixed; left: 0; right: 0; bottom: 0; width: auto; border-radius: 10px 10px 0 0; z-index: 20; padding-bottom: env(safe-area-inset-bottom, 0px); }
+  #refWinCv { height: 40vh; height: 40dvh; }
 }
 
 /* tips drawer: beside the canvas, and over it where there is no room, as the side panel is */
@@ -426,6 +441,49 @@ input[type="range"] { width: 100%; accent-color: var(--accent); }
 .stcol > * { flex: none; }
 .stfoot { flex: none; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; padding: 6px 16px; border-top: 1px solid var(--line2); color: var(--muted); font-size: 12px; }
 .stfoot #stTips { margin-left: auto; }
+/* the cover: art from the examples at a whole scale, fading into the panel across its lower third. The welcome shows it tall, the start screen as a band */
+.sheet.start { transition: max-width .2s; }
+.stcover { position: relative; flex: none; height: 72px; overflow: hidden; background: var(--stage); transition: height .2s; }
+.cvart { position: absolute; inset: 0; overflow: hidden; }
+.cvart canvas { position: absolute; top: 50%; image-rendering: pixelated; opacity: 0; transition: opacity .6s; }
+.cvart canvas.on { opacity: 1; }
+.cvfade { position: absolute; inset: 0; background: linear-gradient(to bottom, transparent 66%, var(--panel)); pointer-events: none; }
+.cvmark { position: absolute; left: 50%; top: 50%; margin: -24px 0 0 -24px; display: none; }
+.stcover.bare .cvmark { display: block; }
+.cvclose, .cvback { position: absolute; top: 8px; background: var(--panel); }
+.cvclose { right: 8px; }
+.cvback { left: 8px; }
+.cvcap { position: absolute; left: 16px; right: 56px; bottom: 6px; display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 8px; margin: 0; font-size: 12px; color: var(--fg) !important; }
+.stcover.bare .cvcap { display: none; }
+.cvdots { flex: none; display: flex; justify-content: center; gap: 0; }
+.cvdot { width: var(--ctl); height: var(--ctl); padding: 0; border: 0; background: transparent; display: flex; align-items: center; justify-content: center; }
+.cvdot::before { content: ""; width: 8px; height: 8px; border-radius: 4px; background: var(--line2); }
+.cvdot[aria-pressed="true"]::before { background: var(--accent); }
+.stwelcome { display: none; flex-direction: column; align-items: center; gap: 12px; padding: 4px 24px 20px; text-align: center; }
+.stwelcome .brand { padding: 0; }
+.stwelcome .brand-word { display: block; }
+.stwelcome .brand-icon { margin-right: 8px; }
+.wccards { align-self: stretch; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 8px; margin-top: 4px; }
+.wccard { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; padding: 14px; min-height: 44px; background: transparent; border: 1px solid var(--line2); border-radius: 10px; text-align: left; color: var(--muted); font-size: 12px; touch-action: manipulation; }
+.wccard:hover { background: var(--hover); }
+.wccard svg { width: 24px; height: 24px; fill: none; stroke: var(--accent-text); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; margin-bottom: 2px; }
+.wccard b { color: var(--fg); font-weight: 600; font-size: 14px; }
+.stwelcome > p { font-size: 13px; }
+.wclinks { display: flex; flex-wrap: wrap; justify-content: center; gap: 0 20px; }
+.sheet.start[data-phase="welcome"] { max-width: 760px; height: auto; overflow-y: auto; }
+[data-phase="welcome"] .stcover { height: 300px; }
+[data-phase="welcome"] .stwelcome { display: flex; }
+.sheet.start[data-phase="welcome"] > :is(.sthead, .sttabs, .stbody, .stfoot) { display: none; }
+[data-phase="welcome"] > #stPhone { order: 1; border-bottom: 0; border-top: 1px solid var(--line2); }   /* under the cards, as the cards are what a first visit is for */
+[data-phase="start"] .cvcap, [data-phase="start"] > .cvdots { display: none; }
+@media (prefers-reduced-motion: reduce) { .sheet.start, .stcover, .cvart canvas { transition: none; } }
+.newbig { display: flex; flex-direction: column; gap: 6px; }
+.szcard.nbcard { display: grid; grid-template-columns: 48px minmax(0, 1fr); align-items: center; column-gap: 10px; padding: 8px 10px; text-align: left; }
+.nbcard .szframe { grid-row: span 2; }
+.szcard.nbcard b { font: 600 13px var(--font-ui); color: var(--fg); align-self: end; }
+.nbcard span:last-child { align-self: start; font-size: 11px; }
+.newmore { display: flex; flex-direction: column; gap: 10px; }
+#newMoreBtn { align-self: flex-start; }
 @media (max-width: 1000px) {
   .stbody, .stbody.nocont { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); overflow-y: auto; align-content: start; }
   .stcol { min-height: auto; overflow-y: visible; }
@@ -444,6 +502,10 @@ input[type="range"] { width: 100%; accent-color: var(--accent); }
   .stcol + .stcol, #exWrap { border: 0; }
   .stbody { overflow-y: auto; }
   .stfoot #stTips { margin-left: 0; }
+  .sheet.start[data-phase="welcome"] { height: 100vh; height: 100dvh; }
+  [data-phase="welcome"] .stcover { height: 40vh; height: 40dvh; }
+  .wccards { grid-template-columns: 1fr; }
+  .wccard { padding: 12px; }
 }
 .excards { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 8px; }
 .excard { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; padding: 8px; background: transparent; border: 1px solid var(--line2); border-radius: 8px; text-align: left; font-size: 12px; color: var(--muted); touch-action: manipulation; }

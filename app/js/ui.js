@@ -25,7 +25,8 @@ const ICON = {
   mirror: '<svg viewBox="0 0 24 24"><path d="M12 3v18" stroke-dasharray="3 3"/><path d="M9 7L3 17h6zM15 7l6 10h-6z"/></svg>',
   views: '<svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="1.5"/><path d="M12 4v16M4 12h16"/></svg>',
   canvas: '<svg viewBox="0 0 24 24"><path d="M4 8V4h4M16 4h4v4M20 16v4h-4M8 20H4v-4"/></svg>',
-  grid: '<svg viewBox="0 0 24 24"><path d="M4 9h16M4 15h16M9 4v16M15 4v16"/></svg>'
+  grid: '<svg viewBox="0 0 24 24"><path d="M4 9h16M4 15h16M9 4v16M15 4v16"/></svg>',
+  photo: '<svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="1.5"/><circle cx="8.5" cy="10" r="1.5"/><path d="M21 16l-5-5L6 19"/></svg>'
 };
 function iconBtn(svg, label, fn, pressed) {
   const b = document.createElement('button'); b.className = 'btn ico'; b.innerHTML = svg; b.setAttribute('aria-label', label); b.title = label; b.onclick = fn;
@@ -40,7 +41,7 @@ function updateStatus(a) {
 }
 
 /* ---------- tools & modes ---------- */
-const TOOL_NAMES = { pencil: 'Pencil', eraser: 'Eraser', line: 'Line', rect: 'Rectangle', fill: 'Fill', picker: 'Color picker', place: 'Place object', pick: 'Select object', shade: 'Lighten / Darken', dither: 'Dither', shadow: 'Shadow ellipse', tile: 'Ground tile', scatter: 'Scatter', terrain: 'Terrain', marquee: 'Rectangular select', wand: 'Magic wand', pivot: 'Set pivot', hand: 'Hand' };
+const TOOL_NAMES = { pencil: 'Pencil', eraser: 'Eraser', line: 'Line', rect: 'Rectangle', ellipse: 'Ellipse', fill: 'Fill', picker: 'Color picker', place: 'Place object', pick: 'Select object', shade: 'Lighten / Darken', dither: 'Dither', shadow: 'Shadow ellipse', tile: 'Ground tile', scatter: 'Scatter', terrain: 'Terrain', marquee: 'Rectangular select', wand: 'Magic wand', pivot: 'Set pivot', hand: 'Hand' };
 /* What the art and the panel answer to. Hand changes only what a drag does, so a selection and a ghost carry on as they were under the tool it interrupted. */
 const heldTool = () => S.tool === 'hand' ? S.toolBefore : S.tool;
 function setTool(t) {
@@ -69,13 +70,14 @@ function setTool(t) {
 /* A person picking a tool, as against setTool's other callers, which only need it set. Coming back from Hand is not a choice: everything stays as it was. */
 function chooseTool(t) {
   const back = S.tool === 'hand' && (t === 'hand' || t === S.toolBefore);
+  if (RF.adjust) refAdjustSet(false);
   setTool(t); if (!back && t !== 'hand' && S.tool === t) panelJump();
 }
 
 /* ---------- side panel ---------- */
 /* What each tool needs, in order: these sections follow its options, and the first that is showing is where choosing the tool lands. LIGHT_TOOLS read the light, so its control shows in their options. */
 const TOOL_PANELS = {
-  pencil: ['tool', 'color'], eraser: ['tool', 'color'], line: ['tool', 'color'], rect: ['tool', 'color'], fill: ['tool', 'color'],
+  pencil: ['tool', 'color'], eraser: ['tool', 'color'], line: ['tool', 'color'], rect: ['tool', 'color'], ellipse: ['tool', 'color'], fill: ['tool', 'color'],
   picker: ['color'],
   place: ['tool', 'color'], pick: ['object', 'tool'],
   terrain: ['tool', 'color'], scatter: ['tool', 'color'], tile: ['tool', 'color'],
@@ -95,6 +97,7 @@ const PANELS = [
   { key: 'animation', id: 'animSec', pill: 'Animation', icon: 'film', hint: 'Named lists of Character layers, played as frames.', when: () => prefGet('animTools') && (S.anims.length > 0 || S.layers.some(isChar)), meta: () => S.anims.length ? String(S.anims.length) : '' },
   { key: 'symmetry', id: 'symSec', pill: 'Symmetry', icon: 'mirror', hint: 'Repeats what you paint across a mirror line.', meta: () => S.mirrorX && S.mirrorY ? 'Four-way' : S.mirrorX ? 'Left-right' : S.mirrorY ? 'Top-bottom' : 'Off' },
   { key: 'shadow', id: 'shadowSec', pill: 'Shadow', rail: 'shadow', hint: 'Cast a shadow from a layer, or outline it.' },
+  { key: 'reference', id: 'refSec', pill: 'Reference', icon: 'photo', hint: 'Photos and pictures to trace over or look at. They are never part of the art.', meta: () => RF.list.length ? String(RF.list.length) : '' },
   { key: 'views', id: 'sceneSec', pill: 'Views', icon: 'views', hint: 'Saved views, the minimap and sections of a big canvas.' },
   { key: 'canvas', id: 'canvasSec', pill: 'Canvas', icon: 'canvas', hint: 'Canvas size and its lock.', meta: () => S.w + ' x ' + S.h },
   { key: 'grid', id: 'gridSec', pill: 'Grid', icon: 'grid', hint: 'Grid display, guides and snap.', meta: () => S.mode === 'iso' ? 'Iso' : '2D' }
@@ -221,6 +224,7 @@ function setBrush(n) { S.brush = Math.max(1, Math.min(8, n)); syncBrush(); reque
 function syncBrush() {
   document.querySelectorAll('#brushRow .chip').forEach(b => press(b, +b.dataset.n === S.brush)); $('brushN').value = S.brush;
   const b = $('sbBrush'), n = S.brush, cells = cellBrush(), label = 'Brush size in ' + (cells ? 'cells' : 'pixels');
+  $('perfect').hidden = n !== 1; press($('perfect'), perfectOn());   // a larger brush has no corners to clean
   $('brushUnit').textContent = cells ? 'cells' : 'px'; $('brushN').setAttribute('aria-label', label); $('brushRow').setAttribute('aria-label', label);
   b.hidden = !brushed(S.tool); b.textContent = cells ? 'Brush ' + n + (n > 1 ? ' cells (' : ' cell (') + n * S.cell + ' px)' : 'Brush ' + n + ' px';
   syncChip();
@@ -341,6 +345,7 @@ const GUIDES = [
   { id: 'guideGrid', name: () => 'Grid', note: () => S.mode === 'iso' ? 'Tile lines' : 'Cell lines', line: '<path d="M1 3h18M1 11h18M5 0v14M15 0v14"/>', color: 'grid', on: () => S.gridShow !== 'off', set: v => { if (!v) gridWas = S.gridShow; S.gridShow = v ? gridWas : 'off'; syncGrid(); } },
   { id: 'guideHover', name: () => S.mode === 'iso' ? 'Tile under pointer' : 'Cell under pointer', line: '<path d="M10 1l9 6-9 6-9-6z" fill="var(--sel)"/>', color: 'accent', on: () => S.guideHover, set: v => { S.guideHover = v; }, need: () => S.gridShow === 'off' && 'Needs Grid' },
   { id: 'rulersOn', name: () => 'Rulers', pref: 'rulers', line: '<path d="M1 3h18M3 3v4M8 3v4M13 3v4M18 3v4"/>', color: 'grid', on: () => S.rulers, set: v => { S.rulers = v; setDirty(true); }, need: () => S.mode === 'iso' ? 'In 2D only' : Math.max(...rulerCells()) > RULER_CELLS ? 'Up to ' + RULER_CELLS + ' cells a side' : S.gridShow === 'off' && 'Needs Grid' },
+  { id: 'guideRef', name: () => 'References', note: () => RF.list.length === 1 ? '1 added' : RF.list.length + ' added', line: '<rect x="2" y="1" width="16" height="12" rx="1.5"/><path d="M18 10l-4-4-8 7"/>', color: 'accent', on: () => RF.shown, set: v => { RF.shown = v; refSync(); }, need: () => !RF.list.length && 'None added' },
   { id: 'guideMirror', name: () => 'Mirror line', line: '<path d="M10 0v14" stroke-dasharray="3 2"/>', color: 'accent', on: () => S.guideMirror, set: v => { S.guideMirror = v; }, need: () => !S.mirrorX && !S.mirrorY && 'Needs Symmetry' },
   { id: 'guideSec', name: () => 'Sections', line: '<path d="M1 7h18M10 0v14"/>', color: 'accent', on: () => S.secOn, set: secShow },
   { id: 'seamGuard', name: () => 'Seam guard', pref: 'seamGuard', line: '<path d="M10 0v14" stroke-width="3"/>', color: 'accent', on: () => S.seamGuard, set: v => { S.seamGuard = v; setDirty(true); }, need: () => !S.secOn && 'Needs Sections' },
@@ -552,7 +557,7 @@ hooks.color = () => {
   const sh = $('shades').children, f = faceShades(S.color);
   const hx = v => rgbToHex(v & 255, (v >>> 8) & 255, (v >>> 16) & 255);
   sh[0].style.background = hx(f.top); sh[1].style.background = hx(f.left); sh[2].style.background = hx(f.right);
-  drawDitherPreview(); syncPlace(); if (heldTool() === 'terrain') syncTerrain(); if (heldTool() === 'place') syncLibrary();
+  drawDitherPreview(); refPickedSync(); syncPlace(); if (heldTool() === 'terrain') syncTerrain(); if (heldTool() === 'place') syncLibrary();
   if (pvShown() && (S.tool === 'place' || S.tool === 'terrain')) pvClear();
   panelSync();
 };
@@ -799,6 +804,8 @@ function initUI() {
   $('sbBrush').onclick = () => exMark('#brushOpt');
   $('lineSnap').onclick = e => { S.lineSnap = !S.lineSnap; press(e.currentTarget, S.lineSnap); };
   $('rectFill').onclick = e => { S.rectFill = !S.rectFill; press(e.currentTarget, S.rectFill); };
+  for (const [id, k] of [['ovalFill', 'ovalFill'], ['ovalCircle', 'ovalCircle'], ['ovalCenter', 'ovalCenter']]) $(id).onclick = e => { S[k] = !S[k]; press(e.currentTarget, S[k]); };
+  $('perfect').onclick = () => { prefSet('perfect', Object.assign({}, prefGet('perfect'), { [S.mode === 'iso' ? 'iso' : 'flat']: !perfectOn() })); syncBrush(); };
   $('fillAll').onclick = () => { S.fillAll = true; press($('fillAll'), true); press($('fillOne'), false); };
   $('fillOne').onclick = () => { S.fillAll = false; press($('fillAll'), false); press($('fillOne'), true); };
   initObjects(); initTerrain(); initHeightGuides(); initAssembly(); initScatter(); initLibrary(); initCharacters();

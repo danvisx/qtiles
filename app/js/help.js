@@ -12,6 +12,7 @@ const TOOL_HELP = {
   eraser: ['Eraser', 'Clears pixels on the active layer at the brush size.', 'drag to erase.'],
   line: ['Line', 'Draws one straight line at the brush size, on the 2:1 stair in Iso mode.', 'drag to draw. Snap to iso angles keeps it 2:1.'],
   rect: ['Rectangle', 'Draws a rectangle outline, or a solid one with Filled on.', 'drag from corner to corner.'],
+  ellipse: ['Ellipse', 'Draws an ellipse or circle with even steps, as an outline at the brush size or filled.', 'drag from corner to corner. Shift keeps a circle, Alt draws from the center.'],
   fill: ['Fill', 'Fills the connected area of one color.', 'tap an area to fill it.'],
   picker: ['Picker', 'Takes a color from the canvas.', 'tap the canvas to take that color.'],
   place: ['Place', 'Places shapes and library items as objects that stay editable. Dotted guides show where it will stand and how tall it is.', 'tap to place at the size in the options, or drag a footprint.'],
@@ -32,7 +33,7 @@ const TOOL_HELP = {
 const HELP = [
   ['#projName', 'The name used for saved files.'],
   ['#saveInfo', 'Where saves go and when the last one was. Opens File.'],
-  ['#fNew', 'Starts a blank canvas or an example.'], ['#fOpen', 'Opens a project file, or adds a PNG as a new layer.'], ['#fReopen', 'Opens the file you last worked on.'],
+  ['#fNew', 'Starts a blank canvas or an example.'], ['#fOpen', 'Opens a project file, or adds a PNG as a new layer. A JPEG, WebP or GIF becomes a reference.'], ['#fRef, #refAdd', 'Adds a photo or picture to trace or look at. It is never part of the art. Up to 3 a project.'], ['#fReopen', 'Opens the file you last worked on.'],
   ['#fSaveCopy', 'Saves to a new file and carries on there as a new project. The old file stays as it was.'], ['#fResize', 'Sets an exact canvas size.'],
   ['#fExport', 'Saves a PNG of what is shown.'], ['#fExportLayers', 'Saves one PNG per visible layer in a .zip.'], ['#fExportTiles', 'Cuts the picture into square tiles in a .zip.'],
   ['#fSprite', 'Saves an animation\'s frames in one PNG, with a .json file of where each one is.'], ['#fFrame', 'Saves this layer alone, cropped to its pixels, at a whole-number scale.'],
@@ -76,6 +77,9 @@ const HELP = [
   ['[data-transform="unwallL"]', 'Turns a left wall back into a flat drawing.'], ['[data-transform="unwallR"]', 'Turns a right wall back into a flat drawing.'],
   ['#asmDone', 'Leaves the assembly.', 'Esc'],
   ['#newClose', 'Closes this and leaves a blank canvas.', 'Esc'], ['.stcard', 'Carries on from this copy.'], ['#stReopen', 'Opens the file you last worked on. The browser may ask first.'], ['#stOpen', 'Opens a project file, or adds a PNG as a new layer.'], ['#stAll', 'Lists every copy this browser keeps.'],
+  ['#wcNew', 'Goes on to New, with a 64 x 64 sprite in 2D chosen.'], ['#wcEx', 'Goes on to the examples, at Start here.'], ['#wcCont', 'Goes on to your recovery copies and last file.'],
+  ['#wcTour', 'A short tour of the tools, gestures and layers.'], ['#wcOpen', 'Opens a project file, or adds a PNG as a new layer.'], ['#wcAbout', 'What qtiles is, where your files live, and the credits.'],
+  ['#stBack', 'Goes back to the welcome.'], ['#cvOpen', 'Opens a copy of the example this picture comes from.'], ['.cvdot', 'Shows this picture.'],
   ['#stTabs button', 'Shows this part of the screen.'], ['#stTour', 'A short tour of the tools, gestures and layers.'], ['#stTips', 'Leaves a blank canvas and opens tips on pixel art.'], ['#stAbout', 'What qtiles is, where your files live, and the credits.'], ['#stPrefs', 'Labels, theme and other settings that are rarely changed.'], ['#stFingerPrefs', 'Opens Preferences at Input, where Finger draws is.'],
   ['#exSearch', 'Filters the examples by title, lesson and skill.'], ['#exChips .chip', 'Shows one category of examples.'], ['.excard', 'Opens a copy of this example, with its tips.'],
   ['.stagedot', 'Shows one step of how this was built. Finished shows the whole piece again. This changes nothing in the project.'],
@@ -105,7 +109,8 @@ const HELP = [
   ['#palAdd', 'Adds the current color to the palette.'], ['#palEdit', 'Tapping a swatch then removes that color.'], ['#palTools', 'Make ramps, import and export palettes.'],
   ['#brushRow .chip, #brushN, #brushDown, #brushUp', 'Brush size sets how many pixels wide a stroke is. The pixel under the pointer is the center for odd sizes, and the upper left of the center four for even sizes. With Snap on Cell it counts whole cells instead.', '[ and ]'],
   ['#sbBrush', 'The brush size of this tool, and with Snap on Cell the pixels it covers. Tap to go to the size control.', '[ and ]'],
-  ['#lineSnap', 'Keeps lines on the 2:1 stair.'], ['#rectFill', 'Fills the rectangle instead of drawing its outline.'],
+  ['#lineSnap', 'Keeps lines on the 2:1 stair.'], ['#rectFill', 'Fills the rectangle instead of drawing its outline.'], ['#ovalFill', 'Fills the ellipse instead of drawing only its outline.'], ['#ovalCircle', 'Keeps the ellipse a circle, as Shift does.'], ['#ovalCenter', 'Draws the ellipse out from where the drag starts, as Alt does.'],
+  ['#perfect', 'At brush size 1, takes out the doubled corner a quick stroke leaves, so lines stay one pixel thin. Remembered for 2D and Isometric separately.'],
   ['#fillAll', 'Fill stops at colors on any layer.'], ['#fillOne', 'Fill reads only the active layer.'],
   ['#placeTabShapes', 'Place shapes you set up yourself.'], ['#placeTabLib', 'Place ready-made items.'],
   ['#libSearch', 'Filters the library by name.'], ['#libCats .chip', 'Shows one category.'], ['#libGrid .shapecard', 'Puts this item on the pen. Then tap the canvas.'],
@@ -158,6 +163,7 @@ const HELP = [
   ['#cvResizeBtn', 'Sets an exact canvas size.'],
   ['#cvLock, #cvLock2', 'Keeps the canvas at this size. Art past the edge is cut off, and the + and − handles go. Resize still works.'], ['.toastact', 'Turns the canvas lock off, so art past the edge grows the canvas again.'],
   ['#newFlat', 'Opens the project in 2D, with square pixels and a square grid. You can switch later.'], ['#newIso', 'Opens the project on the 2:1 tile grid. You can switch later.'],
+  ['#newMoreBtn', 'Shows every preset size, and a size of your own.'],
   ['.szcard', 'Chooses this size. Sprite and Character sizes start with the canvas size locked.'], ['#newW, #newH', 'Any size from 1 to 4096 px. A typed size starts unlocked.'], ['#newOk', 'Starts a new project at this size and mode.'],
   ['#cvLink', 'Keeps width and height in the canvas\'s proportions.'], ['#cvWDown, #cvHDown', 'One pixel less.'], ['#cvWUp, #cvHUp', 'One pixel more.'], ['#sprScales .chip, #frmScales .chip', 'Each pixel becomes this many pixels across.'],
   ['#extStep', 'How far the + and − handles move a canvas edge.'], ['#tileSel, #tileCustom', 'The size of the tile grid. Pixels already drawn stay put.'], ['[data-opt^="edgeRun"]', 'How the tile edge steps: runs of 2, 3 or 4 pixels.'], ['#guideBtn', 'Shows the exact shape of one tile.'],
@@ -168,12 +174,21 @@ const HELP = [
   ['.tip .chip', 'Takes you to this in the app.'], ['.tipcheck input', 'Ticks are saved with the project.'], ['#tipsSearch', 'Filters the tips as you type.'], ['#tipsClose', 'Closes the tips.', 'Esc'],
   ['#fSave', 'Saves the project file.', 'Ctrl+S'],
   ['#guideGrid', 'Lines of the grid: tiles in Iso, cells in 2D. Grid display says how much they show.'], ['#guideHover', 'Tints and outlines the tile or cell under the pointer. It needs Grid on.'], ['#rulersOn', 'Shows cell numbers along the top and left of the canvas, on canvases up to 64 cells a side. They need Grid on.'],
-  ['#guideMirror', 'Shows the dashed line that strokes mirror across. Hiding it leaves symmetry on. Symmetry turns mirroring itself on and off.'], ['#guideSec', 'Shows the lines between sections. The same switch as Sections under Views and sections.'],
+  ['#guideRef', 'Shows or hides every reference on the canvas for now. Each one also has its own switch in the Reference section.'], ['#guideMirror', 'Shows the dashed line that strokes mirror across. Hiding it leaves symmetry on. Symmetry turns mirroring itself on and off.'], ['#guideSec', 'Shows the lines between sections. The same switch as Sections under Views and sections.'],
   ['#heightBtn', 'Dotted lines that show where the ghost or the selected object stands and how tall it is. Off, Lines or Planes.'], ['#guideHeight', 'Shows or hides the height guides. Their level is set under Height guides in the Place object and Select object options, or in Preferences.'], ['[data-hg="off"]', 'No height guides and no placement line in the status bar.'], ['[data-hg="lines"]', 'Dotted lines at each corner, level ticks, the footprint on its surface, and drop lines to the ground under anything raised.'], ['[data-hg="planes"]', 'Lines, plus two faint walls behind the volume.'],
   ['#seamGuard', 'Near a section\'s edge, shows the 4 px across the seam on your side, so a pattern can carry on. It needs Sections on.'], ['#objFootOpt', 'Draws every object\'s footprint as a thin diamond on the ground, whatever height it stands at.'],
   ['#sizeChip', 'Canvas size, grid and brush at a glance. Tap to see how they fit together and change them.'], ['#szCv', 'The canvas, grid and brush to scale.'], ['#szResize', 'Sets an exact canvas size.'],
   ['#szBrushDown, #szBrushUp, #szBrushN', 'How many pixels wide the brush is, or how many cells with Snap on Cell.', '[ and ]'], ['#szGridDown, #szGridUp, #szGridN', 'The size of one cell or tile. Pixels already drawn stay put.'], ['#sizesPop [data-pop-close]', 'Closes the sizes.', 'Esc'],
   ['#miniBtn, #miniOpt, #miniClose', 'Shows or hides the map of the whole canvas.'],
+  ['.refrow .vname', 'Chooses this reference for the controls below.'], ['.refrow [aria-label^="Hide"], .refrow [aria-label^="Show"]', 'Turns this reference off without removing it, or on again.'], ['.refrow [aria-label^="Lock"], .refrow [aria-label^="Unlock"]', 'A locked reference cannot be moved, scaled or turned by accident.'], ['.refrow [aria-label^="Remove"]', 'Takes this reference out of the project. The toast can bring it back.'],
+  ['#refAbove', 'Draws the reference over the art, to trace it. The picker takes its color wherever it shows.'], ['#refBelow', 'Draws the reference under the art, so what you paint covers it. The picker takes its color only where the art is empty.'],
+  ['#refOp', 'How strongly the reference shows, 10 to 100 percent.'], ['#refPix', 'Shows the reference as the art grid would hold it: one color per pixel of the canvas.'],
+  ['#refWinOn', 'Shows the whole picture in a window of its own beside the work, with its own pan and zoom. A tap there takes its color.'], ['#refKeep', 'Saves the reference in the project file, made small enough to keep. Off, it stays for this session and its recovery copies only.'],
+  ['#refAdjust', REF_HELP[1] + ' One finger moves it, two scale and turn it.', 'Esc'], ['#refFit', 'Places the whole reference on the canvas, centered and upright.'], ['#refUnturn', 'Takes away any turn and stretch, keeping its size and place.'],
+  ['#refSnap', 'A color taken from a reference becomes the nearest color of the palette, by how alike they look. The exact one shows under Color.'], ['#refMakeBtn', 'Turns the reference into a new pixel layer in a few colors, as a starting point to paint over.'],
+  ['#refPickedAdd', 'Adds the exact color from the photo as a loose color and uses it.'], ['#refWinFitBtn', 'Shows the whole picture again.'], ['#refWinClose', 'Closes the reference window. The reference stays.'], ['#refWinCv', 'Drag or pinch to move and zoom. A tap takes the color under it.'],
+  ['#rmCanvas', 'The layer is the size of the canvas, the picture stretched to fill it.'], ['#rmShape', 'The layer keeps the picture\'s shape, at the width you give, inside the canvas.'], ['#rmW', 'Width of the new layer\'s art in pixels. The height follows the picture.'], ['#rmH', 'Height of the new layer\'s art, from the width and the picture\'s shape.'],
+  ['#rmPal', 'Every pixel becomes the nearest color of the project palette.'], ['#rmPhoto', 'Chooses a few colors from the photo itself, by median cut.'], ['#rmN', 'How many colors to choose from the photo, 2 to 32.'], ['#rmDither', 'None, or an ordered Bayer pattern that mixes neighboring colors.'], ['#rmOk', 'Makes the new layer. One undo takes it away.'],
   ['#viewSave', 'Keeps this position and zoom in the project, up to 9.'], ['.vname', 'Jumps to this view.'], ['.vrow [aria-label^="Rename"]', 'Gives this view a name.'], ['.vrow [aria-label^="Delete"]', 'Removes this view. The art stays as it is.'],
   ['#secOn', 'Divides the canvas into a grid of sections, to walk a big map in order.'], ['#secSize', 'How big a section is. Marks stay with their numbers.'], ['#secDone', 'Marks the section in view as done. The map tints it.'], ['#secNote', 'A note on the section in view, saved with the project.'],
   ['#secPrev', 'Goes to the section before this one, in reading order.'], ['#secNext', 'Goes to the next section, in reading order.'], ['#secTodo', 'Goes to the next section not marked done.'], ['#secX', 'The section\'s number across.'], ['#secY', 'The section\'s number down.'], ['#secGo', 'Goes to that section and zooms to fit it.'],
@@ -250,7 +265,7 @@ function setLabels(on) { $('tools').classList.toggle('labels', on); }
 function labelsStart() {
   const saved = prefGet('labels'); setLabels(saved === null ? COARSE() : saved);
 }
-function syncToolHelp() { $('sbTool').textContent = TOOL_NAMES[S.tool] + ':'; $('sbHint').textContent = TOOL_HELP[S.tool][2]; }
+function syncToolHelp() { $('sbTool').textContent = (RF.adjust ? 'Adjust reference' : TOOL_NAMES[S.tool]) + ':'; $('sbHint').textContent = (RF.adjust ? REF_HELP : TOOL_HELP[S.tool])[2]; }
 function syncFinger() { $('sbFinger').hidden = !S.fingerDraws; }
 /* A phone has no Pencil, so there a finger draws until someone chooses otherwise. */
 function fingerStart() { const saved = prefGet('fingers'); S.fingerDraws = saved === null ? PHONE() : saved; syncFinger(); }
@@ -317,6 +332,7 @@ function helpEscape() {
   if (SK.side) { shrinkClose(); return true; }
   if (!$('tipsDrawer').hidden) { tipsShow(false); return true; }
   if ($('side').classList.contains('open')) { sidePanel(false); $('panelBtn').focus({ preventScroll: true }); return true; }
+  if (RF.adjust) { refAdjustSet(false); return true; }
   if (S.tool === 'hand') { setTool('hand'); return true; }
   return false;
 }

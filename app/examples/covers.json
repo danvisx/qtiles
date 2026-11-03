@@ -1,0 +1,6 @@
+[
+  { "example": "cover", "title": "A corner and 2D pieces", "crop": [0, 0, 480, 200] },
+  { "example": "street-corner", "crop": [0, 24, 384, 176] },
+  { "example": "harbour", "crop": [24, 40, 360, 168] },
+  { "example": "cover", "title": "2D pieces", "crop": [248, 112, 232, 72], "band": false }
+]

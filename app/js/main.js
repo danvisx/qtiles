@@ -2,13 +2,13 @@
 /* qtiles entry point: wires the pieces together and runs the render loop. */
 
 (async function main() {
-  keysMove(); themeApply(); readTheme(); resizeView(); initUI(); initGroups(); initHelp(); initTips(); initFiles(); initStorage(); initExamples();
+  keysMove(); themeApply(); readTheme(); resizeView(); initUI(); initGroups(); initHelp(); initTips(); initFiles(); initRefs(); initStorage(); initExamples();
   new ResizeObserver(() => { resizeView(); }).observe($('stage'));
   window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', readTheme);
   new MutationObserver(readTheme).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 
   startBlank(); await storageStart();
-  if (prefGet('startScreen')) await startOpen(); else await storageResume();
+  await startFirst();
   fitView(); storageTell();
 
   const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches; let ants = 0;

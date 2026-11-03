@@ -19,6 +19,9 @@ def embed_examples():
     manifest = json.loads((folder / "index.json").read_text())
     lines = ["'use strict';", "/* Written by scripts/build_artifact.py from index.json and the project files here. Do not edit. */"]
     lines.append("EX_DATA.list = " + json.dumps(manifest, separators=(",", ":")) + ";")
+    covers = folder / "covers.json"   # the welcome's covers: an example and a crop in art pixels each
+    if covers.exists():
+        lines.append("EX_DATA.covers = " + json.dumps(json.loads(covers.read_text()), separators=(",", ":")) + ";")
     for entry in manifest:
         text = json.dumps(json.loads((folder / entry["file"]).read_text()), separators=(",", ":"))
         lines.append(f"EX_DATA.files[{json.dumps(entry['file'])}] = {json.dumps(text)};")
