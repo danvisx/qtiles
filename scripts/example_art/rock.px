@@ -1,0 +1,39 @@
+id: rock
+title: Rock
+category: scenery
+order: 8
+lesson: Value planes on an irregular form.
+skills: value planes, ramp shading, silhouette
+tile: 16
+light: left
+palette: Earth and stone
+anchor: 11, 7
+legend:
+a = Granite 1
+b = Granite 2
+c = Granite 3
+d = Granite 4
+A = Granite 2
+B = Granite 2
+C = Granite 1
+E = Granite 5
+M = Moss stone 2
+art:
+..........dddd........
+.......ddddddddb......
+......ddddddEdddb.....
+.....ddddEEddddbbb....
+....ddddddddddbbaab...
+...ddddEdddddbbbaaab..
+..ccddddddbbbbCbaaaab.
+.ccccccccbbbbbCaaaaaa.
+cccccBcccAbbbbbCaaaaa.
+ccccBccccAbbbbbCaaaaaa
+ccccBccccAbbbbbCaaaaaa
+cccBccccccAbbbaaCaaaa.
+.cMMccccccAbbbaaCaaa..
+.ccMMMMcccAbbbaaaaa...
+.....cMMccAbbbaa......
+tip: | Look at the rock. | No face of it lines up with the grid, but it is still a top, a lit side and a shaded side.
+tip: 3 | Think in flat planes. | Four values, each a flat shape with straight edges. Curves make a rock look soft; corners make it hard.
+tip: | Try it. | Cracks go where two planes meet. Add a dark line along one edge with the Pencil and the rock gets harder. | pencil

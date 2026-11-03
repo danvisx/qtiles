@@ -1,0 +1,41 @@
+id: cat
+title: Cat (sitting)
+category: animals
+order: 17
+lesson: Ears, a tail, and the same body plan as the dog.
+skills: silhouette, fur ramp, mirroring
+tile: 16
+light: left
+palette: Skin and hair
+facings: 2
+shadow: true
+cast: 30
+legend:
+b = Red hair 2
+c = Red hair 3
+d = Red hair 4
+E = Pale skin 6
+n = Pale skin 3
+art:
+..........c....c.
+..........dc..dc.
+..........cdddcc.
+.........cdddddcb
+.........cddEdEdb
+.........cdddnddb
+.........bcddddb.
+.........bcccdb..
+........bcccccb..
+.......bcccccdcb.
+......bccdccccdb.
+...b..bccdcbccdb.
+..bc..bcccbbbccb.
+..bc.bcccbbbbccb.
+..bc.bccccbbbccb.
+...bcbcccbbbcccb.
+...bcccccbbdcccd.
+....bbbbdddbddddd
+tip: | Compare it with the dog. | Same plan: head up, chest, haunch, tail. Pointed ears, a short face and an upright tail do the rest.
+tip: 1 | Change the ends. | Most of an animal is one body. Swap the head and tail and a dog turns into a cat, so start from those.
+tip: 3 | Same ramp plan. | Light on the head and chest, dark on the low back, like the dog on a redder ramp. Pale eyes stand out against it, so they are the one detail it needs.
+tip: | The other facing. | The tail is what a mirror shows up: it swaps sides with the head, so the whole cat looks the other way. Nothing needed redrawing.

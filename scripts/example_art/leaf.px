@@ -1,0 +1,39 @@
+id: leaf
+title: Leaf
+category: scenery
+order: 4
+mode: 2d
+lock: true
+lesson: Hue shift: shadows cooler, lights warmer.
+skills: hue shift, ramp shading
+light: left
+palette: qtiles
+outline: darkest
+path: Next: Potted plant.
+legend:
+b = Greens 2
+c = Greens 3
+d = Greens 4
+e = Greens 5
+V = Greens 3
+F = Greens 6
+art:
+................
+.............de.
+...........ddec.
+.........ddeeVc.
+........deeeVcc.
+.......deFeVdcc.
+......deFeVddcb.
+.....deeeVddccb.
+.....deeVddcccb.
+....deeVddcccb..
+....deVddcccbb..
+....dVddcccbb...
+....Vdccbbb.....
+...Vcbbb........
+..V.............
+................
+tip: | Look at the leaf. | Dark green here is bluer than mid green, and light green is yellower. The color changes as well as the brightness.
+tip: 3 | Follow one ramp. | The Greens ramp is built that way: each step down moves toward blue and each step up toward yellow. Shading along it gives the hue shift for free.
+tip: | Try it. | Tap a dark pixel with the Color picker, then a light one, and watch the hue slider move. Lit and shaded greens are different hues. | picker

@@ -1,0 +1,3303 @@
+[
+  {
+    "id": "character-placeholder",
+    "title": "Villager",
+    "tier": "Character",
+    "summary": "A figure in two facings, feet on a tile, with shadow and outline layers.",
+    "file": "character-placeholder.qtiles.json",
+    "tips": [
+      {
+        "title": "Feet on the tile.",
+        "text": "The feet sit on the center of a tile, so the figure stands in the right place wherever it goes on a map.",
+        "show": {
+          "layer": "Villager",
+          "region": [
+            160,
+            76,
+            64,
+            40
+          ]
+        }
+      },
+      {
+        "title": "Shade along a ramp.",
+        "text": "Every color here is a step on a palette ramp: lighter toward the light on the left, darker away from it. No black or white is mixed in. Lighten / Darken moves a pixel one step.",
+        "show": {
+          "tool": "shade",
+          "layer": "Villager",
+          "solo": true,
+          "region": [
+            172,
+            56,
+            40,
+            56
+          ]
+        }
+      },
+      {
+        "title": "Sel-out.",
+        "text": "The outline is one ramp step darker than the pixels beside it, not black. It separates the figure from the ground without a hard line, and it sits on its own layer.",
+        "show": {
+          "layer": "Villager outline",
+          "solo": true,
+          "region": [
+            172,
+            56,
+            40,
+            56
+          ],
+          "mark": "#outBtn"
+        }
+      },
+      {
+        "title": "One light, one shadow.",
+        "text": "The shadow falls away from the light and stays on its own layer at 35 percent, so you can change it without touching the figure.",
+        "show": {
+          "layer": "Villager shadows",
+          "solo": true,
+          "mark": "#castBtn"
+        }
+      },
+      {
+        "title": "Two facings are enough.",
+        "text": "Draw one facing toward you and one facing away. Mirror each and you have all four.",
+        "show": {
+          "layer": "Villager",
+          "mark": "[data-sel=\"mirror\"]"
+        }
+      }
+    ],
+    "layers": 4,
+    "objects": 0,
+    "category": "characters",
+    "order": 12.5,
+    "lesson": "Feet on a tile, two facings, and shadow and outline on their own layers.",
+    "skills": [
+      "feet on tile",
+      "ramp shading",
+      "outline",
+      "mirroring"
+    ],
+    "author": "claude"
+  },
+  {
+    "id": "element-cottage",
+    "title": "Cottage yard",
+    "tier": "Element",
+    "summary": "A house, a well and a tree built from objects. Explode the house to edit its pieces.",
+    "file": "element-cottage.qtiles.json",
+    "tips": [
+      {
+        "title": "One tap, the whole house.",
+        "text": "The house is an assembly. Select object picks all of it, so it moves and turns as one. Explode takes it apart into pieces you can edit.",
+        "show": {
+          "tool": "pick",
+          "layer": "Props",
+          "item": "house",
+          "mark": "#asmExplode"
+        }
+      },
+      {
+        "title": "Change one part.",
+        "text": "Double-tap the house, or use Edit inside, to change one piece and keep the group together. Done or Esc leaves.",
+        "show": {
+          "tool": "pick",
+          "layer": "Props",
+          "item": "house",
+          "mark": "#asmIn"
+        }
+      },
+      {
+        "title": "2:1 edges.",
+        "text": "Every slanted edge steps two pixels across for one down, never 30 or 45 degrees. Roof, walls and ground all use the same stair, so they meet cleanly.",
+        "show": {
+          "tool": "line",
+          "region": [
+            176,
+            52,
+            104,
+            64
+          ]
+        }
+      },
+      {
+        "title": "One light direction.",
+        "text": "This project is lit from the right, so walls facing right are lighter and shadows fall left. Choose Left: every face and shadow redraws, because objects keep their parameters.",
+        "show": {
+          "tool": "pick",
+          "mark": "[data-light=\"left\"]"
+        }
+      },
+      {
+        "title": "Big shapes first.",
+        "text": "The house began as a box and a roof. The door, windows and chimney came last. Blocks read at a glance, and details are easy to move once the blocks are right.",
+        "show": {
+          "tool": "place",
+          "layer": "Props",
+          "mark": "[data-tool=\"place\"]"
+        }
+      }
+    ],
+    "layers": 3,
+    "objects": 15,
+    "category": "scenery",
+    "order": 15.5,
+    "lesson": "Build with objects, and they stay editable as one assembly.",
+    "skills": [
+      "objects",
+      "assemblies",
+      "materials"
+    ],
+    "author": "claude"
+  },
+  {
+    "id": "scene-placeholder",
+    "title": "Village corner",
+    "tier": "Scene",
+    "summary": "Terrain, a path, a fenced house, trees, water and a character, on separate layers.",
+    "file": "scene-placeholder.qtiles.json",
+    "tips": [
+      {
+        "title": "A layer for each job.",
+        "text": "Background, ground, terrain, props and the character each have their own layer, so you can hide, lock or repaint one without touching the others.",
+        "show": {
+          "layer": "Props",
+          "solo": true,
+          "mark": "#layers"
+        }
+      },
+      {
+        "title": "Test tiles 3 x 3.",
+        "text": "The ground is stamped tiles in several variants. The preview repeats one tile 3 x 3, where any seam would show at once.",
+        "show": {
+          "tool": "tile",
+          "seam": [
+            6,
+            8
+          ]
+        }
+      },
+      {
+        "title": "Two levels of terrain.",
+        "text": "The hill comes from the Terrain tool. Each cell is a stack of levels, kept as ordinary objects you can still edit.",
+        "show": {
+          "tool": "terrain",
+          "layer": "Terrain",
+          "solo": true
+        }
+      },
+      {
+        "title": "Scatter, then reroll.",
+        "text": "The trees and rocks were painted with Scatter. The same stroke and seed give the same result, and Reroll tries another layout.",
+        "show": {
+          "tool": "scatter",
+          "layer": "Props",
+          "mark": "#scReroll"
+        }
+      },
+      {
+        "title": "Shadows that follow.",
+        "text": "Objects cast live shadows into a linked layer. Move anything and its shadow moves too, away from the one light in the project.",
+        "show": {
+          "layer": "Props shadows",
+          "solo": true
+        }
+      },
+      {
+        "title": "On the ground.",
+        "text": "The character is plain pixels on a layer above the props, with feet on a tile center and a short shadow of its own.",
+        "show": {
+          "layer": "Villager",
+          "region": [
+            250,
+            226,
+            64,
+            48
+          ]
+        }
+      }
+    ],
+    "layers": 9,
+    "objects": 24,
+    "category": "scenery",
+    "order": 27.5,
+    "lesson": "A scene from tiles, terrain, scattered objects and live shadows.",
+    "skills": [
+      "tiles",
+      "terrain",
+      "scatter",
+      "live shadows"
+    ],
+    "author": "claude"
+  },
+  {
+    "id": "crate",
+    "title": "Crate",
+    "category": "scenery",
+    "size": "tiny",
+    "order": 2,
+    "lesson": "Three faces, one light: top, lit side, shaded side.",
+    "summary": "Three faces, one light: top, lit side, shaded side.",
+    "skills": [
+      "2:1 lines",
+      "ramp shading",
+      "outline"
+    ],
+    "stages": [
+      "1 Block-in",
+      "2 Base colors",
+      "3 Shading",
+      "4 Details",
+      "5 Outline"
+    ],
+    "author": "claude",
+    "box": [
+      1,
+      1,
+      18,
+      19
+    ],
+    "file": "crate.qtiles.json",
+    "tips": [
+      {
+        "title": "Look at the whole crate.",
+        "text": "Three faces and one light from the left. The stages below take it apart, so tap 1 to 5 and then Finished.",
+        "show": {
+          "stage": 0,
+          "region": [
+            1,
+            1,
+            18,
+            19
+          ]
+        }
+      },
+      {
+        "title": "Block in the shape.",
+        "text": "One flat color for the silhouette. If this does not read as a box, no shading will save it.",
+        "show": {
+          "stage": 1,
+          "region": [
+            1,
+            1,
+            18,
+            19
+          ]
+        }
+      },
+      {
+        "title": "Step along the ramp.",
+        "text": "The top is the lightest, the lit side a step down and the shaded side darkest. Every color is a step on one ramp, with no black or white mixed in.",
+        "show": {
+          "tool": "shade",
+          "stage": 3,
+          "region": [
+            1,
+            1,
+            18,
+            19
+          ]
+        }
+      },
+      {
+        "title": "Add the details last.",
+        "text": "Plank gaps and the braces follow the faces, so a brace on the left side leans the other way from one on the right.",
+        "show": {
+          "stage": 4,
+          "region": [
+            1,
+            1,
+            18,
+            19
+          ]
+        }
+      },
+      {
+        "title": "Outline with the art's own ramp.",
+        "text": "Sel-out: each outline pixel is a step darker than the pixel beside it, so the crate sits on any background. Try it yourself with the Outline button.",
+        "show": {
+          "stage": 5,
+          "region": [
+            1,
+            1,
+            18,
+            19
+          ]
+        }
+      }
+    ],
+    "path": "Next: Barrel.",
+    "layers": 5,
+    "objects": 0
+  },
+  {
+    "id": "barrel",
+    "title": "Barrel",
+    "category": "scenery",
+    "size": "tiny",
+    "order": 3,
+    "lesson": "Ellipse rims at 2:1, and banded shading on a round side.",
+    "summary": "Ellipse rims at 2:1, and banded shading on a round side.",
+    "skills": [
+      "2:1 ellipses",
+      "banded shading",
+      "outline"
+    ],
+    "stages": [
+      "1 Block-in",
+      "2 Base colors",
+      "3 Shading",
+      "4 Details",
+      "5 Outline"
+    ],
+    "author": "claude",
+    "box": [
+      1,
+      1,
+      16,
+      20
+    ],
+    "file": "barrel.qtiles.json",
+    "tips": [
+      {
+        "title": "Look at the barrel.",
+        "text": "A round thing still follows the grid: its rim is an ellipse twice as wide as it is tall, the same 2:1 as a tile.",
+        "show": {
+          "stage": 0,
+          "region": [
+            1,
+            1,
+            16,
+            20
+          ]
+        }
+      },
+      {
+        "title": "Shade in bands.",
+        "text": "A curved side has no single face, so the light falls in vertical bands. Lightest a third of the way in from the left, a step per band, darkest on the right.",
+        "show": {
+          "stage": 3,
+          "region": [
+            1,
+            1,
+            16,
+            20
+          ]
+        }
+      },
+      {
+        "title": "Hoops curve with the rim.",
+        "text": "A straight hoop would flatten the barrel. These dip in the middle, like the front of the rim, so the form stays round.",
+        "show": {
+          "stage": 4,
+          "region": [
+            1,
+            1,
+            16,
+            20
+          ]
+        }
+      },
+      {
+        "title": "Try it.",
+        "text": "Run Lighten / Darken down one band and see how little it takes to make the barrel shinier or duller.",
+        "show": {
+          "tool": "shade",
+          "stage": 0,
+          "region": [
+            1,
+            1,
+            16,
+            20
+          ]
+        }
+      }
+    ],
+    "path": "Next: Stone path and water.",
+    "layers": 5,
+    "objects": 0
+  },
+  {
+    "id": "bush",
+    "title": "Bush",
+    "category": "scenery",
+    "size": "tiny",
+    "order": 5,
+    "lesson": "Clustered 3:2 shapes and a dithered edge.",
+    "summary": "Clustered 3:2 shapes and a dithered edge.",
+    "skills": [
+      "clusters",
+      "dither",
+      "ramp shading"
+    ],
+    "stages": [
+      "1 Block-in",
+      "2 Base colors",
+      "3 Shading",
+      "4 Details",
+      "5 Outline"
+    ],
+    "author": "claude",
+    "box": [
+      1,
+      2,
+      22,
+      15
+    ],
+    "file": "bush.qtiles.json",
+    "tips": [
+      {
+        "title": "Look at the bush.",
+        "text": "Foliage is not one blob. It is a few 3:2 ovals overlapping, each lit on its own upper left.",
+        "show": {
+          "stage": 0,
+          "region": [
+            1,
+            2,
+            22,
+            15
+          ]
+        }
+      },
+      {
+        "title": "Light each cluster.",
+        "text": "Every oval gets its own step of light, with the deepest dark where they meet at the bottom. Forms read from their shadows.",
+        "show": {
+          "stage": 3,
+          "region": [
+            1,
+            2,
+            22,
+            15
+          ]
+        }
+      },
+      {
+        "title": "Break the edge, then add berries.",
+        "text": "Pixels knocked out of the rim make it leafy rather than smooth, and a checker of two greens does the same inside. A few red pixels last.",
+        "show": {
+          "stage": 4,
+          "region": [
+            1,
+            2,
+            22,
+            15
+          ]
+        }
+      },
+      {
+        "title": "Try it.",
+        "text": "Dither with a checker over the right side and watch it turn from flat green into leaves.",
+        "show": {
+          "tool": "dither",
+          "stage": 0,
+          "region": [
+            1,
+            2,
+            22,
+            15
+          ]
+        }
+      }
+    ],
+    "path": "Next: Tree.",
+    "layers": 5,
+    "objects": 0
+  },
+  {
+    "id": "grass-tile",
+    "title": "Grass tile",
+    "category": "scenery",
+    "size": "tiny",
+    "order": 1,
+    "lesson": "A 2:1 diamond, and how it repeats 3 x 3 with no seam.",
+    "summary": "A 2:1 diamond, and how it repeats 3 x 3 with no seam.",
+    "skills": [
+      "2:1 lines",
+      "seamless",
+      "ramp shading"
+    ],
+    "stages": [
+      "1 Block-in",
+      "2 Base colors",
+      "3 Shading",
+      "4 Details",
+      "5 Outline"
+    ],
+    "author": "claude",
+    "box": [
+      2,
+      1,
+      24,
+      14
+    ],
+    "file": "grass-tile.qtiles.json",
+    "tips": [
+      {
+        "title": "Look at one tile.",
+        "text": "This diamond is 24 pixels wide and 12 tall: always 2 across for 1 down. Everything on the path stands on this shape. Tap the stages, then Finished.",
+        "show": {
+          "stage": 0,
+          "region": [
+            2,
+            1,
+            24,
+            14
+          ]
+        }
+      },
+      {
+        "title": "Draw the diamond first.",
+        "text": "The edges climb in runs of 2 pixels, never smoother. That stair is what lets tiles lock together. One flat color is enough to check it.",
+        "show": {
+          "stage": 1,
+          "region": [
+            2,
+            1,
+            24,
+            14
+          ]
+        }
+      },
+      {
+        "title": "Keep texture off the border.",
+        "text": "The tufts stay a pixel or two inside the edge, so the seam between two tiles has nothing to line up.",
+        "show": {
+          "stage": 4,
+          "region": [
+            2,
+            1,
+            24,
+            14
+          ]
+        }
+      },
+      {
+        "title": "Now repeat it.",
+        "text": "The preview lays this tile out 3 x 3. Look for a line or a shape that gives the tile away. The outline is left out there, because tiles in a floor touch.",
+        "show": {
+          "seam": [
+            0,
+            0
+          ],
+          "stage": 0,
+          "region": [
+            2,
+            1,
+            24,
+            14
+          ]
+        }
+      }
+    ],
+    "path": "Next: Crate.",
+    "layers": 5,
+    "objects": 0
+  },
+  {
+    "id": "path-water",
+    "title": "Stone path and water",
+    "category": "scenery",
+    "size": "tiny",
+    "order": 4,
+    "lesson": "Two tiles that join, and ramp offsets for texture.",
+    "summary": "Two tiles that join, and ramp offsets for texture.",
+    "skills": [
+      "seamless",
+      "ramp offsets",
+      "2:1 lines"
+    ],
+    "stages": [
+      "1 Block-in",
+      "2 Base colors",
+      "3 Shading",
+      "4 Details",
+      "5 Outline"
+    ],
+    "author": "claude",
+    "box": [
+      2,
+      1,
+      24,
+      14
+    ],
+    "file": "path-water.qtiles.json",
+    "tips": [
+      {
+        "title": "Look at the two tiles.",
+        "text": "Stone on the left, water on the right, sharing one edge. Each repeats by itself, and the edge between them is a straight 2:1 stair, so either can sit beside the other.",
+        "show": {
+          "stage": 0,
+          "region": [
+            2,
+            1,
+            24,
+            14
+          ]
+        }
+      },
+      {
+        "title": "One color, then offsets.",
+        "text": "The cobbles are one mid step with gaps one or two steps darker, and a corner a step lighter. Texture comes from moving along the ramp, not from new colors.",
+        "show": {
+          "stage": 3,
+          "region": [
+            2,
+            1,
+            24,
+            14
+          ]
+        }
+      },
+      {
+        "title": "Water is mostly one color.",
+        "text": "A few short dashes a step lighter and darker run along the grid. They imply ripples, and leaving most of the tile flat keeps it calm.",
+        "show": {
+          "stage": 4,
+          "region": [
+            2,
+            1,
+            24,
+            14
+          ]
+        }
+      },
+      {
+        "title": "Now repeat the stone.",
+        "text": "Three by three, the cobbles carry on across the seams, as the pattern repeats exactly once per tile.",
+        "show": {
+          "seam": [
+            0,
+            0
+          ],
+          "stage": 0,
+          "region": [
+            2,
+            1,
+            24,
+            14
+          ]
+        }
+      }
+    ],
+    "path": "Next: Bush.",
+    "layers": 5,
+    "objects": 0
+  },
+  {
+    "id": "mailbox-bench",
+    "title": "Mailbox and bench",
+    "category": "scenery",
+    "size": "small",
+    "order": 10,
+    "lesson": "Small props, and sel-out outlines.",
+    "summary": "Small props, and sel-out outlines.",
+    "skills": [
+      "props",
+      "sel-out",
+      "2:1 lines"
+    ],
+    "stages": [
+      "1 Block-in",
+      "2 Base colors",
+      "3 Shading",
+      "4 Details",
+      "5 Outline"
+    ],
+    "author": "claude",
+    "box": [
+      1,
+      1,
+      56,
+      31
+    ],
+    "file": "mailbox-bench.qtiles.json",
+    "tips": [
+      {
+        "title": "Look at the two props.",
+        "text": "A bench and a mailbox, each just a handful of parts. Small things read through a clear silhouette, not through detail.",
+        "show": {
+          "stage": 0,
+          "region": [
+            1,
+            1,
+            56,
+            31
+          ]
+        }
+      },
+      {
+        "title": "Parts first.",
+        "text": "Planks, legs, box and post get one color each. If two parts merge here, the outline will not separate them later.",
+        "show": {
+          "stage": 2,
+          "region": [
+            1,
+            1,
+            56,
+            31
+          ]
+        }
+      },
+      {
+        "title": "One red flag.",
+        "text": "One small accent does a lot: the flag says mailbox more than the box does. Keep accents few, and in a color the piece does not otherwise use.",
+        "show": {
+          "stage": 4,
+          "region": [
+            1,
+            1,
+            56,
+            31
+          ]
+        }
+      },
+      {
+        "title": "Sel-out keeps it soft.",
+        "text": "Each outline pixel is one step darker than the art beside it, so the wood gets a brown line and the box a blue one. A black line would look stuck on.",
+        "show": {
+          "stage": 5,
+          "region": [
+            1,
+            1,
+            56,
+            31
+          ]
+        }
+      },
+      {
+        "title": "Try it.",
+        "text": "Pick the bench planks with the Color picker and step one with Lighten / Darken to see a plank stand out.",
+        "show": {
+          "tool": "shade",
+          "stage": 0,
+          "region": [
+            1,
+            1,
+            56,
+            31
+          ]
+        }
+      }
+    ],
+    "layers": 5,
+    "objects": 0
+  },
+  {
+    "id": "pine",
+    "title": "Pine",
+    "category": "scenery",
+    "size": "small",
+    "order": 7,
+    "lesson": "Stacked flattened cones, each hem an ellipse.",
+    "summary": "Stacked flattened cones, each hem an ellipse.",
+    "skills": [
+      "stacked forms",
+      "2:1 ellipses",
+      "banded shading"
+    ],
+    "stages": [
+      "1 Block-in",
+      "2 Base colors",
+      "3 Shading",
+      "4 Details",
+      "5 Outline"
+    ],
+    "author": "claude",
+    "box": [
+      1,
+      2,
+      32,
+      52
+    ],
+    "file": "pine.qtiles.json",
+    "tips": [
+      {
+        "title": "Look at the pine.",
+        "text": "Four cones stacked, each smaller than the one below. The bottom of every cone is a piece of a 2:1 ellipse, so the tree stands on the same grid as a tile.",
+        "show": {
+          "stage": 0,
+          "region": [
+            1,
+            2,
+            32,
+            52
+          ]
+        }
+      },
+      {
+        "title": "One silhouette.",
+        "text": "Lay out the four tiers as a jagged arrow. Getting the steps even matters more than any detail.",
+        "show": {
+          "stage": 1,
+          "region": [
+            1,
+            2,
+            32,
+            52
+          ]
+        }
+      },
+      {
+        "title": "Bands, like the barrel.",
+        "text": "A cone is round, so each tier gets vertical bands: lit on the left, dark on the right. The same idea as the barrel, on a slant.",
+        "show": {
+          "stage": 3,
+          "region": [
+            1,
+            2,
+            32,
+            52
+          ]
+        }
+      },
+      {
+        "title": "Pick out the hems.",
+        "text": "Light pixels along the left of each hem separate one tier from the next, and scallops stop the edge looking cut with a ruler.",
+        "show": {
+          "stage": 4,
+          "region": [
+            1,
+            2,
+            32,
+            52
+          ]
+        }
+      }
+    ],
+    "layers": 6,
+    "objects": 0
+  },
+  {
+    "id": "rock",
+    "title": "Rock",
+    "category": "scenery",
+    "size": "tiny",
+    "order": 8,
+    "lesson": "Value planes on an irregular form.",
+    "summary": "Value planes on an irregular form.",
+    "skills": [
+      "value planes",
+      "ramp shading",
+      "silhouette"
+    ],
+    "stages": [
+      "1 Block-in",
+      "2 Base colors",
+      "3 Shading",
+      "4 Details",
+      "5 Outline"
+    ],
+    "author": "claude",
+    "box": [
+      1,
+      1,
+      24,
+      17
+    ],
+    "file": "rock.qtiles.json",
+    "tips": [
+      {
+        "title": "Look at the rock.",
+        "text": "No face of it lines up with the grid, but it is still a top, a lit side and a shaded side.",
+        "show": {
+          "stage": 0,
+          "region": [
+            1,
+            1,
+            24,
+            17
+          ]
+        }
+      },
+      {
+        "title": "Think in flat planes.",
+        "text": "Four values, each a flat shape with straight edges. Curves make a rock look soft; corners make it hard.",
+        "show": {
+          "stage": 3,
+          "region": [
+            1,
+            1,
+            24,
+            17
+          ]
+        }
+      },
+      {
+        "title": "Try it.",
+        "text": "Cracks go where two planes meet. Add a dark line along one edge with the Pencil and the rock gets harder.",
+        "show": {
+          "tool": "pencil",
+          "stage": 0,
+          "region": [
+            1,
+            1,
+            24,
+            17
+          ]
+        }
+      }
+    ],
+    "layers": 5,
+    "objects": 0
+  },
+  {
+    "id": "street-lamp",
+    "title": "Street lamp",
+    "category": "scenery",
+    "size": "small",
+    "order": 9,
+    "lesson": "Thin vertical forms, and a glow made with dither.",
+    "summary": "Thin vertical forms, and a glow made with dither.",
+    "skills": [
+      "thin forms",
+      "dither",
+      "glow"
+    ],
+    "stages": [
+      "1 Block-in",
+      "2 Base colors",
+      "3 Shading",
+      "4 Details",
+      "5 Outline"
+    ],
+    "author": "claude",
+    "box": [
+      2,
+      2,
+      21,
+      50
+    ],
+    "file": "street-lamp.qtiles.json",
+    "tips": [
+      {
+        "title": "Look at the lamp.",
+        "text": "A post two pixels wide is hard to shade, so it gets one light column and one dark one. That is all a thin form needs.",
+        "show": {
+          "stage": 0,
+          "region": [
+            2,
+            2,
+            21,
+            50
+          ]
+        }
+      },
+      {
+        "title": "Parts, one color each.",
+        "text": "Base, post, collar, lantern, cap. At this stage it should already read as a street lamp, with nothing but its silhouette.",
+        "show": {
+          "stage": 2,
+          "region": [
+            2,
+            2,
+            21,
+            50
+          ]
+        }
+      },
+      {
+        "title": "Glow is a pattern, not a blend.",
+        "text": "Pixels here are opaque, so light cannot fade. A checker near the lantern, then sparser dots, and the eye mixes them with the dusk behind.",
+        "show": {
+          "stage": 4,
+          "region": [
+            2,
+            2,
+            21,
+            50
+          ]
+        }
+      },
+      {
+        "title": "Try it.",
+        "text": "Put a dark layer behind the lamp and the glow comes up. Dither is the tool that made it.",
+        "show": {
+          "tool": "dither",
+          "stage": 0,
+          "region": [
+            2,
+            2,
+            21,
+            50
+          ]
+        }
+      }
+    ],
+    "layers": 5,
+    "objects": 0
+  },
+  {
+    "id": "tree",
+    "title": "Tree",
+    "category": "scenery",
+    "size": "small",
+    "order": 6,
+    "lesson": "A tapered trunk, foliage ovals and a ground shadow.",
+    "summary": "A tapered trunk, foliage ovals and a ground shadow.",
+    "skills": [
+      "clusters",
+      "taper",
+      "cast shadow"
+    ],
+    "stages": [
+      "1 Block-in",
+      "2 Base colors",
+      "3 Shading",
+      "4 Details",
+      "5 Outline"
+    ],
+    "author": "claude",
+    "box": [
+      2,
+      3,
+      39,
+      49
+    ],
+    "file": "tree.qtiles.json",
+    "tips": [
+      {
+        "title": "Look at the tree.",
+        "text": "A trunk, a crown of ovals, and a shadow on the ground. It stands on a tile: the base of the trunk is on the center of a cell.",
+        "show": {
+          "stage": 0,
+          "region": [
+            2,
+            3,
+            39,
+            49
+          ]
+        }
+      },
+      {
+        "title": "Big shapes first.",
+        "text": "The whole silhouette in one color. A tree reads from its outline: wide crown, narrow trunk, a bit of flare at the ground.",
+        "show": {
+          "stage": 1,
+          "region": [
+            2,
+            3,
+            39,
+            49
+          ]
+        }
+      },
+      {
+        "title": "Each oval has its own light.",
+        "text": "Top left of every cluster is light, and the bottom right falls into the next one. The lowest row is the darkest, as the crown shades itself.",
+        "show": {
+          "stage": 3,
+          "region": [
+            2,
+            3,
+            39,
+            49
+          ]
+        }
+      },
+      {
+        "title": "Bark comes last.",
+        "text": "The trunk is three vertical bands, wider at the base. A few dark marks are enough.",
+        "show": {
+          "stage": 4,
+          "region": [
+            2,
+            3,
+            39,
+            49
+          ]
+        }
+      },
+      {
+        "title": "The shadow is its own layer.",
+        "text": "It falls away from the light and stays at 35 percent, so it can change without touching the tree. It came from Cast shadow.",
+        "show": {
+          "stage": 0,
+          "region": [
+            2,
+            3,
+            39,
+            49
+          ]
+        }
+      }
+    ],
+    "layers": 6,
+    "objects": 0
+  },
+  {
+    "id": "campfire",
+    "title": "Campfire",
+    "category": "scenery",
+    "size": "tiny",
+    "order": 11,
+    "lesson": "A warm ramp, and a lit area on the ground.",
+    "summary": "A warm ramp, and a lit area on the ground.",
+    "skills": [
+      "warm ramp",
+      "dither",
+      "2:1 ellipses"
+    ],
+    "stages": [
+      "1 Block-in",
+      "2 Base colors",
+      "3 Shading",
+      "4 Details",
+      "5 Outline"
+    ],
+    "author": "claude",
+    "box": [
+      4,
+      3,
+      25,
+      24
+    ],
+    "file": "campfire.qtiles.json",
+    "tips": [
+      {
+        "title": "Look at the fire.",
+        "text": "The stones sit in a 2:1 ellipse and the logs run along the grid. Only the flame ignores the grid, because it is the one thing here that moves.",
+        "show": {
+          "stage": 0,
+          "region": [
+            4,
+            3,
+            25,
+            24
+          ]
+        }
+      },
+      {
+        "title": "A flame is one ramp.",
+        "text": "Red-orange outside, yellow inside, almost white at the heart. Each tongue is the same shape, a step lighter and a size smaller.",
+        "show": {
+          "stage": 3,
+          "region": [
+            4,
+            3,
+            25,
+            24
+          ]
+        }
+      },
+      {
+        "title": "Try it.",
+        "text": "The light on the ground is a checker, then sparser dots, with nothing blended. Dither a wider ring and the fire looks brighter.",
+        "show": {
+          "tool": "dither",
+          "stage": 0,
+          "region": [
+            4,
+            3,
+            25,
+            24
+          ]
+        }
+      }
+    ],
+    "layers": 5,
+    "objects": 0
+  },
+  {
+    "id": "cat",
+    "title": "Cat (sitting)",
+    "category": "animals",
+    "size": "small",
+    "order": 17,
+    "lesson": "Ears, a tail, and the same body plan as the dog.",
+    "summary": "Ears, a tail, and the same body plan as the dog.",
+    "skills": [
+      "silhouette",
+      "fur ramp",
+      "mirroring"
+    ],
+    "stages": [
+      "1 Block-in",
+      "2 Base colors",
+      "3 Shading",
+      "4 Details",
+      "5 Outline"
+    ],
+    "author": "claude",
+    "box": [
+      3,
+      1,
+      48,
+      21
+    ],
+    "file": "cat.qtiles.json",
+    "tips": [
+      {
+        "title": "Compare it with the dog.",
+        "text": "Same plan: head up, chest, haunch, tail. Pointed ears, a short face and an upright tail do the rest.",
+        "show": {
+          "stage": 0,
+          "region": [
+            3,
+            1,
+            48,
+            21
+          ]
+        }
+      },
+      {
+        "title": "Change the ends.",
+        "text": "Most of an animal is one body. Swap the head and tail and a dog turns into a cat, so start from those.",
+        "show": {
+          "stage": 1,
+          "region": [
+            3,
+            1,
+            48,
+            21
+          ]
+        }
+      },
+      {
+        "title": "Same ramp plan.",
+        "text": "Light on the head and chest, dark on the low back, like the dog on a redder ramp. Pale eyes stand out against it, so they are the one detail it needs.",
+        "show": {
+          "stage": 3,
+          "region": [
+            3,
+            1,
+            48,
+            21
+          ]
+        }
+      },
+      {
+        "title": "The other facing.",
+        "text": "The tail is what a mirror shows up: it swaps sides with the head, so the whole cat looks the other way. Nothing needed redrawing.",
+        "show": {
+          "stage": 0,
+          "region": [
+            3,
+            1,
+            48,
+            21
+          ]
+        }
+      }
+    ],
+    "layers": 9,
+    "objects": 0
+  },
+  {
+    "id": "child",
+    "title": "Child",
+    "category": "characters",
+    "size": "small",
+    "order": 14,
+    "lesson": "Proportions at 3 heads tall.",
+    "summary": "Proportions at 3 heads tall.",
+    "skills": [
+      "proportions",
+      "feet on tile",
+      "mirroring"
+    ],
+    "stages": [
+      "1 Block-in",
+      "2 Base colors",
+      "3 Shading",
+      "4 Details",
+      "5 Outline"
+    ],
+    "author": "claude",
+    "box": [
+      2,
+      1,
+      46,
+      25
+    ],
+    "file": "child.qtiles.json",
+    "tips": [
+      {
+        "title": "Compare the head.",
+        "text": "Seven rows of head on twenty-one rows of child: three heads tall. The Walker has a head nearly this big on a much longer body. Proportions say child, not size.",
+        "show": {
+          "stage": 0,
+          "region": [
+            2,
+            1,
+            46,
+            25
+          ]
+        }
+      },
+      {
+        "title": "Measure in heads.",
+        "text": "Block the head, then stack two more of the same height, one for the body and one for the legs. Big head, no neck.",
+        "show": {
+          "stage": 1,
+          "region": [
+            2,
+            1,
+            46,
+            25
+          ]
+        }
+      },
+      {
+        "title": "Few details.",
+        "text": "Two eyes low on the face and one pixel of blush. Moving the eyes down makes a face younger.",
+        "show": {
+          "stage": 4,
+          "region": [
+            2,
+            1,
+            46,
+            25
+          ]
+        }
+      },
+      {
+        "title": "Try it.",
+        "text": "Scale nothing. Erase two rows of leg and see how much younger it gets.",
+        "show": {
+          "tool": "eraser",
+          "stage": 0,
+          "region": [
+            2,
+            1,
+            46,
+            25
+          ]
+        }
+      }
+    ],
+    "layers": 9,
+    "objects": 0
+  },
+  {
+    "id": "courier",
+    "title": "Courier with a parcel",
+    "category": "characters",
+    "size": "small",
+    "order": 13,
+    "lesson": "Carried objects, and what goes wrong in a mirror.",
+    "summary": "Carried objects, and what goes wrong in a mirror.",
+    "skills": [
+      "carried objects",
+      "mirroring",
+      "clothing ramps"
+    ],
+    "stages": [
+      "1 Block-in",
+      "2 Base colors",
+      "3 Shading",
+      "4 Details",
+      "5 Outline"
+    ],
+    "author": "claude",
+    "box": [
+      2,
+      1,
+      54,
+      36
+    ],
+    "file": "courier.qtiles.json",
+    "tips": [
+      {
+        "title": "Look at the courier.",
+        "text": "The parcel hides the middle of the figure, so it is drawn as part of the same pose: arms under it, weight leaning back a little.",
+        "show": {
+          "stage": 0,
+          "region": [
+            2,
+            1,
+            54,
+            36
+          ]
+        }
+      },
+      {
+        "title": "Pose with the load.",
+        "text": "Merge the figure and the parcel into one shape. If the two look stuck together rather than carried, move the arms, not the box.",
+        "show": {
+          "stage": 1,
+          "region": [
+            2,
+            1,
+            54,
+            36
+          ]
+        }
+      },
+      {
+        "title": "A box still has three faces.",
+        "text": "The parcel is the crate again, small: light top, mid left, dark right, and a label to say which way up it goes.",
+        "show": {
+          "stage": 4,
+          "region": [
+            2,
+            1,
+            54,
+            36
+          ]
+        }
+      },
+      {
+        "title": "Mirrors flip everything.",
+        "text": "The label and the cap peak swap sides, and the light does too. A flip is fine for most things, but look at text and at anything held in one hand.",
+        "show": {
+          "stage": 0,
+          "region": [
+            2,
+            1,
+            54,
+            36
+          ]
+        }
+      }
+    ],
+    "layers": 9,
+    "objects": 0
+  },
+  {
+    "id": "dog",
+    "title": "Dog (sitting)",
+    "category": "animals",
+    "size": "small",
+    "order": 16,
+    "lesson": "Animal silhouette, a fur ramp, facing and mirror.",
+    "summary": "Animal silhouette, a fur ramp, facing and mirror.",
+    "skills": [
+      "silhouette",
+      "fur ramp",
+      "mirroring"
+    ],
+    "stages": [
+      "1 Block-in",
+      "2 Base colors",
+      "3 Shading",
+      "4 Details",
+      "5 Outline"
+    ],
+    "author": "claude",
+    "box": [
+      1,
+      1,
+      52,
+      23
+    ],
+    "file": "dog.qtiles.json",
+    "tips": [
+      {
+        "title": "Look at the dog.",
+        "text": "Sitting is the easiest pose to read: head up, chest forward, haunch low, tail on the ground.",
+        "show": {
+          "stage": 0,
+          "region": [
+            1,
+            1,
+            52,
+            23
+          ]
+        }
+      },
+      {
+        "title": "A silhouette, not an outline.",
+        "text": "Snout, back, tail. You should know it is a dog from this one flat shape.",
+        "show": {
+          "stage": 1,
+          "region": [
+            1,
+            1,
+            52,
+            23
+          ]
+        }
+      },
+      {
+        "title": "The ear goes on last.",
+        "text": "A floppy ear two steps darker sits inside the silhouette, so it has to wait for the details. That one patch says dog more than anything else.",
+        "show": {
+          "stage": 4,
+          "region": [
+            1,
+            1,
+            52,
+            23
+          ]
+        }
+      },
+      {
+        "title": "Fur is a ramp.",
+        "text": "The light chest and muzzle are one step on the same ramp as the darker back. No new color, just a shift along it.",
+        "show": {
+          "stage": 3,
+          "region": [
+            1,
+            1,
+            52,
+            23
+          ]
+        }
+      },
+      {
+        "title": "The other facing.",
+        "text": "Animals face a way, so a flip gives you the second one for nothing. Most animals are close enough to symmetric that nobody notices.",
+        "show": {
+          "stage": 0,
+          "region": [
+            1,
+            1,
+            52,
+            23
+          ]
+        }
+      }
+    ],
+    "layers": 9,
+    "objects": 0
+  },
+  {
+    "id": "duck",
+    "title": "Duck",
+    "category": "animals",
+    "size": "tiny",
+    "order": 18,
+    "lesson": "Rounded forms in a few pixels.",
+    "summary": "Rounded forms in a few pixels.",
+    "skills": [
+      "small forms",
+      "silhouette",
+      "mirroring"
+    ],
+    "stages": [
+      "1 Block-in",
+      "2 Base colors",
+      "3 Shading",
+      "4 Details",
+      "5 Outline"
+    ],
+    "author": "claude",
+    "box": [
+      2,
+      1,
+      28,
+      16
+    ],
+    "file": "duck.qtiles.json",
+    "tips": [
+      {
+        "title": "Look at the duck.",
+        "text": "A curve for the back, a curve for the neck, a dot for an eye. At this size one misplaced pixel changes the animal.",
+        "show": {
+          "stage": 0,
+          "region": [
+            2,
+            1,
+            28,
+            16
+          ]
+        }
+      },
+      {
+        "title": "Two ovals.",
+        "text": "A low wide one and a small high one, joined by a neck. Any bird starts like this.",
+        "show": {
+          "stage": 1,
+          "region": [
+            2,
+            1,
+            28,
+            16
+          ]
+        }
+      },
+      {
+        "title": "Try it.",
+        "text": "The bill and feet are the only warm pixels. Move the eye one pixel with the Pencil and see how much the duck changes.",
+        "show": {
+          "tool": "pencil",
+          "stage": 0,
+          "region": [
+            2,
+            1,
+            28,
+            16
+          ]
+        }
+      }
+    ],
+    "layers": 7,
+    "objects": 0
+  },
+  {
+    "id": "gardener",
+    "title": "Gardener",
+    "category": "characters",
+    "size": "small",
+    "order": 15,
+    "lesson": "Clothing ramps, and hat and tool silhouettes.",
+    "summary": "Clothing ramps, and hat and tool silhouettes.",
+    "skills": [
+      "clothing ramps",
+      "silhouette",
+      "tools"
+    ],
+    "stages": [
+      "1 Block-in",
+      "2 Base colors",
+      "3 Shading",
+      "4 Details",
+      "5 Outline"
+    ],
+    "author": "claude",
+    "box": [
+      1,
+      1,
+      54,
+      33
+    ],
+    "file": "gardener.qtiles.json",
+    "tips": [
+      {
+        "title": "Look at the gardener.",
+        "text": "A wide hat and a long-handled spade say gardener before any detail does. Cover them with a thumb and it could be anyone.",
+        "show": {
+          "stage": 0,
+          "region": [
+            1,
+            1,
+            54,
+            33
+          ]
+        }
+      },
+      {
+        "title": "Silhouette first.",
+        "text": "Hat brim wider than the shoulders, tool taller than the head. Props that stick out of the shape read best.",
+        "show": {
+          "stage": 1,
+          "region": [
+            1,
+            1,
+            54,
+            33
+          ]
+        }
+      },
+      {
+        "title": "Each garment a ramp.",
+        "text": "Straw, shirt, overalls and skin each step along their own ramp, so clothes look like separate things and not one painted shape.",
+        "show": {
+          "stage": 3,
+          "region": [
+            1,
+            1,
+            54,
+            33
+          ]
+        }
+      },
+      {
+        "title": "Shade under the brim.",
+        "text": "One dark row across the top of the face puts the hat on the head. Without it the hat floats.",
+        "show": {
+          "stage": 4,
+          "region": [
+            1,
+            1,
+            54,
+            33
+          ]
+        }
+      }
+    ],
+    "layers": 9,
+    "objects": 0
+  },
+  {
+    "id": "rabbit",
+    "title": "Rabbit",
+    "category": "animals",
+    "size": "tiny",
+    "order": 19,
+    "lesson": "One ramp, and a strong silhouette.",
+    "summary": "One ramp, and a strong silhouette.",
+    "skills": [
+      "one ramp",
+      "silhouette",
+      "mirroring"
+    ],
+    "stages": [
+      "1 Block-in",
+      "2 Base colors",
+      "3 Shading",
+      "4 Details",
+      "5 Outline"
+    ],
+    "author": "claude",
+    "box": [
+      1,
+      1,
+      28,
+      18
+    ],
+    "file": "rabbit.qtiles.json",
+    "tips": [
+      {
+        "title": "Look at the rabbit.",
+        "text": "Every pixel is on one ramp. With a silhouette this clear, the long ears do all the work.",
+        "show": {
+          "stage": 0,
+          "region": [
+            1,
+            1,
+            28,
+            18
+          ]
+        }
+      },
+      {
+        "title": "Ears make it.",
+        "text": "Two tall lines on a round body, one step apart, so the sky shows between them.",
+        "show": {
+          "stage": 1,
+          "region": [
+            1,
+            1,
+            28,
+            18
+          ]
+        }
+      },
+      {
+        "title": "Try it.",
+        "text": "Erase the top of the ears and it turns into a mouse. One ramp keeps a sprite this small clean, so the shape has to do the work.",
+        "show": {
+          "tool": "eraser",
+          "stage": 0,
+          "region": [
+            1,
+            1,
+            28,
+            18
+          ]
+        }
+      }
+    ],
+    "layers": 7,
+    "objects": 0
+  },
+  {
+    "id": "walker",
+    "title": "Walker",
+    "category": "characters",
+    "size": "small",
+    "order": 12,
+    "lesson": "Feet on a tile, and two facings from one drawing.",
+    "summary": "Feet on a tile, and two facings from one drawing.",
+    "skills": [
+      "feet on tile",
+      "mirroring",
+      "ramp shading"
+    ],
+    "stages": [
+      "1 Block-in",
+      "2 Base colors",
+      "3 Shading",
+      "4 Details",
+      "5 Outline"
+    ],
+    "author": "claude",
+    "box": [
+      2,
+      1,
+      52,
+      34
+    ],
+    "file": "walker.qtiles.json",
+    "tips": [
+      {
+        "title": "Look at the two figures.",
+        "text": "The one on the right is not a second drawing. It is the left one flipped, on a linked layer.",
+        "show": {
+          "stage": 0,
+          "region": [
+            2,
+            1,
+            52,
+            34
+          ]
+        }
+      },
+      {
+        "title": "Pose in one color.",
+        "text": "A stride reads from the gap between the legs and the arm swung opposite. If the silhouette walks, the rest will.",
+        "show": {
+          "stage": 1,
+          "region": [
+            2,
+            1,
+            52,
+            34
+          ]
+        }
+      },
+      {
+        "title": "Ramps for clothes too.",
+        "text": "Jacket, trousers and skin each have a ramp, lit from the left. Three or four steps is plenty at this size.",
+        "show": {
+          "stage": 3,
+          "region": [
+            2,
+            1,
+            52,
+            34
+          ]
+        }
+      },
+      {
+        "title": "Feet on the tile.",
+        "text": "The pivot is on the center of a cell, between the feet, so the figure stands in the right place anywhere on a map. Set pivot shows it.",
+        "show": {
+          "tool": "pivot",
+          "stage": 0,
+          "region": [
+            2,
+            1,
+            52,
+            34
+          ]
+        }
+      },
+      {
+        "title": "Mirror, then update.",
+        "text": "Draw one facing only. Update mirror, in the Character section, redoes the flip after an edit. Remember that the light flips too.",
+        "show": {
+          "tool": "pivot",
+          "stage": 0,
+          "region": [
+            2,
+            1,
+            52,
+            34
+          ]
+        }
+      }
+    ],
+    "layers": 9,
+    "objects": 0
+  },
+  {
+    "id": "car",
+    "title": "Car",
+    "category": "transport",
+    "size": "small",
+    "order": 23,
+    "lesson": "A box with a cabin, glass and wheel arches.",
+    "summary": "A box with a cabin, glass and wheel arches.",
+    "skills": [
+      "boxes",
+      "glass",
+      "wheels on tile"
+    ],
+    "stages": [
+      "1 Block-in",
+      "2 Base colors",
+      "3 Shading",
+      "4 Details",
+      "5 Outline"
+    ],
+    "author": "claude",
+    "box": [
+      1,
+      1,
+      52,
+      41
+    ],
+    "file": "car.qtiles.json",
+    "tips": [
+      {
+        "title": "Look at the car.",
+        "text": "Two boxes on the grid: a long low one and a shorter one on top. The long side faces the light.",
+        "show": {
+          "stage": 0,
+          "region": [
+            1,
+            1,
+            52,
+            41
+          ]
+        }
+      },
+      {
+        "title": "Two boxes.",
+        "text": "Block the body and the cabin first. The proportions decide whether it is a car, a van or a truck.",
+        "show": {
+          "stage": 1,
+          "region": [
+            1,
+            1,
+            52,
+            41
+          ]
+        }
+      },
+      {
+        "title": "Glass is a value, not a color.",
+        "text": "The windows are a light cool ramp on the lit side and darker in front, with a slanted streak. They follow the same light as the paint.",
+        "show": {
+          "stage": 3,
+          "region": [
+            1,
+            1,
+            52,
+            41
+          ]
+        }
+      },
+      {
+        "title": "Wheels sit in arches.",
+        "text": "A dark ring first and the wheel inside it, both skewed to lie on the side of the car. The wheels touch the tile, so the car stands on the grid.",
+        "show": {
+          "stage": 4,
+          "region": [
+            1,
+            1,
+            52,
+            41
+          ]
+        }
+      }
+    ],
+    "layers": 5,
+    "objects": 0
+  },
+  {
+    "id": "cow",
+    "title": "Cow",
+    "category": "animals",
+    "size": "small",
+    "order": 20,
+    "lesson": "Two-tone patches that follow the form.",
+    "summary": "Two-tone patches that follow the form.",
+    "skills": [
+      "patches",
+      "form",
+      "mirroring"
+    ],
+    "stages": [
+      "1 Block-in",
+      "2 Base colors",
+      "3 Shading",
+      "4 Details",
+      "5 Outline"
+    ],
+    "author": "claude",
+    "box": [
+      1,
+      1,
+      60,
+      25
+    ],
+    "file": "cow.qtiles.json",
+    "tips": [
+      {
+        "title": "Look at the cow.",
+        "text": "A long body on four legs, turned along the grid, with a big square head. It faces the same way a car would.",
+        "show": {
+          "stage": 0,
+          "region": [
+            1,
+            1,
+            60,
+            25
+          ]
+        }
+      },
+      {
+        "title": "A box with a head.",
+        "text": "The body is a box on the grid, so it sits on tiles like a crate. Four short legs and a tail make it an animal.",
+        "show": {
+          "stage": 1,
+          "region": [
+            1,
+            1,
+            60,
+            25
+          ]
+        }
+      },
+      {
+        "title": "Patches wrap around.",
+        "text": "A dark patch runs over the back and on down the side, changing shape at the corner. Spots that ignore the corner look printed on.",
+        "show": {
+          "stage": 3,
+          "region": [
+            1,
+            1,
+            60,
+            25
+          ]
+        }
+      },
+      {
+        "title": "The nose says cow.",
+        "text": "The pink muzzle, a step or two along its own ramp, is the part nobody could mistake.",
+        "show": {
+          "stage": 4,
+          "region": [
+            1,
+            1,
+            60,
+            25
+          ]
+        }
+      }
+    ],
+    "layers": 7,
+    "objects": 0
+  },
+  {
+    "id": "van",
+    "title": "Van",
+    "category": "transport",
+    "size": "small",
+    "order": 24,
+    "lesson": "Reusing the car's plan with different proportions.",
+    "summary": "Reusing the car's plan with different proportions.",
+    "skills": [
+      "proportions",
+      "boxes",
+      "glass"
+    ],
+    "stages": [
+      "1 Block-in",
+      "2 Base colors",
+      "3 Shading",
+      "4 Details",
+      "5 Outline"
+    ],
+    "author": "claude",
+    "box": [
+      1,
+      1,
+      48,
+      43
+    ],
+    "file": "van.qtiles.json",
+    "tips": [
+      {
+        "title": "Compare it with the car.",
+        "text": "The same wheels, glass and lamps, but one tall box instead of two. Change the proportions and the plan still holds.",
+        "show": {
+          "stage": 0,
+          "region": [
+            1,
+            1,
+            48,
+            43
+          ]
+        }
+      },
+      {
+        "title": "One tall box.",
+        "text": "A van is a little shorter than you expect and much higher than the car. Nothing else about the block-in is new.",
+        "show": {
+          "stage": 1,
+          "region": [
+            1,
+            1,
+            48,
+            43
+          ]
+        }
+      },
+      {
+        "title": "White is not white.",
+        "text": "The lightest step is the top only. The lit side is a step down and the shaded side two, or the form disappears.",
+        "show": {
+          "stage": 3,
+          "region": [
+            1,
+            1,
+            48,
+            43
+          ]
+        }
+      },
+      {
+        "title": "A stripe wraps the corner.",
+        "text": "It runs down the side at one height and carries on across the front, a step darker there, which ties the two faces together.",
+        "show": {
+          "stage": 4,
+          "region": [
+            1,
+            1,
+            48,
+            43
+          ]
+        }
+      }
+    ],
+    "layers": 5,
+    "objects": 0
+  },
+  {
+    "id": "bicycle",
+    "title": "Bicycle",
+    "category": "transport",
+    "size": "small",
+    "order": 21,
+    "lesson": "Thin shapes, and wheels as 2:1 ellipses.",
+    "summary": "Thin shapes, and wheels as 2:1 ellipses.",
+    "skills": [
+      "thin forms",
+      "2:1 ellipses",
+      "sel-out"
+    ],
+    "stages": [
+      "1 Block-in",
+      "2 Base colors",
+      "3 Shading",
+      "4 Details",
+      "5 Outline"
+    ],
+    "author": "claude",
+    "box": [
+      1,
+      1,
+      46,
+      44
+    ],
+    "file": "bicycle.qtiles.json",
+    "tips": [
+      {
+        "title": "Look at the bicycle.",
+        "text": "Almost nothing but lines. Both wheels lie on the side of an invisible box that runs along the grid, so they lean the same way as a wall.",
+        "show": {
+          "stage": 0,
+          "region": [
+            1,
+            1,
+            46,
+            44
+          ]
+        }
+      },
+      {
+        "title": "Wheels first.",
+        "text": "Two skewed rings give the size and the direction. The frame goes between them, and its triangle is what says bicycle.",
+        "show": {
+          "stage": 1,
+          "region": [
+            1,
+            1,
+            46,
+            44
+          ]
+        }
+      },
+      {
+        "title": "Only the tires are outlined.",
+        "text": "An outline on a 1 pixel tube fills the gaps, so the frame goes on after the outline and stands alone.",
+        "show": {
+          "stage": 3,
+          "region": [
+            1,
+            1,
+            46,
+            44
+          ]
+        }
+      },
+      {
+        "title": "Spokes are a hint.",
+        "text": "A cross of dim pixels is enough. A full set would fill the wheel in and lose the silhouette.",
+        "show": {
+          "stage": 4,
+          "region": [
+            1,
+            1,
+            46,
+            44
+          ]
+        }
+      }
+    ],
+    "layers": 5,
+    "objects": 0
+  },
+  {
+    "id": "motorcycle",
+    "title": "Motorcycle",
+    "category": "transport",
+    "size": "small",
+    "order": 22,
+    "lesson": "Mass and detail, wheels and a tank.",
+    "summary": "Mass and detail, wheels and a tank.",
+    "skills": [
+      "mass",
+      "ramp shading",
+      "2:1 ellipses"
+    ],
+    "stages": [
+      "1 Block-in",
+      "2 Base colors",
+      "3 Shading",
+      "4 Details",
+      "5 Outline"
+    ],
+    "author": "claude",
+    "box": [
+      1,
+      1,
+      42,
+      39
+    ],
+    "file": "motorcycle.qtiles.json",
+    "tips": [
+      {
+        "title": "Look at the motorcycle.",
+        "text": "The same two wheels as the bicycle, with something heavy between them. Where the bicycle was air, this is solid.",
+        "show": {
+          "stage": 0,
+          "region": [
+            1,
+            1,
+            42,
+            39
+          ]
+        }
+      },
+      {
+        "title": "Mass between the wheels.",
+        "text": "The block-in fills the frame. Tank, seat and engine are one lump that leans slightly forward.",
+        "show": {
+          "stage": 1,
+          "region": [
+            1,
+            1,
+            42,
+            39
+          ]
+        }
+      },
+      {
+        "title": "The tank catches the light.",
+        "text": "It is the only smooth rounded part, so it gets the widest ramp and a highlight along the top.",
+        "show": {
+          "stage": 3,
+          "region": [
+            1,
+            1,
+            42,
+            39
+          ]
+        }
+      },
+      {
+        "title": "Dark details on dark.",
+        "text": "The engine is two steps of gray with a row of fins. Near black needs only a little contrast to read.",
+        "show": {
+          "stage": 4,
+          "region": [
+            1,
+            1,
+            42,
+            39
+          ]
+        }
+      }
+    ],
+    "layers": 5,
+    "objects": 0
+  },
+  {
+    "id": "sailboat",
+    "title": "Sailboat",
+    "category": "transport",
+    "size": "small",
+    "order": 25,
+    "lesson": "Long forms on water, and a hull on the iso axis.",
+    "summary": "Long forms on water, and a hull on the iso axis.",
+    "skills": [
+      "hull on the axis",
+      "sails",
+      "water"
+    ],
+    "stages": [
+      "1 Block-in",
+      "2 Base colors",
+      "3 Shading",
+      "4 Details",
+      "5 Outline"
+    ],
+    "author": "claude",
+    "box": [
+      1,
+      1,
+      53,
+      59
+    ],
+    "file": "sailboat.qtiles.json",
+    "tips": [
+      {
+        "title": "Look at the boat.",
+        "text": "A hull runs along the grid like a wall, but it comes to a point. Sails stand in the same plane as the hull, so they lean with it.",
+        "show": {
+          "stage": 0,
+          "region": [
+            1,
+            1,
+            53,
+            59
+          ]
+        }
+      },
+      {
+        "title": "Hull, mast, two triangles.",
+        "text": "A boat is a very short list of shapes. Most of the work is in where they meet.",
+        "show": {
+          "stage": 1,
+          "region": [
+            1,
+            1,
+            53,
+            59
+          ]
+        }
+      },
+      {
+        "title": "Sails are lit too.",
+        "text": "White cloth still has steps: lightest at the top where it faces the sky, a step down toward the boom.",
+        "show": {
+          "stage": 3,
+          "region": [
+            1,
+            1,
+            53,
+            59
+          ]
+        }
+      },
+      {
+        "title": "Water marks.",
+        "text": "A few dashes on the tile say water. Too many and the boat stops being the subject.",
+        "show": {
+          "stage": 4,
+          "region": [
+            1,
+            1,
+            53,
+            59
+          ]
+        }
+      }
+    ],
+    "layers": 5,
+    "objects": 0
+  },
+  {
+    "id": "small-plane",
+    "title": "Small plane",
+    "category": "transport",
+    "size": "small",
+    "order": 26,
+    "lesson": "An object turned to the iso axis, with wings as thin slabs.",
+    "summary": "An object turned to the iso axis, with wings as thin slabs.",
+    "skills": [
+      "iso axis",
+      "thin slabs",
+      "tubes"
+    ],
+    "stages": [
+      "1 Block-in",
+      "2 Base colors",
+      "3 Shading",
+      "4 Details",
+      "5 Outline"
+    ],
+    "author": "claude",
+    "box": [
+      1,
+      1,
+      59,
+      48
+    ],
+    "file": "small-plane.qtiles.json",
+    "tips": [
+      {
+        "title": "Look at the plane.",
+        "text": "A tube along one grid axis and a long thin slab along the other. Turn anything to the grid first, and the rest is boxes.",
+        "show": {
+          "stage": 0,
+          "region": [
+            1,
+            1,
+            59,
+            48
+          ]
+        }
+      },
+      {
+        "title": "The cross.",
+        "text": "Body and wing make a plus laid on the ground. The tail is a small copy of it.",
+        "show": {
+          "stage": 1,
+          "region": [
+            1,
+            1,
+            59,
+            48
+          ]
+        }
+      },
+      {
+        "title": "Wings are thin slabs.",
+        "text": "A wing is a top face and a thin edge, two pixels deep. The top catches all the light. Draw the far wing first and the near one last, with the body between.",
+        "show": {
+          "stage": 3,
+          "region": [
+            1,
+            1,
+            59,
+            48
+          ]
+        }
+      },
+      {
+        "title": "One stripe, end to end.",
+        "text": "A red line along the body and red wing tips tell the eye that the far parts belong to the same plane.",
+        "show": {
+          "stage": 4,
+          "region": [
+            1,
+            1,
+            59,
+            48
+          ]
+        }
+      }
+    ],
+    "layers": 5,
+    "objects": 0
+  },
+  {
+    "id": "train-engine",
+    "title": "Train engine",
+    "category": "transport",
+    "size": "medium",
+    "order": 27,
+    "lesson": "Repeating parts along the axis.",
+    "summary": "Repeating parts along the axis.",
+    "skills": [
+      "repeating parts",
+      "2:1 ellipses",
+      "boxes"
+    ],
+    "stages": [
+      "1 Block-in",
+      "2 Base colors",
+      "3 Shading",
+      "4 Details",
+      "5 Outline"
+    ],
+    "author": "claude",
+    "box": [
+      1,
+      1,
+      80,
+      55
+    ],
+    "file": "train-engine.qtiles.json",
+    "tips": [
+      {
+        "title": "Look at the engine.",
+        "text": "Long things are mostly the same part again and again. Draw one wheel well and copy it along the axis.",
+        "show": {
+          "stage": 0,
+          "region": [
+            1,
+            1,
+            80,
+            55
+          ]
+        }
+      },
+      {
+        "title": "Three masses.",
+        "text": "Frame, boiler and cab. The boiler is a half cylinder pushed along the grid, the same trick as the mailbox.",
+        "show": {
+          "stage": 1,
+          "region": [
+            1,
+            1,
+            80,
+            55
+          ]
+        }
+      },
+      {
+        "title": "Bands along the tube.",
+        "text": "Along a cylinder the light runs in long stripes, as on the barrel but lying down. Brass rings break it into even lengths.",
+        "show": {
+          "stage": 3,
+          "region": [
+            1,
+            1,
+            80,
+            55
+          ]
+        }
+      },
+      {
+        "title": "Repeat, then break the rhythm.",
+        "text": "Three big wheels and two small ones, and one rod joining them. A pattern with an exception looks designed.",
+        "show": {
+          "stage": 4,
+          "region": [
+            1,
+            1,
+            80,
+            55
+          ]
+        }
+      }
+    ],
+    "layers": 5,
+    "objects": 0
+  },
+  {
+    "id": "street-corner",
+    "title": "Street corner",
+    "tier": "Scene",
+    "category": "scenery",
+    "size": "scene",
+    "order": 28,
+    "lesson": "Small examples placed on cell centers make a street.",
+    "summary": "Small examples placed on cell centers make a street.",
+    "skills": [
+      "composition",
+      "live shadows",
+      "feet on tile",
+      "tiles"
+    ],
+    "author": "claude",
+    "parts": [
+      "tree",
+      "mailbox-bench",
+      "cat",
+      "courier",
+      "car",
+      "van",
+      "street-lamp",
+      "dog",
+      "walker"
+    ],
+    "file": "street-corner.qtiles.json",
+    "tips": [
+      {
+        "title": "Look at the street.",
+        "text": "Every car, tree and person here is one of the small examples, standing on the center of a cell. Nothing was drawn for this scene but the ground.",
+        "show": {}
+      },
+      {
+        "title": "This car is the Car example.",
+        "text": "A scene is mostly placing. Each part is one layer, so you can move it or swap it for something you drew yourself.",
+        "show": {
+          "layer": "Car 1",
+          "solo": true,
+          "region": [
+            80,
+            104,
+            96,
+            72
+          ]
+        }
+      },
+      {
+        "title": "Shadows are live.",
+        "text": "Pixel art cannot cast a live shadow, so each part has a plain box on Shadow shapes, a layer at 0 opacity. Move a box with Select object and its shadow follows.",
+        "show": {
+          "tool": "pick",
+          "layer": "Shadow shapes"
+        }
+      },
+      {
+        "title": "Back to front.",
+        "text": "Layers go from the far corner to the near one, so what stands nearer covers what is behind it. The layer list reads like walking toward the viewer.",
+        "show": {
+          "layer": "Tree 2"
+        }
+      },
+      {
+        "title": "Roads are tiles.",
+        "text": "Road, pavement and grass came from the Tile tool, each with its own texture. The pavement has a rim on its lower edges, which is the kerb.",
+        "show": {
+          "tool": "tile",
+          "layer": "Ground"
+        }
+      }
+    ],
+    "layers": 17,
+    "objects": 18
+  },
+  {
+    "id": "harbour",
+    "title": "Harbour",
+    "tier": "Scene",
+    "category": "scenery",
+    "size": "scene",
+    "order": 29,
+    "lesson": "Water tiles, a quay and small props make a harbour.",
+    "summary": "Water tiles, a quay and small props make a harbour.",
+    "skills": [
+      "composition",
+      "live shadows",
+      "tiles",
+      "water"
+    ],
+    "author": "claude",
+    "parts": [
+      "street-lamp",
+      "crate",
+      "cat",
+      "barrel",
+      "walker",
+      "sailboat"
+    ],
+    "file": "harbour.qtiles.json",
+    "tips": [
+      {
+        "title": "Look at the harbour.",
+        "text": "Crates, barrels, the lamp and the walker are all examples from the path. Water is most of the picture and it is one tile, repeated.",
+        "show": {}
+      },
+      {
+        "title": "This boat is the Sailboat example.",
+        "text": "Its own patch of water is left out here, as the scene has water already. The hull sits on the tile just as it did alone.",
+        "show": {
+          "layer": "Sailboat",
+          "solo": true
+        }
+      },
+      {
+        "title": "A cat on a crate.",
+        "text": "The cat stands on the same cell as the crate, drawn 9 pixels higher and on a layer above it. Height is just a shift up the screen.",
+        "show": {
+          "layer": "Cat",
+          "region": [
+            116,
+            100,
+            96,
+            80
+          ]
+        }
+      },
+      {
+        "title": "A quay is a tile with a rim.",
+        "text": "The stone tile has a rim on its lower edges, 8 pixels tall, which turns a flat floor into a wall above the water.",
+        "show": {
+          "tool": "tile",
+          "layer": "Ground"
+        }
+      },
+      {
+        "title": "Gulls are five pixels.",
+        "text": "Small sprites scattered over open water give the picture scale and life, for almost no work. Try a few more.",
+        "show": {
+          "layer": "Gulls"
+        }
+      }
+    ],
+    "layers": 15,
+    "objects": 10
+  },
+  {
+    "id": "apple",
+    "title": "Apple",
+    "category": "scenery",
+    "size": "tiny",
+    "order": 2,
+    "lesson": "One ramp: base, shadow, highlight.",
+    "summary": "One ramp: base, shadow, highlight.",
+    "skills": [
+      "ramp shading",
+      "one ramp"
+    ],
+    "stages": [
+      "1 Block-in",
+      "2 Base colors",
+      "3 Shading",
+      "4 Details",
+      "5 Outline"
+    ],
+    "author": "claude",
+    "box": [
+      1,
+      0,
+      15,
+      15
+    ],
+    "file": "apple.qtiles.json",
+    "tips": [
+      {
+        "title": "Look at the apple.",
+        "text": "Almost every pixel of the fruit is one of four steps on the Brick ramp. No black and no white went in.",
+        "show": {
+          "stage": 0,
+          "region": [
+            1,
+            0,
+            15,
+            15
+          ]
+        }
+      },
+      {
+        "title": "Base, shadow, highlight.",
+        "text": "Base first. The shadow is one step down, on the side away from the light. The light side is one step up.",
+        "show": {
+          "stage": 3,
+          "region": [
+            1,
+            0,
+            15,
+            15
+          ]
+        }
+      },
+      {
+        "title": "Try it.",
+        "text": "Pick the Lighten / Darken tool and stroke along the bottom of the apple. Each pixel moves one step along its ramp, so the shading stays clean.",
+        "show": {
+          "tool": "shade",
+          "stage": 0,
+          "region": [
+            1,
+            0,
+            15,
+            15
+          ]
+        }
+      }
+    ],
+    "path": "Next: Mug.",
+    "mode": "2d",
+    "layers": 5,
+    "objects": 0
+  },
+  {
+    "id": "cat-face",
+    "title": "Cat face",
+    "category": "animals",
+    "size": "tiny",
+    "order": 6,
+    "lesson": "Readable features with few pixels.",
+    "summary": "Readable features with few pixels.",
+    "skills": [
+      "features",
+      "symmetry",
+      "silhouette"
+    ],
+    "stages": [
+      "1 Block-in",
+      "2 Base colors",
+      "3 Shading",
+      "4 Details",
+      "5 Outline"
+    ],
+    "author": "claude",
+    "box": [
+      0,
+      2,
+      32,
+      27
+    ],
+    "file": "cat-face.qtiles.json",
+    "tips": [
+      {
+        "title": "Look at the face.",
+        "text": "Two ears, two eyes and a nose. That is few pixels, and each one has a job, so nothing here is decoration.",
+        "show": {
+          "stage": 0,
+          "region": [
+            0,
+            2,
+            32,
+            27
+          ]
+        }
+      },
+      {
+        "title": "The shape says cat first.",
+        "text": "Before any feature, the wide head and two points already say cat. If this stage reads as a blob, a face will not save it.",
+        "show": {
+          "stage": 1,
+          "region": [
+            0,
+            2,
+            32,
+            27
+          ]
+        }
+      },
+      {
+        "title": "Try it.",
+        "text": "With the Pencil, move one black pupil a pixel to the side. Now the cat is looking at something. Features this small are all expression.",
+        "show": {
+          "tool": "pencil",
+          "stage": 0,
+          "region": [
+            0,
+            2,
+            32,
+            27
+          ]
+        }
+      }
+    ],
+    "mode": "2d",
+    "layers": 5,
+    "objects": 0
+  },
+  {
+    "id": "heart",
+    "title": "Heart",
+    "category": "objects",
+    "size": "tiny",
+    "order": 1,
+    "lesson": "A clean silhouette and a 1 px outline.",
+    "summary": "A clean silhouette and a 1 px outline.",
+    "skills": [
+      "silhouette",
+      "outline"
+    ],
+    "stages": [
+      "1 Block-in",
+      "2 Base colors",
+      "3 Shading",
+      "4 Details",
+      "5 Outline"
+    ],
+    "author": "claude",
+    "box": [
+      0,
+      1,
+      16,
+      13
+    ],
+    "file": "heart.qtiles.json",
+    "tips": [
+      {
+        "title": "Look at the heart.",
+        "text": "One color and one outline. It reads at any size because the shape does all the work.",
+        "show": {
+          "stage": 0,
+          "region": [
+            0,
+            1,
+            16,
+            13
+          ]
+        }
+      },
+      {
+        "title": "Start with the silhouette.",
+        "text": "Fill the shape in one color. Each edge steps one pixel at a time with no stray corners, and the two lobes match.",
+        "show": {
+          "stage": 1,
+          "region": [
+            0,
+            1,
+            16,
+            13
+          ]
+        }
+      },
+      {
+        "title": "Try the outline.",
+        "text": "With the Eraser, take one pixel out of the notch at the top. Then press Outline layer under Shadow and outline. The 1 px line follows the new shape.",
+        "show": {
+          "tool": "eraser",
+          "stage": 5,
+          "region": [
+            0,
+            1,
+            16,
+            13
+          ]
+        }
+      }
+    ],
+    "path": "Next: Apple.",
+    "mode": "2d",
+    "layers": 5,
+    "objects": 0
+  },
+  {
+    "id": "house-icon",
+    "title": "House icon",
+    "category": "objects",
+    "size": "tiny",
+    "order": 8,
+    "lesson": "Sel-out outlines and a limited palette.",
+    "summary": "Sel-out outlines and a limited palette.",
+    "skills": [
+      "sel-out",
+      "limited palette"
+    ],
+    "stages": [
+      "1 Block-in",
+      "2 Base colors",
+      "3 Shading",
+      "4 Details",
+      "5 Outline"
+    ],
+    "author": "claude",
+    "box": [
+      0,
+      3,
+      32,
+      27
+    ],
+    "file": "house-icon.qtiles.json",
+    "tips": [
+      {
+        "title": "Look at the house.",
+        "text": "A handful of colors from DB16, and no black line anywhere. Everything is on three small ramps.",
+        "show": {
+          "stage": 0,
+          "region": [
+            0,
+            3,
+            32,
+            27
+          ]
+        }
+      },
+      {
+        "title": "Sel-out.",
+        "text": "The outline is not one color. Each outline pixel is a step darker than the art beside it: orange by the walls, deep blue by the roof. The house sits softly on any background.",
+        "show": {
+          "stage": 5,
+          "region": [
+            0,
+            3,
+            32,
+            27
+          ]
+        }
+      },
+      {
+        "title": "Try it.",
+        "text": "Tap the wall, the door and the chimney with the Color picker. They are all steps on one Oranges ramp. Reusing colors is what a limited palette means.",
+        "show": {
+          "tool": "picker",
+          "stage": 0,
+          "region": [
+            0,
+            3,
+            32,
+            27
+          ]
+        }
+      }
+    ],
+    "mode": "2d",
+    "layers": 5,
+    "objects": 0
+  },
+  {
+    "id": "leaf",
+    "title": "Leaf",
+    "category": "scenery",
+    "size": "tiny",
+    "order": 4,
+    "lesson": "Hue shift: shadows cooler, lights warmer.",
+    "summary": "Hue shift: shadows cooler, lights warmer.",
+    "skills": [
+      "hue shift",
+      "ramp shading"
+    ],
+    "stages": [
+      "1 Block-in",
+      "2 Base colors",
+      "3 Shading",
+      "4 Details",
+      "5 Outline"
+    ],
+    "author": "claude",
+    "box": [
+      1,
+      0,
+      15,
+      16
+    ],
+    "file": "leaf.qtiles.json",
+    "tips": [
+      {
+        "title": "Look at the leaf.",
+        "text": "Dark green here is bluer than mid green, and light green is yellower. The color changes as well as the brightness.",
+        "show": {
+          "stage": 0,
+          "region": [
+            1,
+            0,
+            15,
+            16
+          ]
+        }
+      },
+      {
+        "title": "Follow one ramp.",
+        "text": "The Greens ramp is built that way: each step down moves toward blue and each step up toward yellow. Shading along it gives the hue shift for free.",
+        "show": {
+          "stage": 3,
+          "region": [
+            1,
+            0,
+            15,
+            16
+          ]
+        }
+      },
+      {
+        "title": "Try it.",
+        "text": "Tap a dark pixel with the Color picker, then a light one, and watch the hue slider move. Lit and shaded greens are different hues.",
+        "show": {
+          "tool": "picker",
+          "stage": 0,
+          "region": [
+            1,
+            0,
+            15,
+            16
+          ]
+        }
+      }
+    ],
+    "path": "Next: Potted plant.",
+    "mode": "2d",
+    "layers": 5,
+    "objects": 0
+  },
+  {
+    "id": "mug",
+    "title": "Mug",
+    "category": "objects",
+    "size": "tiny",
+    "order": 3,
+    "lesson": "A light direction on a simple form.",
+    "summary": "A light direction on a simple form.",
+    "skills": [
+      "light direction",
+      "form"
+    ],
+    "stages": [
+      "1 Block-in",
+      "2 Base colors",
+      "3 Shading",
+      "4 Details",
+      "5 Outline"
+    ],
+    "author": "claude",
+    "box": [
+      0,
+      1,
+      16,
+      14
+    ],
+    "file": "mug.qtiles.json",
+    "tips": [
+      {
+        "title": "Look at the mug.",
+        "text": "The light comes from the left, so the same blue runs light, mid and dark from left to right, in straight bands.",
+        "show": {
+          "stage": 0,
+          "region": [
+            0,
+            1,
+            16,
+            14
+          ]
+        }
+      },
+      {
+        "title": "Bands follow the form.",
+        "text": "A round side turns away from the light slowly. Each band is one ramp step, and the handle follows the same rule.",
+        "show": {
+          "stage": 3,
+          "region": [
+            0,
+            1,
+            16,
+            14
+          ]
+        }
+      },
+      {
+        "title": "Try it.",
+        "text": "Put the light on the right: with the Pencil, swap the lightest band on the left for the darkest blue. The mug turns round, because the light decides the bands.",
+        "show": {
+          "tool": "pencil",
+          "stage": 0,
+          "region": [
+            0,
+            1,
+            16,
+            14
+          ]
+        }
+      }
+    ],
+    "path": "Next: Leaf.",
+    "mode": "2d",
+    "layers": 5,
+    "objects": 0
+  },
+  {
+    "id": "potted-plant",
+    "title": "Potted plant",
+    "category": "scenery",
+    "size": "tiny",
+    "order": 5,
+    "lesson": "Two materials, each with its own ramp.",
+    "summary": "Two materials, each with its own ramp.",
+    "skills": [
+      "materials",
+      "ramps",
+      "ramp shading"
+    ],
+    "stages": [
+      "1 Block-in",
+      "2 Base colors",
+      "3 Shading",
+      "4 Details",
+      "5 Outline"
+    ],
+    "author": "claude",
+    "box": [
+      3,
+      1,
+      25,
+      30
+    ],
+    "file": "potted-plant.qtiles.json",
+    "tips": [
+      {
+        "title": "Look at the two materials.",
+        "text": "Clay and leaf each have a ramp of their own. The pot runs along Brick and the plant along Greens, and no color is shared, so they stay apart.",
+        "show": {
+          "stage": 0,
+          "region": [
+            3,
+            1,
+            25,
+            30
+          ]
+        }
+      },
+      {
+        "title": "One flat color each.",
+        "text": "Before any shading, each material gets the middle step of its ramp. Decide what is made of what here.",
+        "show": {
+          "stage": 2,
+          "region": [
+            3,
+            1,
+            25,
+            30
+          ]
+        }
+      },
+      {
+        "title": "Try it.",
+        "text": "Pick Lighten / Darken and stroke across the pot, then across a leaf. Each stays on its own ramp, so clay stays clay and leaf stays leaf.",
+        "show": {
+          "tool": "shade",
+          "stage": 0,
+          "region": [
+            3,
+            1,
+            25,
+            30
+          ]
+        }
+      }
+    ],
+    "mode": "2d",
+    "layers": 5,
+    "objects": 0
+  },
+  {
+    "id": "umbrella",
+    "title": "Umbrella",
+    "category": "objects",
+    "size": "tiny",
+    "order": 7,
+    "lesson": "Curves by pixel runs: 1, 2, 3, not jaggies.",
+    "summary": "Curves by pixel runs: 1, 2, 3, not jaggies.",
+    "skills": [
+      "curves",
+      "pixel runs",
+      "ramp shading"
+    ],
+    "stages": [
+      "1 Block-in",
+      "2 Base colors",
+      "3 Shading",
+      "4 Details",
+      "5 Outline"
+    ],
+    "author": "claude",
+    "box": [
+      1,
+      1,
+      30,
+      30
+    ],
+    "file": "umbrella.qtiles.json",
+    "tips": [
+      {
+        "title": "Look at the curve.",
+        "text": "Follow the top edge from the tip down one side. The edge is drawn in runs of pixels, and it looks smooth because their lengths change in order.",
+        "show": {
+          "stage": 0,
+          "region": [
+            1,
+            1,
+            30,
+            30
+          ]
+        }
+      },
+      {
+        "title": "Count the runs.",
+        "text": "From the top: 8, 3, 2, then 1 again and again. Then the edge turns and the runs go down, 1, 2 and longer. A run that breaks that order is a jaggy.",
+        "show": {
+          "stage": 1,
+          "region": [
+            1,
+            1,
+            30,
+            30
+          ]
+        }
+      },
+      {
+        "title": "Try it.",
+        "text": "With the Pencil, add one pixel on top of the curve. One run out of order shows as a bump at once. Undo it and the curve is smooth again.",
+        "show": {
+          "tool": "pencil",
+          "stage": 0,
+          "region": [
+            1,
+            1,
+            30,
+            30
+          ]
+        }
+      }
+    ],
+    "mode": "2d",
+    "layers": 5,
+    "objects": 0
+  }
+]

@@ -1,0 +1,33 @@
+id: grass-tile
+title: Grass tile
+category: scenery
+order: 1
+lesson: A 2:1 diamond, and how it repeats 3 x 3 with no seam.
+skills: 2:1 lines, seamless, ramp shading
+path: Next: Crate.
+tile: 24
+light: left
+palette: Foliage and water
+legend:
+b = Leaf 3
+c = Leaf 4
+A = Leaf 2
+C = Leaf 5
+D = Lime 4
+art:
+...........bb...........
+.........bbbbbb.........
+.......bbCbccbCbb.......
+.....bbbbAbbDbAbbbb.....
+...bbbbCbbbbccbbccbCb...
+.bbbbccAbbbbbCbbCDbAbbb.
+.bbbbbDbbbccbAbbAbccbbb.
+...bbbbccCbbbbbccbbbb...
+.....bbbbAbDbbccbbb.....
+.......bbbbbbbbbb.......
+.........bbccbb.........
+...........bb...........
+tip: | Look at one tile. | This diamond is 24 pixels wide and 12 tall: always 2 across for 1 down. Everything on the path stands on this shape. Tap the stages, then Finished.
+tip: 1 | Draw the diamond first. | The edges climb in runs of 2 pixels, never smoother. That stair is what lets tiles lock together. One flat color is enough to check it.
+tip: 4 | Keep texture off the border. | The tufts stay a pixel or two inside the edge, so the seam between two tiles has nothing to line up.
+tip: | Now repeat it. | The preview lays this tile out 3 x 3. Look for a line or a shape that gives the tile away. The outline is left out there, because tiles in a floor touch. | | seam 0 0

@@ -1,0 +1,7 @@
+dist/
+node_modules/
+*.qtiles.json
+*.isopic.json
+!app/examples/*.qtiles.json
+*.isopolis.json
+.DS_Store

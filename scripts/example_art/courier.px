@@ -1,0 +1,70 @@
+id: courier
+title: Courier with a parcel
+category: characters
+order: 13
+lesson: Carried objects, and what goes wrong in a mirror.
+skills: carried objects, mirroring, clothing ramps
+tile: 32
+light: left
+palette: Skin and hair
+facings: 2
+shadow: true
+cast: 30
+legend:
+a = Blond hair 3
+b = Blond hair 2
+c = Blond hair 4
+d = Blond hair 4
+e = Blond hair 5
+Z = Blond hair 1
+B = Blond hair 1
+h = Black hair 2
+g = Black hair 3
+s = Pale skin 5
+r = Pale skin 3
+t = Pale skin 4
+m = Tan skin 2
+n = Tan skin 3
+w = Tan skin 4
+W = Pale skin 3
+V = Pale skin 2
+p = Black hair 2
+q = Black hair 3
+k = Black hair 1
+E = Black hair 1
+art:
+......bbbbb.......
+.....baaaaab......
+....baaccaaab.....
+....baaaaaaabBBB..
+....hbbbbbbbBBBB..
+....hgsssssr......
+....hgssEsEr......
+....hhsssssr......
+.....hrsssr.......
+......rttr........
+.....ddccbb.......
+....dddccbbb......
+...dddwwwwbbb.....
+...dwwwwwwwwb.....
+..wwwWWwwwwwww.bb.
+.wwwwwwWWwwwwwwwss
+.nddwwwwwWWwwwwwrs
+.nddnwwwwwwWwwwmm.
+.nddnWnwwwwwwmmmm.
+.nssnWnnnwwmmVmmm.
+.nssnWnnnnmmmVmmm.
+.nnnnWnnnnmmmVmmm.
+.nnnnWnnnnmmmVmmm.
+...nnWnnnnmmmVmmm.
+.....WnnnnmmmVm...
+.....qqnnnmmmV....
+.....qqp.nmp......
+.....qqp..pp......
+.....qqp..pp......
+.....kkkk.kkkk....
+.....kkkk.kkkk....
+tip: | Look at the courier. | The parcel hides the middle of the figure, so it is drawn as part of the same pose: arms under it, weight leaning back a little.
+tip: 1 | Pose with the load. | Merge the figure and the parcel into one shape. If the two look stuck together rather than carried, move the arms, not the box.
+tip: 4 | A box still has three faces. | The parcel is the crate again, small: light top, mid left, dark right, and a label to say which way up it goes.
+tip: | Mirrors flip everything. | The label and the cap peak swap sides, and the light does too. A flip is fine for most things, but look at text and at anything held in one hand.

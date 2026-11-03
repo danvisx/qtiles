@@ -1,0 +1,40 @@
+id: apple
+title: Apple
+category: scenery
+order: 2
+mode: 2d
+lock: true
+lesson: One ramp: base, shadow, highlight.
+skills: ramp shading, one ramp
+light: left
+palette: qtiles
+outline: darkest
+path: Next: Mug.
+legend:
+a = Brick 2
+b = Brick 3
+c = Brick 4
+D = Brick 5
+s = Skin and hair 3
+l = Greens 3
+m = Greens 4
+art:
+................
+........s..ml...
+........sllmml..
+........s.lll...
+.....ccbsbbb....
+...ccccbbbbbba..
+..ccDDccbbbbbaa.
+..cDDcccbbbbbaa.
+..cDccbbbbbbbaa.
+..ccccbbbbbbaaa.
+...cbbbbbbbaaa..
+...bbbbbbbaaaa..
+....bbbbaaaaa...
+.....bba.aaa....
+................
+................
+tip: | Look at the apple. | Almost every pixel of the fruit is one of four steps on the Brick ramp. No black and no white went in.
+tip: 3 | Base, shadow, highlight. | Base first. The shadow is one step down, on the side away from the light. The light side is one step up.
+tip: | Try it. | Pick the Lighten / Darken tool and stroke along the bottom of the apple. Each pixel moves one step along its ramp, so the shading stays clean. | shade

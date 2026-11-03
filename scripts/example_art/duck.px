@@ -1,0 +1,34 @@
+id: duck
+title: Duck
+category: animals
+order: 18
+lesson: Rounded forms in a few pixels.
+skills: small forms, silhouette, mirroring
+tile: 16
+light: left
+palette: Skin and hair
+facings: 2
+legend:
+c = Tan skin 3
+d = Tan skin 5
+e = Tan skin 6
+a = Blond hair 2
+E = Black hair 1
+art:
+....ddd.....
+...deeed....
+...deEeeaa..
+...deeeeaaa.
+....deed....
+.....ded....
+.c...ded....
+.dcddeeeed..
+.ddeeeeeeed.
+..ddeeeeeed.
+..cddeeeedc.
+...ccdddcc..
+.....a..a...
+....aa.aa...
+tip: | Look at the duck. | A curve for the back, a curve for the neck, a dot for an eye. At this size one misplaced pixel changes the animal.
+tip: 1 | Two ovals. | A low wide one and a small high one, joined by a neck. Any bird starts like this.
+tip: | Try it. | The bill and feet are the only warm pixels. Move the eye one pixel with the Pencil and see how much the duck changes. | pencil

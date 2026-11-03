@@ -1,0 +1,44 @@
+id: crate
+title: Crate
+category: scenery
+order: 2
+lesson: Three faces, one light: top, lit side, shaded side.
+skills: 2:1 lines, ramp shading, outline
+path: Next: Barrel.
+tile: 16
+light: left
+palette: Earth and stone
+anchor: 8, 9
+legend:
+a = Clay 1
+b = Clay 2
+c = Clay 3
+d = Clay 4
+C = Clay 3
+E = Clay 3
+F = Clay 2
+G = Clay 1
+H = Clay 1
+art:
+......dddd......
+....dddddddd....
+..ddddCCdddddd..
+ddddddddCCdddddd
+dddCCdddddCCdddd
+ccdddCCdddddCCbb
+cGccdddCCdddbbbb
+ccccccdddCbbbbHb
+ccbbccccbbbbbabb
+ccbbbEGcbHbaaabb
+ccbEEbccbbFFaabb
+ccEbbbccbbaaFFbb
+cGbbbbccbbaaaabb
+ccccbbccbbaaabHb
+..ccccccbbabbbb.
+....ccGcbHbbb...
+......ccbbb.....
+tip: | Look at the whole crate. | Three faces and one light from the left. The stages below take it apart, so tap 1 to 5 and then Finished.
+tip: 1 | Block in the shape. | One flat color for the silhouette. If this does not read as a box, no shading will save it.
+tip: 3 | Step along the ramp. | The top is the lightest, the lit side a step down and the shaded side darkest. Every color is a step on one ramp, with no black or white mixed in. | shade
+tip: 4 | Add the details last. | Plank gaps and the braces follow the faces, so a brace on the left side leans the other way from one on the right.
+tip: 5 | Outline with the art's own ramp. | Sel-out: each outline pixel is a step darker than the pixel beside it, so the crate sits on any background. Try it yourself with the Outline button.

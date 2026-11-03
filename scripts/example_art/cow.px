@@ -1,0 +1,52 @@
+id: cow
+title: Cow
+category: animals
+order: 20
+lesson: Two-tone patches that follow the form.
+skills: patches, form, mirroring
+tile: 32
+light: left
+palette: Skin and hair
+facings: 2
+legend:
+b = Tan skin 3
+c = Tan skin 4
+d = Tan skin 5
+e = Tan skin 6
+f = Tan skin 6
+p = Black hair 2
+q = Black hair 3
+k = Black hair 1
+U = Pale skin 4
+V = Pale skin 3
+n = Pale skin 2
+E = Black hair 1
+Y = Tan skin 3
+art:
+........e..e...............
+......eeeeeeee.............
+....eeqqeeeeeeee...........
+..eeqqqqqqeeeeeeee.........
+...eqqqqqqqeeeeeeeee.......
+.pdpeeqqqqeeeeeqqqeeee.....
+.pdpppeqqqeeeeqqqqqqeeee...
+.pdpppppeeeeeqqqqqqqqeeeee.
+.pdppppppdeeqqqqqYqqeeeeYee
+.pdppppppddpeeqqpdffffffdpc
+.pddpppppddpppeppdfEffEfdpp
+.pdddcpppddpppppedffffffccc
+.pdddcpppdddpppppdffffffccc
+kk.ddcddddddpppppcUVVVVUccc
+kk.ddcdpppddddpppUUVVVVUUcc
+kk.ddc..ppppddddpUnUUUUnUcc
+...ddc....ppddddddUUUUUUccc
+...kkk.....UUUUddcdcccccc..
+...kkk.....UUUUddcdcccccb..
+...........V.V.ddcdcc.ccb..
+...............ddcd...ccb..
+...............ddc....kkk..
+...............ddc....kkk..
+tip: | Look at the cow. | A long body on four legs, turned along the grid, with a big square head. It faces the same way a car would.
+tip: 1 | A box with a head. | The body is a box on the grid, so it sits on tiles like a crate. Four short legs and a tail make it an animal.
+tip: 3 | Patches wrap around. | A dark patch runs over the back and on down the side, changing shape at the corner. Spots that ignore the corner look printed on.
+tip: 4 | The nose says cow. | The pink muzzle, a step or two along its own ramp, is the part nobody could mistake.

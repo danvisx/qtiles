@@ -1,0 +1,15 @@
+{
+  "name": "qtiles",
+  "version": "0.3.0",
+  "private": true,
+  "scripts": {
+    "build": "python3 scripts/build_artifact.py",
+    "test": "npm run build --silent && node tests/smoke.js",
+    "perf": "npm run build --silent && node tests/perf.js",
+    "examples": "node scripts/make_examples.js",
+    "vehicles": "node scripts/make_vehicles.js"
+  },
+  "devDependencies": {
+    "jsdom": "30.1.3"
+  }
+}

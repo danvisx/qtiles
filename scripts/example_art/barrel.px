@@ -1,0 +1,47 @@
+id: barrel
+title: Barrel
+category: scenery
+order: 3
+lesson: Ellipse rims at 2:1, and banded shading on a round side.
+skills: 2:1 ellipses, banded shading, outline
+path: Next: Stone path and water.
+tile: 16
+light: left
+palette: Earth and stone
+anchor: 7, 11
+legend:
+a = Clay 1
+b = Clay 2
+c = Clay 3
+d = Clay 4
+e = Clay 5
+S = Slate 4
+T = Slate 3
+U = Slate 2
+K = Clay 3
+L = Clay 2
+M = Clay 1
+art:
+....eeeeee....
+..eeeedddeee..
+.eeedddddddee.
+.eeddccccccee.
+.ceeedcccceea.
+bcdeeeeeeeaaaa
+bcdeedccbbaaaa
+ScdeedccbbaaaU
+bSSSSKccbTUUUa
+bcdeeSSTTMaaaa
+bcdeeKccbMaaaa
+bcdeeKccbMaaaa
+bcdeeKccbMaaaa
+ScdeeKccbMaaaU
+.SSSSKccbTUUU.
+.cdeeSSTTMaaa.
+..deeKccbMaa..
+....eKccbM....
+..............
+tip: | Look at the barrel. | A round thing still follows the grid: its rim is an ellipse twice as wide as it is tall, the same 2:1 as a tile.
+tip: 3 | Shade in bands. | A curved side has no single face, so the light falls in vertical bands. Lightest a third of the way in from the left, a step per band, darkest on the right.
+tip: 4 | Hoops curve with the rim. | A straight hoop would flatten the barrel. These dip in the middle, like the front of the rim, so the form stays round.
+tip: | Try it. | Run Lighten / Darken down one band and see how little it takes to make the barrel shinier or duller. | shade

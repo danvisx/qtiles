@@ -1,0 +1,38 @@
+id: bush
+title: Bush
+category: scenery
+order: 5
+lesson: Clustered 3:2 shapes and a dithered edge.
+skills: clusters, dither, ramp shading
+path: Next: Tree.
+tile: 16
+light: left
+palette: qtiles
+anchor: 10, 7
+legend:
+a = Greens 1
+b = Greens 2
+c = Greens 3
+d = Greens 4
+e = Greens 5
+B = Brick 3
+art:
+....................
+.......deedbb.......
+.......deddc........
+....de.dccdedd.b....
+...deeedddeeeddc....
+...bddddcBddddcBcb..
+...bcccbbbbbcccc....
+.b.ddccbbbbbbdbbcb..
+.dddcBccbbbbbbbbbcb.
+bbddddddddddBdbbcbcb
+.bccccddddddccbcbcb.
+.b.cccccBccccccbcb..
+...bababababababa...
+.......ababab.......
+....................
+tip: | Look at the bush. | Foliage is not one blob. It is a few 3:2 ovals overlapping, each lit on its own upper left.
+tip: 3 | Light each cluster. | Every oval gets its own step of light, with the deepest dark where they meet at the bottom. Forms read from their shadows.
+tip: 4 | Break the edge, then add berries. | Pixels knocked out of the rim make it leafy rather than smooth, and a checker of two greens does the same inside. A few red pixels last.
+tip: | Try it. | Dither with a checker over the right side and watch it turn from flat green into leaves. | dither

@@ -1,0 +1,52 @@
+id: child
+title: Child
+category: characters
+order: 14
+lesson: Proportions at 3 heads tall.
+skills: proportions, feet on tile, mirroring
+tile: 32
+light: left
+palette: Skin and hair
+facings: 2
+shadow: true
+cast: 30
+legend:
+h = Red hair 3
+g = Red hair 4
+i = Red hair 5
+s = Tan skin 4
+t = Tan skin 3
+r = Tan skin 2
+c = Pale skin 2
+d = Pale skin 3
+b = Pale skin 1
+Z = Black hair 3
+k = Black hair 1
+E = Black hair 1
+A = Pale skin 3
+art:
+....hhhhh....
+..hhgggghh...
+.hhggiigghh..
+.hgggsssssr..
+.hgsssEssEr..
+.hhssssssAr..
+..hrrssrr....
+...ccddcc....
+..ddcdcbbb...
+.ddcdccbbbb..
+.sd.dccbb.t..
+.t..dccbb.t..
+...ZZZZZZ....
+...ZZZZZZ....
+....ZZ.ZZ....
+....ss.tt....
+....ss.tt....
+....ss.tt....
+....ss.tt....
+...kkk.kkk...
+...kkk.kkk...
+tip: | Compare the head. | Seven rows of head on twenty-one rows of child: three heads tall. The Walker has a head nearly this big on a much longer body. Proportions say child, not size.
+tip: 1 | Measure in heads. | Block the head, then stack two more of the same height, one for the body and one for the legs. Big head, no neck.
+tip: 4 | Few details. | Two eyes low on the face and one pixel of blush. Moving the eyes down makes a face younger.
+tip: | Try it. | Scale nothing. Erase two rows of leg and see how much younger it gets. | eraser

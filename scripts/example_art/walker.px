@@ -1,0 +1,65 @@
+id: walker
+title: Walker
+category: characters
+order: 12
+lesson: Feet on a tile, and two facings from one drawing.
+skills: feet on tile, mirroring, ramp shading
+tile: 32
+light: left
+palette: Skin and hair
+facings: 2
+shadow: true
+cast: 30
+legend:
+h = Deep skin 2
+g = Deep skin 3
+i = Deep skin 4
+s = Tan skin 4
+r = Tan skin 2
+t = Tan skin 3
+a = Red hair 1
+b = Red hair 2
+c = Red hair 3
+d = Red hair 4
+o = Black hair 4
+q = Black hair 3
+p = Black hair 2
+k = Black hair 1
+E = Black hair 1
+Y = Deep skin 2
+Z = Deep skin 1
+art:
+.....hhhhh....
+...hhgggghh...
+..hhggiigghh..
+..hgggiiggsh..
+..hgggsssssr..
+..hgsssEssEr..
+..hhsssssssr..
+...hrsssssr...
+....rrssrr....
+.....rttr.....
+....ddcccb....
+...dddcccbb...
+..dddccccbbb..
+..ddcdcccbbba.
+..dc.dcccbb.a.
+..dc.dcccbb.a.
+..dc.dcccbb.a.
+..st.ccccbb.t.
+..tt.YYZZZZ.tr
+.....qqqqpp...
+.....qqqqpp...
+....oqq.ppp...
+....oqq..ppp..
+...oqq...ppp..
+...oqq....pp..
+..oqq.....pp..
+..oqq.....pp..
+..kkk.....kkk.
+.kkkk.....kkkk
+tip: | Look at the two figures. | The one on the right is not a second drawing. It is the left one flipped, on a linked layer.
+tip: 1 | Pose in one color. | A stride reads from the gap between the legs and the arm swung opposite. If the silhouette walks, the rest will.
+tip: 3 | Ramps for clothes too. | Jacket, trousers and skin each have a ramp, lit from the left. Three or four steps is plenty at this size.
+tip: | Feet on the tile. | The pivot is on the center of a cell, between the feet, so the figure stands in the right place anywhere on a map. Set pivot shows it. | pivot
+tip: | Mirror, then update. | Draw one facing only. Update mirror, in the Character section, redoes the flip after an edit. Remember that the light flips too. | pivot

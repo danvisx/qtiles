@@ -1,0 +1,72 @@
+id: van
+title: Van
+category: transport
+order: 24
+lesson: Reusing the car's plan with different proportions.
+skills: proportions, boxes, glass
+tile: 32
+light: left
+palette: qtiles
+anchor: 23, 27
+legend:
+a = Neutrals 2
+b = Neutrals 2
+c = Neutrals 3
+d = Neutrals 4
+e = Neutrals 5
+f = Neutrals 6
+h = Deep sea 3
+i = Blues 4
+j = Deep sea 5
+A = Blues 2
+B = Blues 3
+Y = Yellows 4
+T = Neutrals 1
+S = Neutrals 4
+R = Neutrals 3
+art:
+.............ffff.............................
+...........ffffffff...........................
+.........ffffffffffff.........................
+.......ffffffffffffffff.......................
+.....ffffffffffffffffffff.....................
+...ffffffffffffffffffffffff...................
+.ffffffffffffffffffffffffffff.................
+fffffffffffffffffffffffffffffff...............
+fffffffffffffffffffffffffffffffff.............
+eefffffffffffffffffffffffffffffffff...........
+eeeefffffffffffffffffffffffffffffffff.........
+eeeeeefffffffffffffffffffffffffffffffff.......
+eeeeeecefffffffffffffffffffffffffffffffff.....
+eeeeeeceeefffffffffffffffffffffffffffffffff...
+eeeeeeceeeeefffffffffffffffffffffffffffffffff.
+eeeeeeceeeeeeeffffffffffffffffffffffffffffffff
+eeeeeeceeeeeeeeeffffffffffffffffffffffffffffdd
+BBeeeeceeeeeeeeeeeffffffffffffffffffffffffdddd
+BBBBeeceeeeeeeeeeeeeffffffffffffffffffffdddddd
+eeBBBBcecceeeeeeeeeeceffffffffffffffffddddddhd
+eebbbbcBeeeeeeeeeeeeceeeffffffffffffddddddhhhd
+ebbbbbbBBBeeeeeeeeeeceiieeffffffffddddddhhhhhd
+ebbTTTbbbBBBeeeeeeeeceiiiieeffffddddddhjjhhhhd
+cbTTTTTbbeBBBBeeeeeeceiiijjjeefdddddhhhhhjjhhd
+cbTTTTTTbbeeBBBBeeeeceijjjjiieedddhhhhhhhhhjjd
+.bTTSSSTTbbeeeBBBBeecejjjiiiieedhjjhhhhhhhhhdd
+.bTTSSSSTTbeeeeeBBBBcejiiiiiieedhhhjjhhhhhddAA
+..TTSSRSTTbeeeeeeeBBcBeeiiiiieedhhhhhjjhddAAAA
+...TTSSSTTbceeeeeeeecBBBeeiiieedhhhhhhddAAAAYd
+...bTTTTTTbccceeeeeecbbbbBeejeedhhhhddAAAAdYYd
+.....TTTTTb.cccceeeebbbbbbBBeeedjhddAAAAdddYdd
+......TTTb....cccceebbTTTbbbBBedddAAAAddaadddd
+................ccccbTTTTTbbBBBdAAAAddaaaadddd
+..................ccbTTTTTTbbeBAAAddaaaaddddcc
+....................bTTSSSTTbbeAYYdaaaddddcc..
+....................bTTSSSSTTbedYYdaddddccTTT.
+.....................TTSSRSTTbedddddddcc..TTT.
+......................TTSSSTTbedddddcc....TTT.
+......................bTTTTTTbcdddcc..........
+........................TTTTTbcdcc............
+.........................TTTb..c..............
+tip: | Compare it with the car. | The same wheels, glass and lamps, but one tall box instead of two. Change the proportions and the plan still holds.
+tip: 1 | One tall box. | A van is a little shorter than you expect and much higher than the car. Nothing else about the block-in is new.
+tip: 3 | White is not white. | The lightest step is the top only. The lit side is a step down and the shaded side two, or the form disappears.
+tip: 4 | A stripe wraps the corner. | It runs down the side at one height and carries on across the front, a step darker there, which ties the two faces together.

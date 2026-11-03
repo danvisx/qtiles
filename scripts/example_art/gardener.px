@@ -1,0 +1,63 @@
+id: gardener
+title: Gardener
+category: characters
+order: 15
+lesson: Clothing ramps, and hat and tool silhouettes.
+skills: clothing ramps, silhouette, tools
+tile: 32
+light: left
+palette: qtiles
+facings: 2
+shadow: true
+cast: 30
+legend:
+i = Yellows 2
+j = Yellows 3
+h = Yellows 1
+s = Skin and hair 5
+r = Skin and hair 4
+t = Skin and hair 4
+c = Neutrals 5
+b = Neutrals 4
+g = Brick 4
+f = Greens 3
+e = Greens 2
+k = Skin and hair 2
+E = Skin and hair 1
+y = Skin and hair 3
+z = Skin and hair 3
+n = Neutrals 4
+m = Neutrals 3
+art:
+.................y.
+.....iiiiii......yz
+....ijjjjjjii.....z
+...ijjjjjjjjhi....z
+.iijjjjjjjjjhhii..z
+iiiiiiiiiiiihhhhh.z
+..hhhsssssssrhh...z
+....hsssEssEr.....z
+....hsssssssr.....z
+.....rsssssr......z
+......rttrr.......z
+....ggcccbbgg.....z
+...gggcccbbggg....z
+...ggccc.cbbgg....z
+..gggccc.cbbgg..rsz
+..ggfcccccbbgg.rssz
+..gf.ffffeee.g.rrsz
+..gf.ffffeee.gg.rrz
+..ss.ffffeee...gg.z
+..st.ffffeee......z
+.....ffffeeee.....z
+.....ff...eee.....n
+.....ff...ee.....nn
+.....ff...ee.....nn
+.....ff...ee.....nm
+.....ff...ee.....mm
+....kkkk..kkk.....m
+....kkkkk.kkkk.....
+tip: | Look at the gardener. | A wide hat and a long-handled spade say gardener before any detail does. Cover them with a thumb and it could be anyone.
+tip: 1 | Silhouette first. | Hat brim wider than the shoulders, tool taller than the head. Props that stick out of the shape read best.
+tip: 3 | Each garment a ramp. | Straw, shirt, overalls and skin each step along their own ramp, so clothes look like separate things and not one painted shape.
+tip: 4 | Shade under the brim. | One dark row across the top of the face puts the hat on the head. Without it the hat floats.

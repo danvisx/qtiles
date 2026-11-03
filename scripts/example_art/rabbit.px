@@ -1,0 +1,36 @@
+id: rabbit
+title: Rabbit
+category: animals
+order: 19
+lesson: One ramp, and a strong silhouette.
+skills: one ramp, silhouette, mirroring
+tile: 16
+light: left
+palette: Skin and hair
+facings: 2
+legend:
+b = Deep skin 3
+c = Deep skin 4
+d = Deep skin 5
+E = Black hair 1
+n = Deep skin 2
+art:
+....bd.bd..
+....cd.cd..
+....cd.cd..
+....cd.cd..
+....cd.cd..
+....cdcdd..
+...bcddddb.
+...cdEdddd.
+...cddddnd.
+...bcdddd..
+..bcccdb...
+.bccccddb..
+ccccbcddb..
+cbbbbcddb..
+.bbbbcddb..
+..bbbdd.dd.
+tip: | Look at the rabbit. | Every pixel is on one ramp. With a silhouette this clear, the long ears do all the work.
+tip: 1 | Ears make it. | Two tall lines on a round body, one step apart, so the sky shows between them.
+tip: | Try it. | Erase the top of the ears and it turns into a mouse. One ramp keeps a sprite this small clean, so the shape has to do the work. | eraser

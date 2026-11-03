@@ -1,0 +1,39 @@
+id: mug
+title: Mug
+category: objects
+order: 3
+mode: 2d
+lock: true
+lesson: A light direction on a simple form.
+skills: light direction, form
+light: left
+palette: qtiles
+outline: darkest
+path: Next: Leaf.
+legend:
+a = Blues 1
+b = Blues 2
+c = Blues 3
+d = Blues 4
+j = Skin and hair 2
+k = Skin and hair 3
+art:
+................
+................
+..dccccbb.......
+.djjkkkkkb......
+.dcjkkkkbb......
+.ddcccccbb......
+.dcccccbbabbb...
+.dcccccbba..bbb.
+.dcccccbba...bb.
+.dcccccbba...ba.
+.dcccccbba..bba.
+.dcccccbbaaaaa..
+.dcccccbba......
+..ccccbba.......
+................
+................
+tip: | Look at the mug. | The light comes from the left, so the same blue runs light, mid and dark from left to right, in straight bands.
+tip: 3 | Bands follow the form. | A round side turns away from the light slowly. Each band is one ramp step, and the handle follows the same rule.
+tip: | Try it. | Put the light on the right: with the Pencil, swap the lightest band on the left for the darkest blue. The mug turns round, because the light decides the bands. | pencil

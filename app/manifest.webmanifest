@@ -1,0 +1,13 @@
+{
+  "name": "qtiles",
+  "short_name": "qtiles",
+  "description": "A pixel art editor for still images, in 2D and isometric.",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#F7F8FA",
+  "theme_color": "#F7F8FA",
+  "icons": [
+    { "src": "assets/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "assets/layers.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

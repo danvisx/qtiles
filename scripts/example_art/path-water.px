@@ -1,0 +1,37 @@
+id: path-water
+title: Stone path and water
+category: scenery
+order: 4
+lesson: Two tiles that join, and ramp offsets for texture.
+skills: seamless, ramp offsets, 2:1 lines
+path: Next: Bush.
+tile: 16
+light: left
+palette: qtiles
+anchor: 8, 0
+legend:
+a = Neutrals 2
+b = Neutrals 3
+c = Neutrals 4
+d = Neutrals 5
+w = Blues 3
+v = Blues 2
+W = Blues 4
+V = Deep sea 5
+art:
+.......ad...............
+.....accccc.............
+...ccaacbcaad...........
+.cbcaadaaaccccc.........
+.aaacccccaacbcaVw.......
+...aacbcaadaawwwvww.....
+.....aaacccwwwwwwwwww...
+.......aawwwwwwwwwwwwww.
+.........wwWWwwVVwwWWww.
+...........wwwwwvwwww...
+.............wwwwww.....
+...............ww.......
+tip: | Look at the two tiles. | Stone on the left, water on the right, sharing one edge. Each repeats by itself, and the edge between them is a straight 2:1 stair, so either can sit beside the other.
+tip: 3 | One color, then offsets. | The cobbles are one mid step with gaps one or two steps darker, and a corner a step lighter. Texture comes from moving along the ramp, not from new colors.
+tip: 4 | Water is mostly one color. | A few short dashes a step lighter and darker run along the grid. They imply ripples, and leaving most of the tile flat keeps it calm.
+tip: | Now repeat the stone. | Three by three, the cobbles carry on across the seams, as the pattern repeats exactly once per tile. | | seam 0 0

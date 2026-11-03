@@ -1,0 +1,48 @@
+id: dog
+title: Dog (sitting)
+category: animals
+order: 16
+lesson: Animal silhouette, a fur ramp, facing and mirror.
+skills: silhouette, fur ramp, mirroring
+tile: 32
+light: left
+palette: Skin and hair
+facings: 2
+shadow: true
+cast: 30
+legend:
+a = Tan skin 1
+b = Tan skin 2
+c = Tan skin 3
+d = Tan skin 4
+e = Tan skin 5
+A = Deep skin 3
+B = Deep skin 2
+E = Black hair 1
+n = Black hair 2
+art:
+...........cccc...
+.........cddddddc.
+........AAcddddddc
+.......AAAcdEdddcc
+.......AABcdddddnn
+.......AABcddddnnn
+.......ABBcddeeec.
+........BAbcdeeb..
+........Abcddedb..
+.......bccddeedb..
+.....bbcccddeecb..
+...bbcccccbdeecb..
+..bcccccccbddcdb..
+.bccdccccbbddcdb..
+.bcdcccbbbbddcdb..
+..cdccbbbbbddbdb..
+a.bcccbbbbbddbdb..
+aabccdbbbbbddbdb..
+.aabbddddbdddddd..
+..abbbbbbbbbbbbb..
+tip: | Look at the dog. | Sitting is the easiest pose to read: head up, chest forward, haunch low, tail on the ground.
+tip: 1 | A silhouette, not an outline. | Snout, back, tail. You should know it is a dog from this one flat shape.
+tip: 4 | The ear goes on last. | A floppy ear two steps darker sits inside the silhouette, so it has to wait for the details. That one patch says dog more than anything else.
+tip: 3 | Fur is a ramp. | The light chest and muzzle are one step on the same ramp as the darker back. No new color, just a shift along it.
+tip: | The other facing. | Animals face a way, so a flip gives you the second one for nothing. Most animals are close enough to symmetric that nobody notices.

@@ -1,0 +1,1127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<!--BUILD:HEAD-->
+<title>qtiles – pixel art editor</title>
+<link rel="icon" type="image/png" sizes="16x16" href="assets/layers-16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/layers-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="assets/icon-180.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#F7F8FA" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1E1F22" media="(prefers-color-scheme: dark)">
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="style.css">
+<!--/BUILD:HEAD-->
+</head>
+<body>
+<svg class="brand-defs" aria-hidden="true"><defs><path id="lgwText" transform="scale(1 -1)" d="M283 -15Q210 -15 153 23Q96 61 64 128Q32 195 32 282Q32 371 66 440Q101 508 162 546Q222 585 301 585Q408 585 460 492L472 570H609V-180H447V57Q419 21 376 3Q334 -15 283 -15ZM325 118Q381 118 414 162Q447 205 447 280Q447 355 414 399Q381 443 325 443Q266 443 232 399Q197 355 197 280Q197 205 232 162Q266 118 325 118ZM943 0Q873 0 830 42Q788 85 788 155V440H694V570H788V720H950V570H1066V440H950V183Q950 164 962 152Q974 140 992 140H1083V0ZM1233 632Q1194 632 1168 655Q1141 678 1141 715Q1141 751 1168 774Q1194 797 1233 797Q1271 797 1298 774Q1324 751 1324 715Q1324 678 1298 655Q1271 632 1233 632ZM1152 0V570H1314V0ZM1587 0Q1517 0 1474 42Q1432 85 1432 155V750H1594V183Q1594 164 1606 152Q1618 140 1636 140H1667V0ZM2017 -15Q1930 -15 1866 22Q1802 58 1766 126Q1731 193 1731 285Q1731 377 1766 444Q1801 511 1864 548Q1928 585 2014 585Q2103 585 2166 545Q2228 505 2260 429Q2291 353 2286 246H1894Q1902 182 1936 146Q1970 110 2024 110Q2068 110 2096 132Q2124 153 2131 184H2282Q2272 122 2236 78Q2199 33 2143 9Q2087 -15 2017 -15ZM2015 461Q1966 461 1934 430Q1902 398 1894 345H2126Q2122 408 2089 434Q2056 461 2015 461ZM2592 -15Q2477 -15 2411 38Q2345 92 2345 185H2488Q2496 142 2523 122Q2550 102 2590 102Q2625 102 2648 116Q2671 130 2671 156Q2671 176 2654 186Q2636 196 2588 208Q2554 216 2528 222Q2503 229 2474 239Q2440 251 2412 268Q2383 285 2366 314Q2348 344 2348 392Q2348 446 2369 483Q2390 520 2425 542Q2460 565 2502 575Q2543 585 2583 585Q2650 585 2702 562Q2754 538 2784 496Q2814 455 2814 400H2662Q2662 430 2636 450Q2609 470 2573 470Q2548 470 2523 458Q2498 446 2498 419Q2498 401 2514 388Q2530 376 2576 363Q2593 359 2616 353Q2640 347 2663 342Q2686 336 2701 331Q2766 312 2796 273Q2825 234 2825 175Q2825 85 2764 35Q2702 -15 2592 -15Z"/><filter id="lgwBlur" filterUnits="userSpaceOnUse" x="-93" y="-922" width="3045.5" height="1272.7"><feGaussianBlur stdDeviation="34.1"/></filter></defs></svg>
+<header class="island topbar">
+  <span class="brand" role="img" aria-label="qtiles"><img class="brand-icon" src="assets/layers-24.png" srcset="assets/layers-24.png 1x, assets/layers-48.png 2x, assets/layers-72.png 3x" alt=""><svg class="brand-word" viewBox="-93 -922 3045.5 1272.7" aria-hidden="true"><use href="#lgwText" style="fill:var(--logo-shadow);stroke:var(--logo-shadow);stroke-width:45.5;stroke-linejoin:round;opacity:0.5" transform="translate(0 45.5)" filter="url(#lgwBlur)"/><use href="#lgwText" style="fill:var(--logo)"/></svg></span>
+  <button id="fileBtn" class="btn pri" aria-haspopup="menu" aria-expanded="false" aria-controls="fileMenu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>File</button>
+  <button id="saveBtn" class="btn" aria-label="Save (Ctrl+S)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h11l3 3v13H5z"/><path d="M8 4v5h7V4"/><path d="M8 20v-7h8v7"/></svg><span class="savetxt">Save</span><span id="dirtyDot" class="dirtydot" aria-hidden="true" hidden></span></button>
+  <input id="projName" class="name" type="text" value="untitled" aria-label="Project name" maxlength="60" autocomplete="off" spellcheck="false">
+  <button id="saveInfo" class="btn fileinfo"><span id="saveWhere"></span><span id="saveWhen"></span></button>
+  <div class="seg" role="group" aria-label="Drawing mode">
+    <button id="modeFlat" aria-pressed="true">2D</button>
+    <button id="modeIso" aria-pressed="false">Iso</button>
+  </div>
+  <span class="grow"></span>
+  <button id="undoBtn" class="btn ico" aria-label="Undo" title="Undo (Ctrl+Z)"><svg viewBox="0 0 24 24"><path d="M9 14L4 9l5-5"/><path d="M4 9h10a6 6 0 010 12h-3"/></svg></button>
+  <button id="redoBtn" class="btn ico" aria-label="Redo" title="Redo (Ctrl+Shift+Z)"><svg viewBox="0 0 24 24"><path d="M15 14l5-5-5-5"/><path d="M20 9H10a6 6 0 000 12h3"/></svg></button>
+  <button id="histBtn" class="btn ico" aria-label="Undo history" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 109-9 9 9 0 00-6.4 2.6L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l3 2"/></svg></button>
+  <button id="zoomOut" class="btn ico" aria-label="Zoom out">&minus;</button>
+  <span id="zoomRead" class="zoomread">4x</span>
+  <button id="zoomIn" class="btn ico" aria-label="Zoom in">+</button>
+  <button id="fitBtn" class="btn">Fit</button>
+  <button id="tipsBtn" class="btn" aria-pressed="false" aria-expanded="false" aria-controls="tipsDrawer">Tips</button>
+  <button id="prefsBtn" class="btn ico" aria-label="Preferences (Ctrl+,)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/></svg></button>
+  <button id="panelBtn" class="btn" aria-expanded="false" aria-controls="side">Panels</button>
+  <button id="aboutBtn" class="btn ico" aria-label="About qtiles"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><path d="M12 8v.01"/></svg></button>
+</header>
+
+<div class="main">
+  <nav class="island tools" id="tools" aria-label="Tools">
+    <button class="btn ico" data-tool="pencil" aria-label="Pencil (B)" title="Pencil (B)"><svg viewBox="0 0 24 24"><path d="M4 20l1-4L16 5l3 3L8 19z"/><path d="M14 7l3 3"/></svg></button>
+    <button class="btn ico" data-tool="eraser" aria-label="Eraser (E)" title="Eraser (E)"><svg viewBox="0 0 24 24"><path d="M4 15l9-9 6 6-6 6H8z"/><path d="M9 20h11"/></svg></button>
+    <button class="btn ico" data-tool="line" aria-label="Line (L)" title="Line (L)"><svg viewBox="0 0 24 24"><path d="M5 19L19 5"/><circle cx="5" cy="19" r="1.5"/><circle cx="19" cy="5" r="1.5"/></svg></button>
+    <button class="btn ico" data-tool="rect" aria-label="Rectangle (R)" title="Rectangle (R)"><svg viewBox="0 0 24 24"><rect x="5" y="6" width="14" height="12"/></svg></button>
+    <button class="btn ico" data-tool="fill" aria-label="Fill (G)" title="Fill (G)"><svg viewBox="0 0 24 24"><path d="M5 12l7-7 7 7-6 6z"/><path d="M19 15c1 1.5 1.5 2.5 1.5 3.2a1.5 1.5 0 01-3 0c0-.7.5-1.7 1.5-3.2z"/></svg></button>
+    <button class="btn ico" data-tool="picker" aria-label="Color picker (I)" title="Color picker (I)"><svg viewBox="0 0 24 24"><path d="M15 5l4 4-9 9-4 1 1-4z"/><path d="M13 7l4 4"/></svg></button>
+    <button class="btn ico" data-tool="place" aria-label="Place object (C)" title="Place object (C)"><svg viewBox="0 0 24 24"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M12 12l8-4.5M12 12v9M12 12L4 7.5"/></svg></button>
+    <button class="btn ico" data-tool="pick" aria-label="Select object (A)" title="Select object (A)"><svg viewBox="0 0 24 24"><path d="M6 3l13 9-6 1.5L10 20z"/></svg></button>
+    <button class="btn ico" data-tool="shade" aria-label="Lighten / Darken (H)" title="Lighten / Darken (H)"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 010 16z" fill="currentColor"/></svg></button>
+    <button class="btn ico" data-tool="dither" aria-label="Dither (D)" title="Dither (D)"><svg viewBox="0 0 24 24"><path d="M5 5h4v4H5zM15 5h4v4h-4zM10 10h4v4h-4zM5 15h4v4H5zM15 15h4v4h-4z" fill="currentColor" stroke="none"/></svg></button>
+    <button class="btn ico" data-tool="shadow" aria-label="Shadow ellipse (O)" title="Shadow ellipse (O)"><svg viewBox="0 0 24 24"><path d="M12 4v10"/><path d="M9 7l3-3 3 3"/><ellipse cx="12" cy="17.5" rx="8" ry="3.5" fill="currentColor"/></svg></button>
+    <button class="btn ico" data-tool="tile" aria-label="Ground tile (T)" title="Ground tile (T)"><svg viewBox="0 0 24 24"><path d="M12 5l9 5-9 5-9-5z"/><path d="M3 14l9 5 9-5"/></svg></button>
+    <button class="btn ico" data-tool="terrain" aria-label="Terrain (N)" title="Terrain (N)"><svg viewBox="0 0 24 24"><path d="M3 18l5-8 4 5 3-4 6 7z"/><path d="M3 21h18"/></svg></button>
+    <button class="btn ico" data-tool="scatter" aria-label="Scatter (Q)" title="Scatter (Q)"><svg viewBox="0 0 24 24"><path d="M7 4l2.5 4h-5zM17 8l2.5 4h-5zM9 14l2.5 4h-5z"/><path d="M4 21h16"/></svg></button>
+    <button class="btn ico" data-tool="marquee" aria-label="Rectangular select (V)" title="Rectangular select (V)"><svg viewBox="0 0 24 24"><rect x="5" y="6" width="14" height="12" stroke-dasharray="3 3"/></svg></button>
+    <button class="btn ico" data-tool="wand" aria-label="Magic wand (W)" title="Magic wand (W)"><svg viewBox="0 0 24 24"><path d="M5 19L15 9"/><path d="M17 3v4M15 5h4M6 6v3M4.5 7.5h3M18 14v3M16.5 15.5h3"/></svg></button>
+    <button class="btn ico" data-tool="pivot" aria-label="Set pivot (P)" title="Set pivot (P)"><svg viewBox="0 0 24 24"><path d="M12 13l9 4.5-9 4.5-9-4.5z"/><path d="M12 2v15.5M7.5 7h9"/></svg></button>
+    <div class="railview" role="group" aria-label="View">
+      <div class="sep"></div>
+      <button class="btn ico" data-tool="hand" aria-label="Hand (F)" title="Hand (F)"><svg viewBox="0 0 24 24"><path d="M7.5 12V7a1.5 1.5 0 013 0v3.5"/><path d="M10.5 10V5a1.5 1.5 0 013 0v5.5"/><path d="M13.5 10.5V6.5a1.5 1.5 0 013 0V11"/><path d="M16.5 11a1.5 1.5 0 013 0v3.5a6.5 6.5 0 01-6.5 6.5h-1a5 5 0 01-4-2l-3.6-4.4a1.5 1.5 0 012.3-1.9L8 14"/></svg></button>
+    </div>
+  </nav>
+
+  <div class="island stage" id="stage">
+    <canvas id="view" aria-label="Drawing canvas"></canvas>
+    <button class="edge" data-edge="top" aria-label="Extend canvas upward" title="Extend canvas upward"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
+    <button class="edge" data-shrink="top" aria-label="Shrink canvas from the top" title="Shrink canvas from the top"><svg viewBox="0 0 24 24"><path d="M5 12h14"/></svg></button>
+    <button class="edge" data-edge="right" aria-label="Extend canvas to the right" title="Extend canvas to the right"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
+    <button class="edge" data-shrink="right" aria-label="Shrink canvas from the right" title="Shrink canvas from the right"><svg viewBox="0 0 24 24"><path d="M5 12h14"/></svg></button>
+    <button class="edge" data-edge="bottom" aria-label="Extend canvas downward" title="Extend canvas downward"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
+    <button class="edge" data-shrink="bottom" aria-label="Shrink canvas from the bottom" title="Shrink canvas from the bottom"><svg viewBox="0 0 24 24"><path d="M5 12h14"/></svg></button>
+    <button class="edge" data-edge="left" aria-label="Extend canvas to the left" title="Extend canvas to the left"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
+    <button class="edge" data-shrink="left" aria-label="Shrink canvas from the left" title="Shrink canvas from the left"><svg viewBox="0 0 24 24"><path d="M5 12h14"/></svg></button>
+    <div class="selbar island" id="selBar" role="toolbar" aria-label="Selection actions" hidden>
+      <div class="row">
+        <button class="chip" data-sel="cut">Cut</button><button class="chip" data-sel="copy">Copy</button><button class="chip" data-sel="paste">Paste</button><button class="chip" data-sel="delete">Delete</button>
+        <button class="chip" data-more="moreFlip">Flip</button><button class="chip" data-more="moreRotate">Rotate</button><button class="chip" data-more="moreProject">Project</button>
+        <button class="chip float-only" data-sel="done">Done</button><button class="chip float-only" data-sel="cancel">Cancel</button>
+      </div>
+      <div class="row selmore" id="moreFlip" hidden><button class="chip" data-transform="flipH">Horizontal</button><button class="chip" data-transform="flipV">Vertical</button></div>
+      <div class="row selmore" id="moreRotate" hidden><button class="chip" data-transform="rot90">90&deg;</button><button class="chip" data-transform="rot180">180&deg;</button><button class="chip" data-transform="rot270">270&deg;</button></div>
+      <div class="row selmore" id="moreProject" hidden><button class="chip" data-transform="wallL">Left wall</button><button class="chip" data-transform="wallR">Right wall</button><button class="chip" data-transform="top">Top plane</button><button class="chip" data-transform="unwallL">Undo left</button><button class="chip" data-transform="unwallR">Undo right</button></div>
+    </div>
+    <button class="btn minibtn" id="miniBtn" aria-label="Show minimap">Map</button>
+    <div class="mini island" id="mini" role="region" aria-label="Minimap" hidden>
+      <div class="pophead"><span>Map</span><button class="btn ico" id="miniClose" aria-label="Hide minimap"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+      <div class="minimap" id="miniMap" role="group" aria-label="Map of the whole canvas" data-hint="The whole canvas. Tap to jump there, or drag the rectangle to move the view."><canvas id="miniCv" width="1" height="1" role="img" aria-label="Whole canvas"></canvas><canvas id="miniTop" width="1" height="1" aria-hidden="true"></canvas></div>
+    </div>
+    <div class="asmbar island" id="asmBar" hidden><span>Editing inside an assembly</span><button class="chip" id="asmDone">Done</button></div>
+    <div class="fitbar island" id="fitBar" role="region" aria-label="Does it fit" hidden><p id="fitText"></p><button class="btn pri" id="fitGo">Extend now</button><button class="btn pri" id="fitIn" hidden>Fit inside</button></div>
+    <div class="shrinkask island" id="shrinkAsk" role="group" aria-label="Shrink canvas" hidden><p id="shrinkText"></p><div class="row"><button class="btn pri" id="shrinkGo">Shrink</button><button class="btn" id="shrinkNo">Cancel</button></div></div>
+    <div class="tipstrip island" id="tipStrip" role="region" aria-label="Tips" hidden>
+      <p class="tiptext"><b id="tipTitle"></b> <span id="tipText"></span></p>
+      <div class="row wrap stagedots" id="tipStages" role="group" aria-label="Stages" hidden></div>
+      <div class="row wrap">
+        <button class="btn pri" id="tipShow">Show me</button>
+        <button class="chip" id="tipBack">Back</button><button class="chip" id="tipNext">Next</button>
+        <span class="mono muted" id="tipCount"></span>
+        <span class="grow"></span>
+        <button class="chip" id="tipOff">Tips off</button>
+      </div>
+    </div>
+    <div class="selbar island" id="objBar" role="toolbar" aria-label="Object actions" hidden>
+      <div class="row"><button class="chip" id="objBarEdit">Edit</button><button class="chip" id="objBarRaise">Raise</button><button class="chip" id="objBarLower">Lower</button><button class="chip" id="objBarLand">Land</button><button class="chip" id="objBarDel">Delete</button></div>
+    </div>
+  </div>
+
+  <aside class="island drawer" id="tipsDrawer" aria-label="Tips" tabindex="-1" hidden>
+    <div class="pophead"><span>Tips</span><button class="btn ico" id="tipsClose" aria-label="Close tips"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+    <div class="tipsfind"><input id="tipsSearch" type="text" inputmode="search" placeholder="Search tips" aria-label="Search tips" autocomplete="off"></div>
+    <div class="tipsbody" id="tipsBody"></div>
+    <p class="hint tipsnone" id="tipsNone" hidden>No tips match that search.</p>
+  </aside>
+
+  <aside class="island side" id="side" aria-label="Panels">
+    <div class="toolcard" id="toolCard">
+      <span class="toolicon" id="toolIcon" aria-hidden="true"></span>
+      <div class="toolwords">
+        <div class="row between"><h2 id="optTitle">Pencil</h2><kbd class="mono" id="toolKey"></kbd></div>
+        <p class="hint" id="toolHint"></p>
+      </div>
+    </div>
+    <div class="secbar" id="secBar" role="group" aria-label="Go to section"></div>
+    <section class="sec" id="objSec" hidden>
+      <h3 class="h" id="objTitle">Object</h3>
+      <div class="ofields" id="objFields"></div>
+      <div class="row gap-top">
+        <button class="btn" id="objRaise" title="Up one level (Page Up or ])">Raise</button>
+        <button class="btn" id="objLower" title="Down one level (Page Down or [)">Lower</button>
+        <button class="btn" id="objLand" title="Drop onto whatever is below (End)">Land</button>
+        <button class="chip" id="objHalf" aria-pressed="false" title="Steppers, Raise and Lower move half a level">Half levels</button>
+      </div>
+      <button class="btn gap-top" id="objCenter" title="Center on what it stands on, or a detail on its parent">Center on parent</button>
+      <div id="objMulti" hidden>
+        <div class="field gap-top">Align on the tile grid
+          <div class="seg wide" role="group" aria-label="Align">
+            <button data-align="left" title="To the lowest i">Left</button><button data-align="right" title="To the highest i">Right</button><button data-align="top" title="To the lowest j">Top</button><button data-align="bottom" title="To the highest j">Bottom</button>
+          </div>
+        </div>
+        <div class="field gap-top">Distribute
+          <div class="row"><button class="btn grow" data-spread="i">Along i</button><button class="btn grow" data-spread="j">Along j</button></div>
+        </div>
+        <label class="field gap-top">Gap, half tiles<input id="objGap" type="number" min="0" max="256" placeholder="Even" aria-label="Gap in half tiles"></label>
+      </div>
+      <div id="asmRow" class="gap-top">
+        <div class="row">
+          <button class="btn" id="asmMake" title="Join these into one group (Ctrl+G)">Make assembly</button>
+          <button class="btn" id="asmIn" title="Change one part. Double-tap does the same">Edit inside</button>
+          <button class="btn" id="asmExplode" title="Back to separate objects (Ctrl+Shift+G)">Explode</button>
+          <button class="btn" id="asmTurnL">Turn left</button>
+          <button class="btn" id="asmTurnR">Turn right</button>
+          <button class="btn" id="asmFlip">Mirror</button>
+        </div>
+        <div class="row gap-top">
+          <button class="btn" id="libSave">Save to library</button>
+          <button class="btn" id="libPush" hidden title="Make this copy the library item">Update library item</button>
+          <button class="btn" id="libAll" hidden title="Redraw every copy from the library">Update all instances</button>
+        </div>
+      </div>
+      <div id="objParams"></div>
+      <p class="hint warn" id="objWarn" hidden></p>
+      <div class="detaillist gap-top" id="objDetails" hidden></div>
+      <p class="hint" id="objLevels"></p>
+      <label class="field gap-top">Ramp<select id="objRamp"></select></label>
+      <div class="ramprow gap-top" id="objSwatches"></div>
+      <div id="objMat"></div>
+      <div class="field gap-top">Outline
+        <div class="seg wide" role="group" aria-label="Object outline">
+          <button data-obj-outline="none" aria-pressed="false">None</button>
+          <button data-obj-outline="dark" aria-pressed="false">Darkest</button>
+          <button data-obj-outline="sel" aria-pressed="false">One step</button>
+        </div>
+      </div>
+      <div class="field gap-top" id="objFacingRow"><span class="row between">Front points<span class="row"><svg class="facearrow" id="objArrow" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 5.5L12 10M12 10H7.5M12 10l-2 -4"/></svg><span class="mono" id="objFacing"></span></span></span>
+        <div class="row"><button class="btn grow" id="objTurnL">Turn left</button><button class="btn grow" id="objTurnR">Turn right</button></div>
+      </div>
+      <div class="field gap-top" id="objOrderRow"><span class="row between">Order among overlapping solids<span class="mono" id="objOrderRead"></span></span>
+        <div class="row"><button class="btn grow" id="objBack">Back</button><button class="btn grow" id="objForward">Forward</button></div>
+      </div>
+      <div class="row gap-top">
+        <button class="chip" id="objShadow" aria-pressed="false">Casts a shadow</button>
+        <button class="btn" id="objDup">Duplicate</button>
+        <button class="btn danger" id="objDel">Delete</button>
+        <button class="btn" id="objBake">Bake layer</button>
+      </div>
+    </section>
+
+    <section class="sec" id="colorSec">
+      <h3 class="h">Color</h3>
+      <div class="row">
+        <div class="curswatch" id="curSwatch" role="img" aria-label="First color"></div>
+        <button class="curswatch second" id="curSwatch2" aria-label="Second color. Tap to swap with the first (X)" title="Second color. Tap to swap with the first (X)"></button>
+        <input id="colorInput" type="color" value="#3f8a4f" aria-label="Pick a color">
+        <input id="hexInput" class="hex grow" type="text" value="#3f8a4f" maxlength="7" aria-label="Hex color" autocomplete="off" spellcheck="false">
+      </div>
+      <select id="palSel" class="gap-top" aria-label="Palette"></select>
+      <div class="pal" id="pal"></div>
+      <p class="hint" id="palCredit" hidden></p>
+      <div class="sv" id="svBox" tabindex="0" role="slider" aria-label="Saturation and brightness" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i id="svDot"></i></div>
+      <input id="hueInput" class="hue" type="range" min="0" max="360" value="0" aria-label="Hue">
+      <div class="row gap-top">
+        <button class="btn sm" id="palAdd">Add to palette</button>
+        <button class="btn sm" id="palEdit" aria-pressed="false">Remove colors</button>
+        <button class="btn sm" id="palTools">Ramps and files&hellip;</button>
+      </div>
+    </section>
+
+    <section class="sec" id="optSec">
+      <div class="secbody" id="optBody">
+      <div class="opts">
+        <div id="brushOpt" data-for="pencil eraser line shade dither">
+          <div class="field"><span>Brush size (<span id="brushUnit">px</span>)</span>
+            <span class="stepper wide"><button class="btn sm" id="brushDown" aria-label="Brush size down">&minus;</button><input id="brushN" type="number" min="1" max="8" aria-label="Brush size in pixels"><button class="btn sm" id="brushUp" aria-label="Brush size up">+</button></span>
+            <div id="brushRow" role="group" aria-label="Brush size in pixels"></div>
+          </div>
+        </div>
+        <div data-for="line" hidden><button class="chip" id="lineSnap" aria-pressed="true">Snap to iso angles</button></div>
+        <div data-for="rect" hidden><button class="chip" id="rectFill" aria-pressed="false">Filled</button></div>
+        <div data-for="fill" hidden>
+          <div class="field">Fill reads
+            <div class="row"><button class="chip" id="fillAll" aria-pressed="true">All layers</button><button class="chip" id="fillOne" aria-pressed="false">This layer</button></div>
+          </div>
+        </div>
+        <div data-for="place" hidden>
+          <div class="seg wide" role="group" aria-label="Place from"><button id="placeTabShapes" aria-pressed="true">Shapes</button><button id="placeTabLib" aria-pressed="false">Library</button></div>
+          <div id="placeLib" class="gap-top" hidden>
+            <input id="libSearch" type="text" inputmode="search" placeholder="Search" aria-label="Search the library" autocomplete="off">
+            <div class="row gap-top wrap" id="libCats" role="group" aria-label="Category"></div>
+            <div class="shapes gap-top" id="libGrid"></div>
+            <p class="hint" id="libEmpty" hidden></p>
+            <div class="field gap-top" id="libPose" hidden>Before placing
+              <div class="row"><button class="btn grow" id="libTurnL">Turn left</button><button class="btn grow" id="libTurnR" title="R">Turn right</button><button class="btn grow" id="libMirror" title="M">Mirror</button></div>
+              <button class="btn danger gap-top" id="libDel">Remove from library</button>
+            </div>
+            <div class="row gap-top"><button class="btn grow" id="libExport">Export mine</button><button class="btn grow" id="libImport">Import</button></div>
+            <input id="libInput" type="file" accept=".qtiles-lib.json,.isopic-lib.json,.json,application/json" hidden>
+            <p class="hint">Tap an item, then tap the canvas. Your own items are saved in this project. Use Export to take them to another one.</p>
+          </div>
+          <div id="placeShapes" class="gap-top">
+          <div id="shapeCards"></div>
+          <div class="field gap-top" id="placeFacingRow"><span class="row between">Front points<span class="row"><svg class="facearrow" id="placeArrow" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 5.5L12 10M12 10H7.5M12 10l-2 -4"/></svg><span class="mono" id="placeFacing"></span></span></span>
+            <div class="row"><button class="btn grow" id="placeTurnL">Turn left</button><button class="btn grow" id="placeTurnR">Turn right</button></div>
+          </div>
+          <div class="ofields gap-top">
+            <div class="field">Width<span class="stepper wide"><button class="btn sm" data-step="objW:-1" aria-label="Narrower">&minus;</button><input id="objW" type="number" min="1" max="256" aria-label="Width in half tiles"><button class="btn sm" data-step="objW:1" aria-label="Wider">+</button></span></div>
+            <div class="field">Depth<span class="stepper wide"><button class="btn sm" data-step="objD:-1" aria-label="Shallower">&minus;</button><input id="objD" type="number" min="1" max="256" aria-label="Depth in half tiles"><button class="btn sm" data-step="objD:1" aria-label="Deeper">+</button></span></div>
+            <div class="field">Height px<span class="stepper wide"><button class="btn sm" data-step="objH:-4" aria-label="Lower">&minus;</button><input id="objH" type="number" min="1" max="1024" aria-label="Height in pixels"><button class="btn sm" data-step="objH:4" aria-label="Taller">+</button></span></div>
+          </div>
+          <div id="placeParams"></div>
+          <label class="field gap-top">Ramp<select id="placeRamp"></select></label>
+          <div class="ramprow gap-top" id="placeSwatches"></div>
+          <div id="placeMat"></div>
+          <div class="shades" id="shades" aria-label="Top, left and right faces"><i></i><i></i><i></i></div>
+          <div class="field">Outline
+            <div class="seg wide" role="group" aria-label="Outline">
+              <button data-opt="objOutline:none" aria-pressed="false">None</button>
+              <button data-opt="objOutline:dark" aria-pressed="true">Darkest</button>
+              <button data-opt="objOutline:sel" aria-pressed="false">One step</button>
+            </div>
+          </div>
+          <div class="row gap-top"><button class="chip" id="objShadowOpt" aria-pressed="true">Casts a shadow</button></div>
+          <p class="hint">Tap to place one at the size above, or drag to draw its footprint. It lands on the surface under the cursor: the ground, a flat top, or a slope at its height there, on any layer that is showing. Roofs go on a box of the same size. Hold a label on touch to read what it does. Width and depth are in half tiles. A window, door, sign or awning goes on the wall you tap, a chimney on a top or a roof, and each brings its own colors.</p>
+          </div>
+        </div>
+        <div data-for="scatter" hidden>
+          <div class="seg wide" role="group" aria-label="Scatter does"><button data-sc-mode="paint">Paint</button><button data-sc-mode="erase">Erase</button><button data-sc-mode="path">Along a line</button></div>
+          <div id="scPaint" class="gap-top">
+            <div class="field">Scatters<div class="row wrap" id="scList"></div></div>
+            <div class="row gap-top"><button class="btn grow" id="scShape" title="The shape chosen in Place object">Add current shape</button></div>
+            <label class="field gap-top">Add from the library<select id="scAdd"><option value="">Choose an item</option></select></label>
+            <div class="ofields gap-top">
+              <label class="field">Spacing (tiles)<input id="scSpacing" type="number" min="1" max="32"></label>
+              <div id="scBrushOnly" class="ofields span2">
+                <label class="field">Jitter, percent<input id="scJitter" type="number" min="0" max="100"></label>
+                <label class="field">Size steps<input id="scSize" type="number" min="0" max="4"></label>
+                <label class="field">Density, percent<input id="scDensity" type="number" min="1" max="100"></label>
+                <div class="field">Options<div class="row wrap"><button class="chip" id="scTurn" aria-pressed="true">Random facing</button></div></div>
+              </div>
+            </div>
+            <div class="row gap-top wrap"><button class="chip" id="scAvoid" aria-pressed="true">Avoid overlap</button><button class="btn" id="scReroll">Reroll</button><span class="hint">Seed <span class="mono" id="scSeed"></span></span></div>
+            <p class="hint">Drag to paint. The same stroke and seed give the same result. Reroll redoes your last stroke with a new seed.</p>
+          </div>
+          <div id="scErase" class="gap-top" hidden>
+            <label class="field">Erase radius (tiles)<input id="scBrush" type="number" min="1" max="8"></label>
+            <p class="hint">Removes what the stroke touches on the active layer. An assembly goes as a whole. Terrain stays.</p>
+          </div>
+        </div>
+        <div data-for="pick" hidden>
+          <div class="field">Dragging moves
+            <div class="seg wide" role="group" aria-label="Dragging moves"><button id="dragMove" aria-pressed="true">Position</button><button id="dragHeight" aria-pressed="false">Height</button></div>
+          </div>
+          <div class="row gap-top">
+            <button class="chip" id="objAddOpt" aria-pressed="false" title="The same as holding Shift">Add to selection</button>
+            <button class="chip" id="objFreeOpt" aria-pressed="false" title="The same as holding Alt">Free</button>
+          </div>
+          <p class="hint">Tap an object to select it, or drag across empty canvas to select everything you touch. Shift-tap or Add to selection adds and removes. Dragged objects land on the surface under them and snap to whatever stands beside them; Alt or Free turns snapping off, leaving half tiles and single pixels of height. A detail slides along its wall. Arrow keys move one tile, Page Up and Down one level, End lands, Delete removes.</p>
+        </div>
+        <div data-for="place pick scatter terrain" hidden>
+          <div class="row gap-top"><button class="btn grow" id="heightBtn" aria-expanded="false">Height guides: <span class="mono" id="heightRead"></span></button></div>
+        </div>
+        <div data-for="terrain" hidden>
+          <div class="field">Stroke does
+            <div class="seg wide" role="group" aria-label="Stroke does"><button data-ter-mode="raise">Raise</button><button data-ter-mode="lower">Lower</button><button data-ter-mode="level">Level</button></div>
+          </div>
+          <div class="field gap-top">Stroke width (tiles)
+            <div class="seg wide" role="group" aria-label="Stroke width in tiles"><button data-ter-brush="1">1</button><button data-ter-brush="2">2</button><button data-ter-brush="3">3</button><button data-ter-brush="4">4</button><button data-ter-brush="5">5</button></div>
+          </div>
+          <div class="field gap-top">Sides
+            <div class="seg wide" role="group" aria-label="Terrain sides"><button data-ter-side="dirt">Dirt</button><button data-ter-side="stone">Stone</button></div>
+          </div>
+          <div id="terMat"></div>
+          <div class="row between gap-top"><button class="chip" id="terSlopes" aria-pressed="false" title="Where one tile is one level below its neighbor, a ramp instead of a cliff">Slope edges</button><span class="mono muted" id="terCount"></span></div>
+          <p class="hint">Drag over tiles. Each tile changes once per stroke, up to 8 levels. Level sets every tile to the height you started on. The top takes the current color. It paints on a Terrain layer, made at the bottom if there is none.</p>
+        </div>
+        <div data-for="pivot" hidden>
+          <div class="field">Dragging
+            <div class="seg wide" role="group" aria-label="Dragging"><button id="pivotSet">Sets the pivot</button><button id="pivotMove">Moves the layer</button></div>
+          </div>
+          <p class="hint">Tap the point between the character's feet. Then Place on tile, under Character, keeps it on tile centers as the layer moves. An object layer moves with Select object instead.</p>
+        </div>
+        <div data-for="marquee" hidden><p class="hint">Drag to select. Drag inside a selection to move it. Tap outside to deselect.</p></div>
+        <div data-for="wand" hidden>
+          <div class="field">Wand reads
+            <div class="row"><button class="chip" id="wandAll" aria-pressed="true">All layers</button><button class="chip" id="wandOne" aria-pressed="false">This layer</button></div>
+          </div>
+          <p class="hint">Tap to select contiguous pixels of exactly the same color.</p>
+        </div>
+        <div data-for="shade" hidden>
+          <div class="seg wide" role="group" aria-label="Shade direction">
+            <button id="shadeDark" aria-pressed="true">Darken</button>
+            <button id="shadeLight" aria-pressed="false">Lighten</button>
+          </div>
+          <p class="hint">Each pixel moves one step along its palette ramp per stroke. Colors outside a ramp are skipped.</p>
+        </div>
+        <div data-for="shadow" hidden>
+          <div class="field">Edge
+            <div class="seg wide" role="group" aria-label="Shadow edge">
+              <button data-opt="shadowEdge:hard" aria-pressed="true">Hard</button>
+              <button data-opt="shadowEdge:checker" aria-pressed="false">Checker</button>
+            </div>
+          </div>
+          <p class="hint">Drag out from the center of the footprint. It goes on this layer's shadow layer, which is created if there is none.</p>
+        </div>
+        <div data-for="tile" hidden>
+          <label class="field">Fill<select id="tileTex"></select></label>
+          <div id="tileVarField" hidden>
+            <label class="field gap-top"><span class="row between">Variants<span class="mono" id="tileVarsRead"></span></span><input id="tileVariants" type="range" min="2" max="6" value="4"></label>
+            <div class="row gap-top"><button class="chip" id="tileRandom" aria-pressed="true">Random variants</button></div>
+            <label class="field gap-top" id="tilePick" hidden><span class="row between">Variant<span class="mono" id="tileVarRead"></span></span><input id="tileVar" type="range" min="1" max="4" value="1"></label>
+            <div class="row gap-top"><label class="field grow">Seed<input id="tileSeed" type="number" min="1" value="1"></label><button class="btn" id="tileReroll">New seed</button></div>
+          </div>
+          <div class="field gap-top">Rim
+            <div class="seg wide" role="group" aria-label="Tile rim">
+              <button data-opt="tileRim:none" aria-pressed="true">None</button>
+              <button data-opt="tileRim:lower" aria-pressed="false">Lower edges</button>
+              <button data-opt="tileRim:full" aria-pressed="false">Full</button>
+            </div>
+          </div>
+          <label class="field gap-top">Thickness px<input id="tileH" type="number" min="0" max="64" value="0"></label>
+          <div class="row gap-top"><button class="chip seamBtn" aria-pressed="false">Preview tile</button></div>
+          <p class="hint">Tap to stamp one tile, or drag to fill a rectangle of tiles. Textures use the first color's ramp. The same tile and seed always get the same variant.</p>
+        </div>
+        <div data-for="dither" hidden>
+          <div class="seg wide" role="group" aria-label="Dither mode">
+            <button id="ditherBrush" aria-pressed="true">Brush</button>
+            <button id="ditherGrad" aria-pressed="false">Gradient</button>
+          </div>
+          <div class="row between gap-top">
+            <label class="field grow">Pattern<select id="ditherPat"></select></label>
+            <canvas class="dpv" id="ditherPv" width="16" height="16" role="img" aria-label="Pattern preview"></canvas>
+          </div>
+          <label class="field gap-top" id="levelField" hidden><span class="row between">Density<span class="mono" id="levelRead"></span></span><input id="ditherLevel" type="range" min="1" max="16" value="8"></label>
+          <div class="field gap-top">Other pixels
+            <div class="seg wide" role="group" aria-label="Other pixels">
+              <button id="offSecond" aria-pressed="true">Second color</button>
+              <button id="offClear" aria-pressed="false">Transparent</button>
+            </div>
+          </div>
+          <p class="hint" id="gradHint" hidden></p>
+          <p class="hint">Tap the second swatch or press X to swap the two colors.</p>
+          <p class="hint">Dither in at most two colors that are neighbors on the ramp; avoid dithering across large jumps.</p>
+          <p class="hint">Use dither on large flat areas, not on small details.</p>
+        </div>
+      </div>
+      <div class="field gap-top" id="lightField"><span class="lightname">Light</span>
+        <div class="seg wide" role="group" aria-label="Light direction">
+          <button data-light="left" aria-pressed="true"><svg class="lcube" viewBox="0 0 24 24" aria-hidden="true"><path class="fT" d="M12 3l8 4.5L12 12 4 7.5z"/><path class="fL" d="M4 7.5L12 12v9l-8-4.5z"/><path class="fD" d="M20 7.5L12 12v9l8-4.5z"/></svg>Left</button>
+          <button data-light="right" aria-pressed="false"><svg class="lcube" viewBox="0 0 24 24" aria-hidden="true"><path class="fT" d="M12 3l8 4.5L12 12 4 7.5z"/><path class="fD" d="M4 7.5L12 12v9l-8-4.5z"/><path class="fL" d="M20 7.5L12 12v9l8-4.5z"/></svg>Right</button>
+          <button data-light="overhead" aria-pressed="false"><svg class="lcube" viewBox="0 0 24 24" aria-hidden="true"><path class="fT" d="M12 3l8 4.5L12 12 4 7.5z"/><path class="fL" d="M4 7.5L12 12v9l-8-4.5z"/><path class="fL" d="M20 7.5L12 12v9l8-4.5z"/></svg>Overhead</button>
+        </div>
+      </div>
+      </div>
+    </section>
+
+    <section class="sec" id="selSec">
+      <h3 class="h">Selection</h3>
+      <div class="row">
+        <button class="chip" data-sel="all" title="Select all (Ctrl+A)">All</button>
+        <button class="chip" data-sel="none" title="Deselect (Ctrl+D)">None</button>
+        <button class="chip" data-sel="invert" title="Invert (Ctrl+I)">Invert</button>
+        <button class="chip" data-sel="content" title="Select the painted area of this layer">Layer content</button>
+      </div>
+      <div class="field gap-top">New selections
+        <div class="seg wide" role="group" aria-label="New selections">
+          <button data-selop="set" aria-pressed="true">Replace</button>
+          <button data-selop="add" aria-pressed="false" title="Shift adds">Add</button>
+          <button data-selop="sub" aria-pressed="false" title="Alt subtracts">Subtract</button>
+        </div>
+      </div>
+      <div class="row gap-top">
+        <button class="chip" data-sel="cut" title="Cut (Ctrl+X)">Cut</button>
+        <button class="chip" data-sel="copy" title="Copy (Ctrl+C)">Copy</button>
+        <button class="chip" data-sel="paste" title="Paste (Ctrl+V)">Paste</button>
+        <button class="chip" data-sel="delete" title="Delete">Delete</button>
+        <button class="chip" data-sel="duplicate" title="Duplicate (Ctrl+J, or Alt-drag)">Duplicate</button>
+      </div>
+      <div class="field gap-top">Flip and rotate
+        <div class="row">
+          <button class="chip" data-transform="flipH">Flip H</button><button class="chip" data-transform="flipV">Flip V</button>
+          <button class="chip" data-transform="rot90">90&deg;</button><button class="chip" data-transform="rot180">180&deg;</button><button class="chip" data-transform="rot270">270&deg;</button>
+          <button class="chip" data-sel="mirror" title="Flip this layer around the center of its content">Mirror layer</button>
+        </div>
+      </div>
+      <div class="field gap-top">Project from a flat drawing
+        <div class="row">
+          <button class="chip" data-transform="wallL">Left wall</button><button class="chip" data-transform="wallR">Right wall</button><button class="chip" data-transform="top">Top plane</button>
+          <button class="chip" data-transform="unwallL">Undo left wall</button><button class="chip" data-transform="unwallR">Undo right wall</button>
+        </div>
+      </div>
+      <p class="hint">With nothing selected these act on the whole layer. Only flips, 90&deg; turns and 2:1 steps are offered: free rotation and scaling would blur the pixels.</p>
+    </section>
+
+    <section class="sec" id="symSec">
+      <h3 class="h">Symmetry</h3>
+      <div class="row">
+        <button class="chip" id="mirrorX" aria-pressed="false" title="Mirror left and right (S)">Left-right</button>
+        <button class="chip" id="mirrorY" aria-pressed="false" title="Mirror top and bottom">Top-bottom</button>
+      </div>
+      <div id="symMore" hidden>
+        <div class="row gap-top">
+          <button class="chip" id="axisPlace" aria-pressed="false">Place mirror line</button>
+          <button class="chip" id="axisCenter">Center</button>
+          <button class="chip" id="axisSnap" aria-pressed="true">Snap to tiles</button>
+        </div>
+        <p class="hint">With both on, one stroke repeats in all four corners. Objects mirror as separate objects and keep their shading.</p>
+      </div>
+    </section>
+
+    <section class="sec" id="layersSec">
+      <h3 class="h">Layers</h3>
+      <div class="layers" id="layers"></div>
+      <label class="field gap-top">Opacity<input id="layerOpacity" type="range" min="0" max="100" value="100"></label>
+      <div class="lbtns">
+        <button class="btn ico" id="lAdd" aria-label="New layer" title="New layer"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
+        <button class="btn ico" id="lDup" aria-label="Copy layer" title="Copy layer"><svg viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="1.5"/><path d="M15 9V5.5A1.5 1.5 0 0013.5 4h-8A1.5 1.5 0 004 5.5v8A1.5 1.5 0 005.5 15H9"/></svg></button>
+        <button class="btn ico" id="lUp" aria-label="Move layer up" title="Move layer up"><svg viewBox="0 0 24 24"><path d="M12 19V5M6 11l6-6 6 6"/></svg></button>
+        <button class="btn ico" id="lDown" aria-label="Move layer down" title="Move layer down"><svg viewBox="0 0 24 24"><path d="M12 5v14M6 13l6 6 6-6"/></svg></button>
+        <button class="btn ico" id="lMerge" aria-label="Merge down" title="Merge down"><svg viewBox="0 0 24 24"><path d="M4 16.5l8-4 8 4-8 4z"/><path d="M12 3v6.5M8.8 6.5l3.2 3.2 3.2-3.2"/></svg></button>
+        <button class="btn ico danger" id="lDel" aria-label="Delete layer" title="Delete layer"><svg viewBox="0 0 24 24"><path d="M4 7h16M9 7V4.5h6V7M6.5 7l1 13h9l1-13M10 11v5M14 11v5"/></svg></button>
+      </div>
+      <div class="row gap-top"><button class="chip" id="lPick" aria-pressed="false">Select layers</button><button class="btn" id="lGroup">Group selected</button></div>
+      <div class="field gap-top">Label<div class="tags" id="lTags" role="group" aria-label="Layer label"></div></div>
+      <div id="gBox" hidden>
+        <h4 class="h gap-top" id="gTitle">Group</h4>
+        <label class="field">Group opacity<input id="gOpacity" type="range" min="0" max="100" value="100"></label>
+        <div class="field gap-top">Group label<div class="tags" id="gTags" role="group" aria-label="Group label"></div></div>
+        <div class="row gap-top"><button class="btn ico" id="gUp" aria-label="Move group up" title="Move group up"><svg viewBox="0 0 24 24"><path d="M12 19V5M6 11l6-6 6 6"/></svg></button><button class="btn ico" id="gDown" aria-label="Move group down" title="Move group down"><svg viewBox="0 0 24 24"><path d="M12 5v14M6 13l6 6 6-6"/></svg></button><button class="btn" id="gUngroup">Ungroup</button><button class="btn" id="gMerge">Merge group down</button></div>
+      </div>
+      <div class="row gap-top" id="lbtnsObj"><button class="btn" id="lObj">New object layer</button><button class="btn" id="lBake" hidden>Bake layer</button></div>
+      <div id="lShadowRow" hidden>
+        <div class="row gap-top"><button class="chip" id="lShadows" aria-pressed="false" title="Objects on this layer cast shadows that follow them">Live shadows</button></div>
+        <label class="field gap-top">Shadow opacity<input id="lShadowOp" type="range" min="0" max="100" value="35"></label>
+      </div>
+    </section>
+
+    <section class="sec" id="charSec">
+      <h3 class="h">Character</h3>
+      <p class="hint" id="charNote">Tap the layer's type tag and choose Character to give it a pivot and use it as a frame.</p>
+      <div id="charOnly" hidden>
+        <div class="row between"><span class="muted">Pivot</span><span class="mono" id="charPivot">Not set</span></div>
+        <div class="row gap-top wrap">
+          <button class="btn" id="charSet">Set pivot</button>
+          <button class="btn" id="charSnap">Snap pivot to tile center</button>
+          <button class="chip" id="charTile" aria-pressed="false">Place on tile</button>
+        </div>
+      </div>
+      <div class="field gap-top">Facings
+        <div class="row wrap">
+          <button class="btn" id="charMirror">Mirror to other facing</button>
+          <button class="btn" id="charUpdate">Update mirror</button>
+          <button class="btn" id="charBack">Create back view</button>
+        </div>
+      </div>
+      <p class="hint">Down-right and down-left are mirrors, and so are up-right and up-left. A mirror keeps its colors, but a held item changes hands, so check it. Update mirror replaces hand fixes on the mirror.</p>
+      <div class="field gap-top"><span class="row between">Ghost<span class="mono" id="ghostRead">None</span></span>
+        <div class="row wrap">
+          <button class="btn" id="ghostFrom">Ghost from layer</button>
+          <button class="btn" id="ghostClear">Clear ghost</button>
+          <button class="chip" id="charOnion" aria-pressed="false">Onion skin</button>
+        </div>
+      </div>
+      <p class="hint">The ghost shows faintly over everything to trace. It is never exported, and it cannot be picked or drawn on until you clear it.</p>
+      <button class="btn gap-top" id="charFrame">Export frame as PNG&hellip;</button>
+    </section>
+
+    <section class="sec" id="animSec">
+      <h3 class="h">Animation</h3>
+      <div class="row"><select id="animSel" class="grow" aria-label="Animation"></select><button class="btn" id="animNew">New</button></div>
+      <div id="animBody" hidden>
+        <label class="field gap-top">Name<input id="animName" type="text" maxlength="40" autocomplete="off"></label>
+        <div class="frames gap-top" id="animList"></div>
+        <p class="hint" id="animNone" hidden>Select a Character layer and tap Add this layer. Frames are layers, so draw each pose on its own.</p>
+        <div class="row gap-top wrap">
+          <button class="btn" id="animAdd">Add this layer</button>
+          <button class="btn" id="animPlay" aria-pressed="false">Play</button>
+          <button class="btn" id="animSheet">Sprite sheet&hellip;</button>
+          <button class="btn danger" id="animDel">Delete</button>
+        </div>
+        <canvas id="animPv" class="seamcv gap-top" width="1" height="1" role="img" aria-label="Animation preview" hidden></canvas>
+      </div>
+    </section>
+
+    <section class="sec" id="shadowSec">
+      <h3 class="h">Shadow and outline</h3>
+      <label class="field"><span class="row between">Shadow length<span class="mono" id="castRead"></span></span><input id="castLen" type="range" min="25" max="200" step="25" value="100"></label>
+      <div class="field gap-top">Edge
+        <div class="seg wide" role="group" aria-label="Shadow edge">
+          <button data-opt="shadowEdge:hard" aria-pressed="true">Hard</button>
+          <button data-opt="shadowEdge:checker" aria-pressed="false">Checker</button>
+        </div>
+      </div>
+      <div class="row gap-top"><button class="btn" id="castBtn">Cast shadow from layer</button></div>
+      <p class="hint">Follows the light. It replaces this layer's shadow layer, so cast again after changing the art. Object layers have live shadows instead, under Layers.</p>
+      <div class="field gap-top">Outline reaches
+        <div class="seg wide" role="group" aria-label="Outline reaches">
+          <button data-opt="outN:4" aria-pressed="true">4 sides</button>
+          <button data-opt="outN:8" aria-pressed="false">Corners too</button>
+        </div>
+      </div>
+      <div class="field gap-top">Outline sits
+        <div class="seg wide" role="group" aria-label="Outline sits">
+          <button data-opt="outSide:outside" aria-pressed="true">Outside</button>
+          <button data-opt="outSide:inside" aria-pressed="false">Inside</button>
+        </div>
+      </div>
+      <label class="field gap-top">Outline color<select id="outColor"><option value="sel">Darker than the art beside it</option><option value="dark">Darkest of that ramp</option><option value="fixed">First color</option></select></label>
+      <div class="field gap-top" id="outStepsField">Ramp steps darker
+        <div class="seg wide" role="group" aria-label="Ramp steps darker">
+          <button data-opt="outSteps:1" aria-pressed="true">1</button>
+          <button data-opt="outSteps:2" aria-pressed="false">2</button>
+        </div>
+      </div>
+      <div class="row gap-top"><button class="btn" id="outBtn">Outline layer</button><button class="btn" id="outMerge">Merge outline in</button></div>
+      <p class="hint">The outline goes on its own linked layer, so the art stays as it is. An outside outline sits below the art, an inside one above it.</p>
+    </section>
+
+    <section class="sec" id="sceneSec">
+      <h3 class="h">Views and sections</h3>
+      <div class="row"><button class="chip" id="miniOpt" aria-pressed="false">Minimap</button><button class="btn" id="viewSave">Save view</button></div>
+      <div class="frames gap-top" id="viewList"></div>
+      <p class="hint" id="viewNone">Save up to 9 views of this project. Keys 1 to 9 jump to them.</p>
+      <div class="row gap-top"><button class="chip" id="secOn" aria-pressed="false">Sections</button><span class="mono muted" id="secSizeRead"></span></div>
+      <button class="plink" data-prefs="sections">Section size and seam guard are in Preferences</button>
+      <div id="secMore" hidden>
+        <div class="row between gap-top"><span class="muted">Section in view</span><span class="mono" id="secRead"></span></div>
+        <div class="row gap-top"><button class="chip" id="secDone" aria-pressed="false">Section done</button><span class="mono muted" id="secCount"></span></div>
+        <label class="field gap-top">Note<input id="secNote" type="text" maxlength="200" autocomplete="off"></label>
+        <div class="row gap-top"><button class="btn" id="secPrev">Previous</button><button class="btn" id="secNext">Next</button><button class="btn" id="secTodo">Next not done</button></div>
+        <div class="row gap-top">
+          <label class="field grow">Across<input id="secX" type="number"></label>
+          <label class="field grow">Down<input id="secY" type="number"></label>
+          <button class="btn" id="secGo">Go to section</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="sec" id="canvasSec">
+      <h3 class="h">Canvas</h3>
+      <div class="row between"><span class="muted">Size</span><span class="mono" id="cvSize">352 x 224 px</span></div>
+      <div class="row gap-top"><button class="chip" id="cvLock" aria-pressed="false">Lock canvas size</button></div>
+      <div class="row gap-top"><button class="btn" id="cvResizeBtn">Resize&hellip;</button></div>
+      <p class="hint" id="cvHint"></p>
+      <button class="plink" data-prefs="canvas">The extend step and asking before growing are in Preferences</button>
+    </section>
+
+    <section class="sec" id="gridSec">
+      <h3 class="h">Grid</h3>
+      <div class="field">Mode
+        <div class="seg wide" role="group" aria-label="Mode"><button id="modeFlat2" aria-pressed="true">2D</button><button id="modeIso2" aria-pressed="false">Isometric</button></div>
+      </div>
+      <div class="field gap-top">Grid display
+        <div class="seg wide fit" role="group" aria-label="Grid display">
+          <button data-grid="gridShow:off" aria-pressed="false">Off</button>
+          <button data-grid="gridShow:cells" aria-pressed="true">Cells</button>
+          <button data-grid="gridShow:pixels" aria-pressed="false">Cells and pixels</button>
+        </div>
+      </div>
+      <div class="field gap-top">Guides
+        <div class="guides" id="guides" role="group" aria-label="Guides"></div>
+      </div>
+      <div class="field gap-top" id="gridSnap">Snap
+        <div class="seg wide fit" role="group" aria-label="Snap">
+          <button data-grid="snap:pixel" aria-pressed="true">Pixel</button>
+          <button data-grid="snap:cell" aria-pressed="false">Cell</button>
+          <button data-grid="snap:corner" aria-pressed="false">Cell corners</button>
+          <button data-grid="snap:tile" aria-pressed="false">Tile</button>
+        </div>
+        <p class="hint" id="snapNote"></p>
+      </div>
+      <div class="row gap-top" id="isoTools">
+        <button class="chip" id="guideBtn" aria-pressed="false">Tile shape</button>
+        <button class="chip seamBtn" aria-pressed="false">Preview tile</button>
+      </div>
+      <button class="plink" data-prefs="grid">Cell, tile and level sizes are in Preferences</button>
+    </section>
+  </aside>
+</div>
+
+<footer class="island statusbar">
+  <span id="sbName" class="sb-name"></span>
+  <button id="sizeChip" class="sb-chip" title="Sizes" aria-expanded="false">
+    <span id="chipMode"></span>
+    <span id="chipCanvas" class="mono"></span>
+    <span id="chipGrid" class="chip-grid"><span id="chipGridName"></span> <span id="chipGridN" class="mono"></span></span>
+    <span id="chipBrush" class="chip-brush">Brush <span id="chipBrushN" class="mono"></span></span>
+  </button>
+  <span id="status" class="mono">0, 0</span>
+  <span id="sbZoom" class="mono" aria-label="Zoom"></span>
+  <span id="sbOrigin" class="mono"></span>
+  <span id="sbMem" class="mono"></span>
+  <button id="sbFinger" class="sb-brush" hidden>Fingers draw</button>
+  <span class="sb-help"><span id="sbTool" class="sb-tool"></span> <button id="sbBrush" class="sb-brush mono"></button> <span id="sbOver" class="sb-over" hidden></span> <span id="sbPlace" class="mono" hidden></span> <span id="sbHint"></span></span>
+  <span id="sbSave" class="sb-save">Saved</span>
+</footer>
+
+<div class="coach island" id="coach" role="region" aria-label="Getting started" aria-live="polite" hidden>
+  <b id="coachTitle"></b>
+  <p id="coachText"></p>
+  <dl class="legend" id="coachLegend" hidden></dl>
+  <div class="row between"><span class="mono muted" id="coachCount"></span><span class="row"><button class="chip" id="coachSkip">Skip</button><button class="btn pri" id="coachNext">Next</button></span></div>
+</div>
+
+<div class="pop island" id="sizesPop" role="dialog" aria-label="Sizes" hidden>
+  <div class="pophead"><span>Sizes</span><button class="btn ico" data-pop-close="sizesPop" aria-label="Close sizes"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+  <div class="popbody">
+    <canvas id="szCv" class="szcv" role="img" width="1" height="1"></canvas>
+    <div class="szlabels mono" id="szLabels"></div>
+    <p class="hint" id="szPart" hidden></p>
+    <p class="hint warn" id="szWarn" role="status" hidden></p>
+    <div class="field gap-top"><span class="row between">Canvas<button class="btn" id="szResize">Resize&hellip;</button></span>
+      <p class="hint">Canvas: how many pixels wide and tall the drawing is.</p>
+    </div>
+    <div class="field gap-top"><span>Brush size (<span id="szBrushUnit">px</span>)</span>
+      <span class="stepper wide"><button class="btn sm" id="szBrushDown" aria-label="Brush size down">&minus;</button><input id="szBrushN" type="number" min="1" max="8" aria-label="Brush size in pixels"><button class="btn sm" id="szBrushUp" aria-label="Brush size up">+</button></span>
+      <p class="hint">Brush: how many pixels one touch paints.</p>
+    </div>
+    <div class="field gap-top"><span id="szGridName">Cell size (px)</span>
+      <span class="stepper wide"><button class="btn sm" id="szGridDown" aria-label="Cell size down">&minus;</button><input id="szGridN" type="number" aria-label="Cell size in pixels"><button class="btn sm" id="szGridUp" aria-label="Cell size up">+</button></span>
+      <p class="hint" id="szGridNote"></p>
+    </div>
+    <div class="field gap-top">Snap
+      <div class="seg wide fit" role="group" aria-label="Snap">
+        <button data-grid="snap:pixel" aria-pressed="true">Pixel</button>
+        <button data-grid="snap:cell" aria-pressed="false">Cell</button>
+        <button data-grid="snap:corner" aria-pressed="false">Cell corners</button>
+        <button data-grid="snap:tile" aria-pressed="false">Tile</button>
+      </div>
+      <p class="hint" id="szSnapNote"></p>
+    </div>
+  </div>
+</div>
+
+<div class="pop island" id="seamPop" role="dialog" aria-label="Tile preview" hidden>
+  <div class="pophead"><span>Tile preview</span><button class="btn ico" data-pop-close="seamPop" aria-label="Close tile preview"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+  <div class="popbody">
+    <p class="hint" id="seamNote"></p>
+    <div id="seamView">
+      <div class="field">Actual size<canvas id="seam1" class="seamcv" width="1" height="1"></canvas></div>
+      <div class="field gap-top">2x<canvas id="seam2" class="seamcv" width="1" height="1"></canvas></div>
+    </div>
+  </div>
+</div>
+<div class="pop island" id="guidePop" role="dialog" aria-label="Tile shape" hidden>
+  <div class="pophead"><span>Tile shape</span><button class="btn ico" data-pop-close="guidePop" aria-label="Close tile shape"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+  <div class="popbody">
+    <canvas id="guideCv" class="seamcv" width="1" height="1"></canvas>
+    <p class="hint" id="guideNote"></p>
+  </div>
+</div>
+
+<div class="pop island" id="heightPop" role="dialog" aria-label="Height guides" hidden>
+  <div class="pophead"><span>Height guides</span><button class="btn ico" data-pop-close="heightPop" aria-label="Close height guides"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+  <div class="popbody">
+    <div class="seg wide" role="group" aria-label="Height guides"><button data-hg="off">Off</button><button data-hg="lines">Lines</button><button data-hg="planes">Planes</button></div>
+    <p class="hint">Dotted lines show where an object stands and how tall it is, for the ghost and for what is selected. Planes adds walls behind it. Kept on this device, and never in the art or an export.</p>
+  </div>
+</div>
+
+<div class="pop island" id="histPop" role="dialog" aria-label="Undo history" hidden>
+  <div class="pophead"><span>Undo history</span><button class="btn ico" data-pop-close="histPop" aria-label="Close undo history"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+  <div class="popbody">
+    <div class="row between"><span id="histSteps"></span><span id="histUse" class="mono muted"></span></div>
+    <div class="bar gap-top"><i id="histBar"></i></div>
+    <p class="hint">When this fills, the oldest steps are dropped. Large steps are compressed, and undoing one can take a moment.</p>
+    <div class="row gap-top"><button class="btn danger" id="histClear">Clear history&hellip;</button></div>
+  </div>
+</div>
+
+<div class="scrim" id="sheetNew" hidden>
+  <div class="sheet start" id="startBox" role="dialog" aria-modal="true" aria-label="New" tabindex="-1">
+    <div class="sthead">
+      <span id="stBrand"></span>
+      <p>Pixel art in 2D and isometric. Your work stays in your own files.</p>
+      <span class="mono muted" id="stVer"></span>
+      <button class="btn ico" id="newClose" aria-label="Close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    </div>
+    <div class="seg wide sttabs" id="stTabs" role="group" aria-label="Show"><button id="stTabCont" data-tab="cont" aria-pressed="false">Continue</button><button data-tab="new" aria-pressed="true">New</button><button data-tab="ex" aria-pressed="false">Examples</button></div>
+    <div class="stbody" id="stBody" data-tab="new">
+      <section class="stcol" id="stCont" data-col="cont" aria-label="Continue" hidden>
+        <h3>Continue</h3>
+        <div class="stcards" id="stCards"></div>
+        <button class="btn" id="stReopen" hidden></button>
+        <button class="btn" id="stOpen">Open a file&hellip;</button>
+        <button class="plink" id="stAll">All recovery copies</button>
+      </section>
+      <section class="stcol" id="stNew" data-col="new" aria-label="New">
+        <h3>New</h3>
+        <div class="seg wide" role="group" aria-label="Mode"><button id="newFlat" aria-pressed="true">2D</button><button id="newIso" aria-pressed="false">Isometric</button></div>
+        <div class="newgroups" id="newGroups"></div>
+        <div class="field">Custom
+          <div class="row newcustom">
+            <label class="field grow">Width px<input id="newW" type="number" min="1" max="4096" value="352"></label>
+            <label class="field grow">Height px<input id="newH" type="number" min="1" max="4096" value="224"></label>
+            <div class="newpv"><div id="newPv"></div></div>
+          </div>
+          <p class="mono" id="newRead"></p>
+        </div>
+        <div class="row wrap" id="newRow"><button class="btn pri" id="newOk">Create</button></div>
+      </section>
+      <section class="stcol" id="exWrap" data-col="ex" aria-label="Examples">
+        <h3>Examples</h3>
+        <input id="exSearch" type="text" inputmode="search" placeholder="Title, lesson or skill" aria-label="Search examples" autocomplete="off">
+        <div class="exchips" id="exModes" role="group" aria-label="Grid"></div>
+        <div class="exchips" id="exChips" role="group" aria-label="Category"></div>
+        <div id="exStartWrap"><p class="exhead">Start here</p><div class="excards exstart" id="exStart"></div></div>
+        <div class="excards" id="exCards"></div>
+        <p id="exNone" hidden>No example matches that.</p>
+        <p>An example opens as a copy with tips. Saving it asks for a new file.</p>
+      </section>
+    </div>
+    <div class="stfoot">
+      <span id="stHello">New here?</span>
+      <button class="btn" id="stTour">Take the tour</button>
+      <button class="btn" id="stTips">Tips</button>
+      <button class="btn" id="stAbout">About</button>
+      <button class="btn" id="stPrefs">Preferences</button>
+    </div>
+  </div>
+</div>
+
+<div class="scrim" id="sheetGuard" hidden>
+  <div class="sheet" role="dialog" aria-label="Unsaved changes">
+    <h2>Save your changes first?</h2>
+    <p>This project has changes that are not in a saved file. They are lost if you go on without saving.</p>
+    <div class="row"><button class="btn pri" id="guardSave">Save first</button><button class="btn danger" id="guardDrop">Discard changes</button><button class="btn" data-close>Cancel</button></div>
+  </div>
+</div>
+
+<div class="scrim" id="sheetConflict" hidden>
+  <div class="sheet" role="dialog" aria-labelledby="conTitle">
+    <h2 id="conTitle"></h2>
+    <p id="conText"></p>
+    <div class="row"><button class="btn pri" id="conCopy">Save as copy</button><button class="btn danger" id="conOver">Overwrite</button><button class="btn" data-close>Cancel</button></div>
+  </div>
+</div>
+
+<div class="scrim" id="sheetFit" hidden>
+  <div class="sheet" role="dialog" aria-label="Past the edge">
+    <h2>This goes past the edge</h2>
+    <p id="fitAsk"></p>
+    <div class="row"><button class="btn pri" id="fitYes">Extend and place</button><button class="btn" id="fitMove">Move inside</button><button class="btn" data-close>Cancel</button></div>
+  </div>
+</div>
+<div class="scrim" id="sheetOlder" hidden>
+  <div class="sheet" role="dialog" aria-label="Older file">
+    <h2>This file is older than your last session</h2>
+    <p id="oldText"></p>
+    <div class="row"><button class="btn" id="oldRecover">See recovery copies</button><button class="btn danger" id="oldOpen">Open anyway</button><button class="btn" data-close>Cancel</button></div>
+  </div>
+</div>
+
+<div class="scrim" id="sheetRecover" hidden>
+  <div class="sheet" role="dialog" aria-labelledby="recTitle">
+    <h2 id="recTitle">Recovery copies</h2>
+    <button class="btn pri" id="recReopen" hidden></button>
+    <div id="recList" class="reclist"></div>
+    <p id="recEmpty" hidden>This browser holds no copies.</p>
+    <button class="btn" data-close>Close</button>
+  </div>
+</div>
+
+<div class="scrim" id="sheetHistClear" hidden>
+  <div class="sheet" role="dialog" aria-label="Clear history">
+    <h2>Clear undo history?</h2>
+    <p>Every undo and redo step goes, and this cannot be undone. The art stays as it is.</p>
+    <div class="row"><button class="btn danger" id="histClearOk">Clear history</button><button class="btn" data-close>Cancel</button></div>
+  </div>
+</div>
+
+<div class="scrim clear" id="sheetFile" hidden>
+  <div class="filepanel" id="filePanel" tabindex="-1">
+    <div class="filestatus"><b id="fileName"></b><span id="fileState"></span></div>
+    <!-- Help comes first in the left column at 900 px and up, and last under that: CSS order moves it, and menuItems goes by what is on screen. -->
+    <div id="fileMenu" role="menu" aria-label="File">
+      <div class="mcol" role="none">
+      <div class="mgroup" id="fgProject" role="group" aria-labelledby="fmProject">
+        <div class="mhead" id="fmProject">Project</div>
+        <button class="mitem" role="menuitem" id="fNew"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4"/></svg>New&hellip;</button>
+        <button class="mitem" role="menuitem" id="fOpen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 19V5h6l2 3h8v3"/><path d="M3 19l3-8h17l-3 8z"/></svg>Open&hellip;</button>
+        <button class="mitem" role="menuitem" id="fReopen" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 11-9-9 9 9 0 016.4 2.6L21 8"/><path d="M21 3v5h-5"/><path d="M12 7v5l3 2"/></svg><span class="mlabel" id="fReopenName"></span></button>
+        <button class="mitem" role="menuitem" id="fSave"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h11l3 3v13H5z"/><path d="M8 4v5h7V4"/><path d="M8 20v-7h8v7"/></svg>Save<kbd class="mkey">Ctrl+S</kbd></button>
+        <button class="mitem" role="menuitem" id="fSaveCopy"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h7l4 4v11H9z"/><path d="M16 3v4h4"/><path d="M5 7v14h11"/></svg>Save as copy&hellip;</button>
+      </div>
+      <div class="mgroup" id="fgCanvas" role="group" aria-labelledby="fmCanvas">
+        <div class="mhead" id="fmCanvas">Canvas</div>
+        <button class="mitem" role="menuitem" id="fResize"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" stroke-dasharray="3 3"/><path d="M9 15l6-6"/><path d="M11 9h4v4"/><path d="M9 11v4h4"/></svg>Resize canvas&hellip;</button>
+      </div>
+      <div class="mgroup" id="fgHelp" role="group" aria-labelledby="fmHelp">
+        <div class="mhead" id="fmHelp">Help</div>
+        <button class="mitem" role="menuitem" id="fTipsOpen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 00-3.6 10.8c.6.5 1 1.2 1 2.2h5.2c0-1 .4-1.7 1-2.2A6 6 0 0012 3z"/></svg>Tips</button>
+        <button class="mitem" role="menuitem" id="fPrefs"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/></svg>Preferences&hellip;<kbd class="mkey">Ctrl+,</kbd></button>
+        <button class="mitem" role="menuitem" id="fAbout"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><path d="M12 8v.01"/></svg>About qtiles</button>
+      </div>
+      </div>
+      <div class="mcol" role="none">
+      <div class="mgroup" id="fgExport" role="group" aria-labelledby="fmExport">
+        <div class="mhead" id="fmExport">Export</div>
+        <button class="mitem" role="menuitem" id="fExport"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14"/><circle cx="8.5" cy="10" r="1.5"/><path d="M21 16l-5-5L6 19"/></svg>Image&hellip;</button>
+        <button class="mitem" role="menuitem" id="fExportLayers"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l9 5-9 5-9-5z"/><path d="M3 12l9 5 9-5"/><path d="M3 16l9 5 9-5"/></svg>Each layer&hellip;</button>
+        <button class="mitem" role="menuitem" id="fExportTiles"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M4 9.3h16M4 14.7h16M9.3 4v16M14.7 4v16"/></svg>Tiles&hellip;</button>
+        <button class="mitem" role="menuitem" id="fSprite"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="18" height="12"/><path d="M9 6v12M15 6v12"/></svg>Sprite sheet&hellip;</button>
+        <button class="mitem" role="menuitem" id="fFrame"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8V4h4M16 4h4v4M20 16v4h-4M8 20H4v-4"/><rect x="9" y="9" width="6" height="6"/></svg>Frame as PNG&hellip;</button>
+      </div>
+      <div class="mgroup" id="fgBackup" role="group" aria-labelledby="fmBackup">
+        <div class="mhead" id="fmBackup">Backup and history</div>
+        <button class="mitem" role="menuitem" id="fBackup"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 13v7h16v-7"/><path d="M12 3v11"/><path d="M8 10l4 4 4-4"/></svg>Export backup</button>
+        <button class="mitem" role="menuitem" id="fRecover"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.5"/><path d="M5.6 5.6l3.9 3.9M14.5 14.5l3.9 3.9M18.4 5.6l-3.9 3.9M9.5 14.5l-3.9 3.9"/></svg>Recovery copies&hellip;</button>
+        <button class="mitem" role="menuitem" id="fHistory"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 109-9 9 9 0 00-6.4 2.6L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l3 2"/></svg>Undo history&hellip;</button>
+      </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="scrim" id="sheetAbout" hidden>
+  <div class="sheet about" id="aboutBox" role="dialog" aria-modal="true" aria-labelledby="aboutTitle">
+    <div class="abouthead">
+      <h2 id="aboutTitle">About qtiles</h2>
+      <button class="btn ico" id="aboutClose" aria-label="Close About"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    </div>
+    <div class="aboutbody" id="aboutBody" tabindex="-1"></div>
+    <div class="aboutfoot"><span class="mono" id="aboutVer"></span><button class="plink" id="aboutTips">Tips</button><button class="plink" id="aboutGestures">Gestures</button></div>
+  </div>
+</div>
+
+<div class="scrim" id="sheetPrefs" hidden>
+  <div class="sheet prefs" id="prefsBox" role="dialog" aria-modal="true" aria-labelledby="prefsTitle" tabindex="-1">
+    <div class="prefshead">
+      <h2 id="prefsTitle">Preferences</h2>
+      <input id="prefsFind" type="text" inputmode="search" placeholder="Search" aria-label="Search preferences" autocomplete="off">
+      <button class="btn ico" id="prefsClose" aria-label="Close preferences"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    </div>
+    <div class="prefsbody">
+      <nav class="prefsnav" id="prefsNav" aria-label="Preference categories"></nav>
+      <div class="prefslist" id="prefsList"></div>
+    </div>
+    <p class="hint" id="prefsNone" hidden>No settings match that search.</p>
+    <!-- Each part moves into its row when the dialog is built, so its id and the code that syncs it stay as they were. -->
+    <div id="prefParts" hidden>
+      <div data-part="edgeGrow"><div class="seg wide" role="group" aria-label="Past the edge"><button data-edge-grow="auto" aria-pressed="true">Extend</button><button data-edge-grow="ask" aria-pressed="false">Ask first</button></div></div>
+      <div data-part="extStep"><select id="extStep" aria-label="Extend by, in pixels"></select></div>
+      <div data-part="tile">
+        <div class="row">
+          <select id="tileSel" class="grow" aria-label="Tile size"><option value="16">16 &times; 8</option><option value="32" selected>32 &times; 16</option><option value="64">64 &times; 32</option><option value="128">128 &times; 64</option><option value="custom">Custom</option></select>
+          <label class="field grow" id="tileCustomField" hidden>Width px<input id="tileCustom" type="number" min="8" max="256" step="4" value="32"></label>
+        </div>
+      </div>
+      <div data-part="edgeRun">
+        <div class="seg wide" role="group" aria-label="Edge steps">
+          <button data-opt="edgeRun:2" aria-pressed="true">Runs of 2</button>
+          <button data-opt="edgeRun:3" aria-pressed="false">3</button>
+          <button data-opt="edgeRun:4" aria-pressed="false">4</button>
+        </div>
+      </div>
+      <div data-part="level">
+        <div class="row">
+          <input id="levelH" class="grow" type="number" min="4" max="64" aria-label="Level height in pixels">
+          <button class="btn" id="levelAuto">Half tile</button>
+        </div>
+        <p class="hint" id="levelNote"></p>
+      </div>
+      <div data-part="origin">
+        <div class="row" id="prefOrigin" role="group" aria-label="Grid origin">
+          <button class="btn ico" data-nudge="-1,0" aria-label="Move grid left" title="Move grid left"><svg viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></button>
+          <button class="btn ico" data-nudge="1,0" aria-label="Move grid right" title="Move grid right"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+          <button class="btn ico" data-nudge="0,-1" aria-label="Move grid up" title="Move grid up"><svg viewBox="0 0 24 24"><path d="M12 19V5M6 11l6-6 6 6"/></svg></button>
+          <button class="btn ico" data-nudge="0,1" aria-label="Move grid down" title="Move grid down"><svg viewBox="0 0 24 24"><path d="M12 5v14M6 13l6 6 6-6"/></svg></button>
+          <button class="btn" id="originReset">Reset</button>
+        </div>
+      </div>
+      <div data-part="cell">
+        <div class="row">
+          <select id="cellSel" class="grow" aria-label="Cell size in pixels"><option>1</option><option>2</option><option>4</option><option selected>8</option><option>16</option><option>32</option><option value="custom">Custom</option></select>
+          <label class="field grow" id="cellCustomField" hidden>Width px<input id="cellCustom" type="number" min="1" max="256" value="8"></label>
+        </div>
+        <p class="hint" id="cellNote"></p>
+      </div>
+      <div data-part="major">
+        <div class="seg wide" role="group" id="majorSeg" aria-label="Major line every this many cells">
+          <button data-grid="major:0" aria-pressed="false">Off</button>
+          <button data-grid="major:2" aria-pressed="false">2</button>
+          <button data-grid="major:4" aria-pressed="true">4</button>
+          <button data-grid="major:8" aria-pressed="false">8</button>
+          <button data-grid="major:16" aria-pressed="false">16</button>
+        </div>
+      </div>
+      <div data-part="secSize"><select id="secSize" aria-label="Section size"><option value="cells" id="secCells">16 &times; 16 tiles</option></select></div>
+    </div>
+  </div>
+</div>
+
+<div class="scrim" id="sheetGestures" hidden>
+  <div class="sheet" role="dialog" aria-label="Gestures">
+    <h2>Gestures</h2>
+    <dl class="legend" id="gestureList"></dl>
+    <button class="btn" data-close>Close</button>
+  </div>
+</div>
+
+<div class="scrim" id="sheetPal" hidden>
+  <div class="sheet" role="dialog" aria-label="Palette tools">
+    <h2>Palette tools</h2>
+    <div class="field">New ramp from the current color
+      <div class="row"><select id="rampSteps" class="grow" aria-label="Steps in the ramp"><option value="3">3 steps</option><option value="4">4 steps</option><option value="5" selected>5 steps</option><option value="6">6 steps</option><option value="7">7 steps</option><option value="8">8 steps</option><option value="9">9 steps</option></select><button class="btn" id="rampNewBtn">New ramp</button></div>
+    </div>
+    <div class="field">Add the current color to a ramp, in luminance order
+      <div class="row"><select id="rampTarget" class="grow" aria-label="Ramp"></select><button class="btn" id="rampAddBtn">Add to ramp</button></div>
+    </div>
+    <div class="field">Group loose colors by hue. Best effort: check the result.
+      <div class="row"><button class="btn" id="autoRampsBtn">Auto ramps</button></div>
+    </div>
+    <div class="field">Keep a copy of this palette in the project
+      <div class="row"><input id="palName" class="grow" type="text" maxlength="60" aria-label="Palette name" autocomplete="off"><button class="btn" id="palSaveBtn">Save as my palette</button></div>
+    </div>
+    <div class="field">Import a .hex or .gpl file, or paste hex colors
+      <textarea id="palText" rows="3" aria-label="Pasted colors" spellcheck="false"></textarea>
+      <div class="row"><button class="btn" id="palImportBtn">Import file&hellip;</button><button class="btn" id="palTextBtn">Import pasted text</button></div>
+    </div>
+    <div class="field">Export
+      <div class="row"><button class="btn" id="palHexBtn">Export .hex</button><button class="btn" id="palGplBtn">Export .gpl</button></div>
+    </div>
+    <button class="btn" data-close>Close</button>
+  </div>
+</div>
+
+<div class="scrim" id="sheetLinked" hidden>
+  <div class="sheet" role="dialog" aria-label="Delete linked layers">
+    <h2>Delete the linked layers too?</h2>
+    <p id="linkedNote"></p>
+    <div class="row"><button class="btn danger" id="delLinked">Delete them too</button><button class="btn" id="delOnly">Keep them</button><button class="btn" data-close>Cancel</button></div>
+  </div>
+</div>
+
+<div class="scrim" id="sheetMerge" hidden>
+  <div class="sheet" role="dialog" aria-label="Merge group down">
+    <h2>Merge this group down?</h2>
+    <p id="mergeNote"></p>
+    <div class="row"><button class="btn pri" id="mergeOk">Merge</button><button class="btn" data-close>Cancel</button></div>
+  </div>
+</div>
+
+<div class="scrim" id="sheetLib" hidden>
+  <div class="sheet" role="dialog" aria-label="Save to library">
+    <h2>Save to library</h2>
+    <label class="field">Name<input id="libName" type="text" maxlength="40" aria-label="Item name"></label>
+    <label class="field gap-top">Category<select id="libCat"></select></label>
+    <div class="row gap-top"><button class="btn pri" id="libSaveOk">Save</button><button class="btn" data-close>Cancel</button></div>
+  </div>
+</div>
+
+<div class="scrim" id="sheetLibAll" hidden>
+  <div class="sheet" role="dialog" aria-label="Update all instances">
+    <h2>Update all instances?</h2>
+    <p id="libAllNote"></p>
+    <div class="row"><button class="btn pri" id="libAllOk">Update all</button><button class="btn" data-close>Cancel</button></div>
+  </div>
+</div>
+
+<div class="scrim" id="sheetCanvas" hidden>
+  <div class="sheet" role="dialog" aria-label="Resize canvas">
+    <h2>Resize canvas</h2>
+    <div class="row">
+      <div class="field grow">Width px<span class="stepper wide"><button class="btn sm" id="cvWDown" aria-label="Width down">&minus;</button><input id="cvW" type="number" min="1" max="4096" value="352" aria-label="Width in pixels"><button class="btn sm" id="cvWUp" aria-label="Width up">+</button></span></div>
+      <div class="field grow">Height px<span class="stepper wide"><button class="btn sm" id="cvHDown" aria-label="Height down">&minus;</button><input id="cvH" type="number" min="1" max="4096" value="224" aria-label="Height in pixels"><button class="btn sm" id="cvHUp" aria-label="Height up">+</button></span></div>
+    </div>
+    <div class="row wrap"><button class="chip" id="cvLink" aria-pressed="false">Keep proportions</button><button class="chip" id="cvLock2" aria-pressed="false">Lock canvas size</button></div>
+    <div>
+      <div class="field">Keep existing art at</div>
+      <div class="anchor" id="anchor"></div>
+    </div>
+    <p class="mono" id="cvRead"></p>
+    <p>Growing adds transparent space. Shrinking crops from the side opposite the anchor. You can undo this.</p>
+    <div class="row"><button class="btn pri" id="cvOk">Apply</button><button class="btn" data-close>Cancel</button></div>
+  </div>
+</div>
+
+<div class="scrim" id="sheetExport" hidden>
+  <div class="sheet" role="dialog" aria-label="Export PNG">
+    <h2>Export PNG</h2>
+    <div class="seg wide" role="group" aria-label="Export as"><button data-xp-mode="image">One image</button><button data-xp-mode="layers">Each layer</button><button data-xp-mode="tiles">Tiles</button></div>
+    <div class="row wrap">
+      <button class="chip" id="expLayerOnly" aria-pressed="false">Selected layer only</button>
+      <button class="chip" id="expCrop" aria-pressed="false">Crop to content</button>
+      <button class="chip" id="expSel" aria-pressed="false">Selection</button>
+    </div>
+    <div class="field" id="expBgField">Background
+      <div class="seg wide" role="group" aria-label="Background"><button id="expClear" aria-pressed="true">Transparent</button><button id="expSolid" aria-pressed="false">Second color</button></div>
+    </div>
+    <div class="field" id="expScaleField">Scale<div class="row wrap" id="expScales"></div></div>
+    <div id="expTileOpts" hidden>
+      <label class="field">Tile size<select id="expTile"></select></label>
+      <div class="row wrap gap-top"><button class="chip" id="expOverlap" aria-pressed="false">1 px overlap</button><button class="chip" id="expSkip" aria-pressed="false">Skip empty tiles</button></div>
+    </div>
+    <p id="expNote"></p>
+    <div class="row"><button class="btn pri" id="expOk">Export</button><button class="btn" data-close>Cancel</button></div>
+  </div>
+</div>
+
+<div class="scrim" id="sheetFrame" hidden>
+  <div class="sheet" role="dialog" aria-label="Export frame as PNG">
+    <h2>Export frame as PNG</h2>
+    <p id="frmNote"></p>
+    <div class="field">Scale<div class="row wrap" id="frmScales"></div></div>
+    <p id="frmWhy" hidden></p>
+    <div class="row"><button class="btn pri" id="frmOk">Export</button><button class="btn" data-close>Cancel</button></div>
+  </div>
+</div>
+
+<div class="scrim" id="sheetSprite" hidden>
+  <div class="sheet" role="dialog" aria-label="Sprite sheet">
+    <h2>Sprite sheet</h2>
+    <div class="field">Scale<div class="row wrap" id="sprScales"></div></div>
+    <p id="sprNote"></p>
+    <div class="row">
+      <label class="field grow">Columns<input id="sprCols" type="number" min="1" value="1"></label>
+      <label class="field grow">Padding px<input id="sprPad" type="number" min="0" max="32" value="0"></label>
+    </div>
+    <div class="field">Background
+      <div class="seg wide" role="group" aria-label="Background"><button id="sprClear" aria-pressed="true">Transparent</button><button id="sprSolid" aria-pressed="false">Second color</button></div>
+    </div>
+    <p>Every frame gets a space of the same size, with the pivots lined up. A .json file with each frame's place, pivot and duration is saved beside the image. A frame with no pivot stands on the bottom middle of its art.</p>
+    <div class="row"><button class="btn pri" id="sprOk">Export</button><button class="btn" data-close>Cancel</button></div>
+  </div>
+</div>
+
+<div class="busy" id="busy" hidden>
+  <div class="sheet" id="busyBox" role="status" hidden>
+    <h2 id="busyLabel"></h2>
+    <div class="bar"><i id="busyBar"></i></div>
+    <div class="row between"><span class="mono muted" id="busyCount"></span><button class="btn" id="busyStop">Cancel</button></div>
+  </div>
+</div>
+
+<input id="openInput" type="file" accept=".qtiles.json,.isopic.json,.isopolis.json,.json,.png,application/json,image/png" hidden>
+<input id="palInput" type="file" hidden>
+<div class="toast" id="toast" role="status" hidden></div>
+<div class="hintpop island" id="hintPop" role="status" hidden></div>
+
+<!--BUILD:SCRIPTS-->
+<script src="js/core.js"></script>
+<script src="js/palettes.js"></script>
+<script src="js/draw.js"></script>
+<script src="js/composite.js"></script>
+<script src="js/select.js"></script>
+<script src="js/shadow.js"></script>
+<script src="js/tiles.js"></script>
+<script src="js/objects.js"></script>
+<script src="js/materials.js"></script>
+<script src="js/details.js"></script>
+<script src="js/levels.js"></script>
+<script src="js/terrain.js"></script>
+<script src="js/guides.js"></script>
+<script src="js/assembly.js"></script>
+<script src="js/library.js"></script>
+<script src="library/buildings.js"></script>
+<script src="library/nature.js"></script>
+<script src="library/props.js"></script>
+<script src="library/vehicles.js"></script>
+<script src="library/street.js"></script>
+<script src="library/terrain.js"></script>
+<script src="js/scatter.js"></script>
+<script src="js/trees.js"></script>
+<script src="js/solids.js"></script>
+<script src="js/characters.js"></script>
+<script src="js/groups.js"></script>
+<script src="js/scene.js"></script>
+<script src="js/input.js"></script>
+<script src="js/tips.js"></script>
+<script src="js/help.js"></script>
+<script src="js/about.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/prefs.js"></script>
+<script src="js/files.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/export.js"></script>
+<script src="js/examples.js"></script>
+<script src="examples/embedded.js"></script>
+<script src="js/main.js"></script>
+<!--/BUILD:SCRIPTS-->
+</body>
+</html>
