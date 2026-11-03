@@ -10,7 +10,7 @@ A project is a single `.json` file that lives wherever you keep it, such as iClo
 python3 -m http.server -d app 8000
 ```
 
-Then open http://localhost:8000. Opening `app/index.html` directly from disk also works. Chromium and Chrome can save back to the same file; Firefox falls back to a normal download.
+Then open http://localhost:8000. Opening `app/index.html` directly from disk also works. Chromium/Chrome can save back to the same file; Firefox falls back to a normal download.
 
 ## Test it
 

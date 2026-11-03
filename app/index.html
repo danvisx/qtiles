@@ -65,11 +65,13 @@
     <div class="railview" role="group" aria-label="View">
       <div class="sep"></div>
       <button class="btn ico" data-tool="hand" aria-label="Hand (F)" title="Hand (F)"><svg viewBox="0 0 24 24"><path d="M7.5 12V7a1.5 1.5 0 013 0v3.5"/><path d="M10.5 10V5a1.5 1.5 0 013 0v5.5"/><path d="M13.5 10.5V6.5a1.5 1.5 0 013 0V11"/><path d="M16.5 11a1.5 1.5 0 013 0v3.5a6.5 6.5 0 01-6.5 6.5h-1a5 5 0 01-4-2l-3.6-4.4a1.5 1.5 0 012.3-1.9L8 14"/></svg></button>
+      <button class="btn ico" data-view="flip" aria-pressed="false" aria-label="Flip view (K)" title="Flip view (K)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v18" stroke-dasharray="2 2.5"/><path d="M9 7L4 17h5z"/><path d="M15 7l5 10h-5z" fill="currentColor"/></svg></button><button class="btn ico" data-view="gray" aria-pressed="false" aria-label="Grayscale (Y)" title="Grayscale (Y)"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="14" rx="2"/><path d="M9.5 5v14M14.5 5v14"/><path d="M14.5 5H18a2 2 0 012 2v10a2 2 0 01-2 2h-3.5z" fill="currentColor"/></svg></button><button class="btn ico" data-view="sil" aria-pressed="false" aria-label="Silhouette (J)" title="Silhouette (J)"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5" fill="currentColor"/><path d="M5 20c0-4 3-6.5 7-6.5s7 2.5 7 6.5z" fill="currentColor"/></svg></button>
     </div>
   </nav>
 
   <div class="island stage" id="stage">
     <canvas id="view" aria-label="Drawing canvas"></canvas>
+    <div class="viewbadge island" id="viewBadge" role="status" hidden><span id="viewWords"></span><button class="chip" id="silOne" aria-pressed="false" hidden>Active layer only</button></div>
     <button class="edge" data-edge="top" aria-label="Extend canvas upward" title="Extend canvas upward"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
     <button class="edge" data-shrink="top" aria-label="Shrink canvas from the top" title="Shrink canvas from the top"><svg viewBox="0 0 24 24"><path d="M5 12h14"/></svg></button>
     <button class="edge" data-edge="right" aria-label="Extend canvas to the right" title="Extend canvas to the right"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
@@ -90,8 +92,9 @@
     </div>
     <button class="btn minibtn" id="miniBtn" aria-label="Show minimap">Map</button>
     <div class="mini island" id="mini" role="region" aria-label="Minimap" hidden>
-      <div class="pophead"><span>Map</span><button class="btn ico" id="miniClose" aria-label="Hide minimap"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
-      <div class="minimap" id="miniMap" role="group" aria-label="Map of the whole canvas" data-hint="The whole canvas. Tap to jump there, or drag the rectangle to move the view."><canvas id="miniCv" width="1" height="1" role="img" aria-label="Whole canvas"></canvas><canvas id="miniTop" width="1" height="1" aria-hidden="true"></canvas></div>
+      <div class="pophead"><span class="minigrip" id="miniGrip" role="slider" aria-label="Map size" aria-valuemin="100" aria-valuemax="200" aria-valuenow="100" tabindex="0"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 14l8-8M6 19L19 6M11 19l8-8"/></svg></span><span class="seg" role="group" aria-label="Map shows"><button id="miniWhole" aria-pressed="true">Whole</button><button id="miniFollow" aria-pressed="false">Follow</button></span><span class="grow"></span><button class="btn ico" id="miniClose" aria-label="Hide minimap"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+      <div class="minimap" id="miniMap" role="group" aria-label="Map of the canvas" data-hint="The whole canvas. Tap to jump there, or drag the rectangle to move the view."><canvas id="miniCv" width="1" height="1" role="img" aria-label="Whole canvas"></canvas><canvas id="miniTop" width="1" height="1" aria-hidden="true"></canvas></div>
+      <div class="seg miniscale" id="miniScale" role="group" aria-label="Map scale" hidden><button data-mscale="1">1x</button><button data-mscale="2">2x</button><button data-mscale="3">3x</button></div>
     </div>
     <div class="refwin island" id="refWin" role="region" aria-label="Reference window" hidden>
       <div class="pophead"><span class="refwinname" id="refWinName"></span><button class="btn sm" id="refWinFitBtn">Whole</button><button class="btn ico" id="refWinClose" aria-label="Close the reference window"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
@@ -660,6 +663,7 @@
   <span id="sbOrigin" class="mono"></span>
   <span id="sbMem" class="mono"></span>
   <button id="sbFinger" class="sb-brush" hidden>Fingers draw</button>
+  <span class="sbviews" role="group" aria-label="View"><button class="btn ico" data-view="flip" aria-pressed="false" aria-label="Flip view (K)" title="Flip view (K)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v18" stroke-dasharray="2 2.5"/><path d="M9 7L4 17h5z"/><path d="M15 7l5 10h-5z" fill="currentColor"/></svg></button><button class="btn ico" data-view="gray" aria-pressed="false" aria-label="Grayscale (Y)" title="Grayscale (Y)"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="14" rx="2"/><path d="M9.5 5v14M14.5 5v14"/><path d="M14.5 5H18a2 2 0 012 2v10a2 2 0 01-2 2h-3.5z" fill="currentColor"/></svg></button><button class="btn ico" data-view="sil" aria-pressed="false" aria-label="Silhouette (J)" title="Silhouette (J)"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5" fill="currentColor"/><path d="M5 20c0-4 3-6.5 7-6.5s7 2.5 7 6.5z" fill="currentColor"/></svg></button></span>
   <span class="sb-help"><span id="sbTool" class="sb-tool"></span> <button id="sbBrush" class="sb-brush mono"></button> <span id="sbOver" class="sb-over" hidden></span> <span id="sbPlace" class="mono" hidden></span> <span id="sbHint"></span></span>
   <span id="sbSave" class="sb-save">Saved</span>
 </footer>

@@ -211,7 +211,7 @@ function objRuler(c, x, y, z) {
   for (let k = 0; k <= n; k++) { const t = Math.round(sy(k)) + 0.5; c.moveTo(rx, t); c.lineTo(rx + 6, t); }
   for (const h of [o.z, o.z + o.h]) { const t = Math.round(ground - h * z) + 0.5; c.moveTo(rx, t); c.lineTo(rx + 14, t); }
   c.stroke();
-  if (label) for (let k = 0; k <= n; k++) c.fillText(k, rx + 17, sy(k));
+  if (label) for (let k = 0; k <= n; k++) vText(c, k, rx + 17, sy(k));
 }
 /* Each footprint as a thin diamond on the ground, to check alignment, whatever height it stands at. */
 function objFootprints(c, x, y, z) {

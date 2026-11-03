@@ -118,7 +118,7 @@ function hgStroke(c, segs, color, dotted) {
 function hgPoly(c, pts) { c.moveTo(pts[0][0], pts[0][1]); for (let k = 1; k < pts.length; k++) c.lineTo(pts[k][0], pts[k][1]); c.closePath(); }
 function hgLabel(c, text, x, y) {
   c.font = '10px ' + TH.mono; c.textBaseline = 'middle'; c.textAlign = 'left'; c.lineJoin = 'round';
-  c.strokeStyle = TH.panel; c.lineWidth = 3; c.strokeText(text, x, y); c.fillStyle = TH.fg; c.fillText(text, x, y);
+  c.strokeStyle = TH.panel; c.lineWidth = 3; c.fillStyle = TH.fg; vText(c, text, x, y, true);
 }
 /* Above the top front corner, on whichever side leaves it clear of the pointer. A finger hides far more than a Pencil does. */
 function hgTag(c, text, fx, fy, color, x, y, z) {
@@ -129,7 +129,7 @@ function hgTag(c, text, fx, fy, color, x, y, z) {
   if (!clear(l, t)) { l = fx - w / 2; t = Math.min(fy, py) - reach - h; }
   l = Math.round(Math.max(4, Math.min(vw - w - 4, l))); t = Math.round(Math.max(4, Math.min(vh - h - 4, t)));
   c.fillStyle = TH.panel; c.fillRect(l, t, w, h); c.strokeStyle = color; c.lineWidth = 1; c.strokeRect(l + 0.5, t + 0.5, w - 1, h - 1);
-  c.font = '10px ' + TH.mono; c.textBaseline = 'middle'; c.textAlign = 'left'; c.fillStyle = TH.fg; c.fillText(text, l + 6, t + h / 2);
+  c.font = '10px ' + TH.mono; c.textBaseline = 'middle'; c.textAlign = 'left'; c.fillStyle = TH.fg; vText(c, text, l + 6, t + h / 2);
 }
 /* Two walls behind the volume. The volume's own front is cut out, so a sheet never lies over the near faces. */
 function hgSheets(c, base, top, color) {

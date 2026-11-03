@@ -335,7 +335,7 @@ function readTheme() {
   TH.check = vctx.createPattern(t, 'repeat');
   const d = document.createElement('canvas'); d.width = d.height = HATCH; const q = d.getContext('2d');
   q.fillStyle = g('--danger'); q.globalAlpha = 0.25; q.fillRect(0, 0, HATCH, HATCH); q.globalAlpha = 1; for (let k = 0; k < HATCH; k++) q.fillRect(k, HATCH - 1 - k, 2, 1);
-  TH.hatch = vctx.createPattern(d, 'repeat'); MM.key = ''; requestRender();
+  TH.hatch = vctx.createPattern(d, 'repeat'); MM.key = ''; viewKeys(); if (VW.sil && VW.one) CP.gImg++; requestRender();
 }
 function resizeView() {
   const r = view.getBoundingClientRect(); dpr = window.devicePixelRatio || 1;
@@ -421,7 +421,7 @@ function brushTag(c, a, x, y, z, t) {
   const text = [S.mode === 'iso' ? '' : Math.floor(a.x / S.cell) + ', ' + Math.floor(a.y / S.cell), size].filter(Boolean).join('  ');
   const W = Math.round(text.length * 7.3) + 14, Ht = 22, sx = Math.max(W / 2, Math.min(vw - W / 2, x + (b.x0 + b.x1 + 1) / 2 * z)), sy = Math.max(Ht / 2, y + b.y0 * z - 56);
   c.fillStyle = TH.panel; c.fillRect(sx - W / 2, sy - Ht / 2, W, Ht); c.strokeStyle = TH.grid; c.lineWidth = 1; c.strokeRect(sx - W / 2 + 0.5, sy - Ht / 2 + 0.5, W - 1, Ht - 1);
-  c.fillStyle = TH.fg; c.font = '12px ' + TH.mono; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(text, sx, sy);
+  c.fillStyle = TH.fg; c.font = '12px ' + TH.mono; c.textAlign = 'center'; c.textBaseline = 'middle'; vText(c, text, sx, sy);
 }
 function brushCursor(c, x, y, z) {
   const t = drawId !== null && drawTool === 'eraser' ? 'eraser' : S.tool, finger = drawId !== null && drawFinger && (brushed(t) || S.mode !== 'iso'), a = finger ? lastArt : hover;   // a Pencil's eraser end erases whatever tool is chosen
@@ -496,8 +496,8 @@ function drawRulers(c, x, y, z) {
   if (h) { c.globalAlpha = 0.3; c.fillStyle = TH.accentFill; c.fillRect(x + h.i * k, top, k, RULER_PX); c.fillRect(left, y + h.j * k, RULER_PX, k); c.globalAlpha = 1; }
   c.fillStyle = TH.muted; c.font = '10px ' + TH.mono; c.textAlign = 'center'; c.textBaseline = 'middle';
   const sx = rulerStep(k, String(nx - 1).length * 6 + 4), sy = rulerStep(k, 12);
-  for (let i = Math.ceil(Math.max(0, -x / k - 1) / sx) * sx, e = Math.min(nx - 1, (vw - x) / k); i <= e; i += sx) c.fillText(String(i), x + (i + 0.5) * k, top + RULER_PX / 2);
-  for (let j = Math.ceil(Math.max(0, -y / k - 1) / sy) * sy, e = Math.min(ny - 1, (vh - y) / k); j <= e; j += sy) c.fillText(String(j), left + RULER_PX / 2, y + (j + 0.5) * k);
+  for (let i = Math.ceil(Math.max(0, -x / k - 1) / sx) * sx, e = Math.min(nx - 1, (vw - x) / k); i <= e; i += sx) vText(c, String(i), x + (i + 0.5) * k, top + RULER_PX / 2);
+  for (let j = Math.ceil(Math.max(0, -y / k - 1) / sy) * sy, e = Math.min(ny - 1, (vh - y) / k); j <= e; j += sy) vText(c, String(j), left + RULER_PX / 2, y + (j + 0.5) * k);
 }
 /* The part of an image outside the canvas, under the hatch. It takes a screen-sized canvas so the hatch stops at the art's own outline and keeps its width at any zoom. With no image the hatch fills the box. */
 const HATCH = 8, HC = { cv: null };
@@ -508,9 +508,42 @@ function hatchOut(c, src, dx, dy, dw, dh, x, y, W, Ht) {
   if (src) { h.drawImage(src, dx, dy, dw, dh); h.globalCompositeOperation = 'source-atop'; h.fillRect(0, 0, vw, vh); h.globalCompositeOperation = 'source-over'; } else h.fillRect(dx, dy, dw, dh);
   c.save(); c.beginPath(); c.rect(0, 0, vw, vh); c.rect(x, y, W, Ht); c.clip('evenodd'); c.drawImage(cv, 0, 0, vw, vh); c.restore();
 }
+/* Checking views (045): they change what the stage shows, never the art, and none is saved.
+   Flip mirrors the whole stage, and `local` mirrors the pointer to match, so everything drawn in art coordinates, from the grid to the cursor, agrees with it for free.
+   Grayscale and Silhouette act where a tile's composite is put on its canvas (`cpPut`), or for Silhouette of the active layer only, where that layer is laid in (`cpCompose`). key names what the tiles were put with. */
+const VW = { flip: false, gray: false, sil: false, one: false, key: '', silV: 0 };
+/* Rec. 709 luma of the stored sRGB values, so the gray is the one a value check in any other editor gives. */
+function grayPx(v) { const g = Math.round(0.2126 * (v & 255) + 0.7152 * (v >>> 8 & 255) + 0.0722 * (v >>> 16 & 255)); return (v & 0xff000000 | g << 16 | g << 8 | g) >>> 0; }
+const silPx = (v, c) => v >>> 24 ? (v & 0xff000000 | c) >>> 0 : 0;
+/* What a tile's pixel shows as, or null when no view changes it. */
+function viewFilter() {
+  const sil = VW.sil && !VW.one, c = VW.silV;
+  return VW.gray && sil ? v => grayPx(silPx(v, c)) : VW.gray ? grayPx : sil ? v => silPx(v, c) : null;
+}
+/* The silhouette is the text color, which stands out from the checker in either theme, so a theme change puts the tiles again. */
+function viewKeys() { VW.silV = packHex(TH.fg) & 0xffffff; VW.key = (VW.gray ? 'g' : '') + (VW.sil && !VW.one ? 's' + VW.silV : ''); }
+function viewSync() {
+  viewKeys();
+  document.querySelectorAll('[data-view]').forEach(b => press(b, VW[b.dataset.view]));
+  const on = ['flip', 'gray', 'sil'].filter(k => VW[k]);
+  $('viewBadge').hidden = !on.length; $('viewWords').textContent = on.map(k => ({ flip: 'Flipped', gray: 'Grayscale', sil: 'Silhouette' })[k]).join(' · ');
+  $('silOne').hidden = !VW.sil; press($('silOne'), VW.one);
+  hooks.view && hooks.view(); requestRender();
+}
+function viewSet(k, on = !VW[k]) {
+  const recompose = k === 'one' || (k === 'sil' && VW.one);   // Silhouette of one layer is in the composite itself
+  VW[k] = on; if (recompose) CP.gImg++;
+  viewSync();
+}
+/* Words stay readable in Flip view: each is mirrored back about its own anchor, and a left-aligned label grows the other way, as the box it sits in has been mirrored. */
+function vText(c, s, x, y, stroke) {
+  if (!VW.flip) { if (stroke) c.strokeText(s, x, y); c.fillText(s, x, y); return; }
+  c.save(); c.translate(x, y); c.scale(-1, 1); c.textAlign = { left: 'right', right: 'left' }[c.textAlign] || c.textAlign;
+  if (stroke) c.strokeText(s, 0, 0); c.fillText(s, 0, 0); c.restore();
+}
 function render() {
   needRender = false; pickStep(); const c = vctx, z = S.z, x = S.ox, y = S.oy, W = S.w * z, Ht = S.h * z;
-  c.setTransform(dpr, 0, 0, dpr, 0, 0); c.imageSmoothingEnabled = false;
+  if (VW.flip) c.setTransform(-dpr, 0, 0, dpr, vw * dpr, 0); else c.setTransform(dpr, 0, 0, dpr, 0, 0); c.imageSmoothingEnabled = false;
   c.fillStyle = TH.stage; c.fillRect(0, 0, vw, vh);
   /* The checker starts where the art does, so its squares and the art's pixels share their edges at any device pixel ratio. */
   const ax = pxSnap(x), ay = pxSnap(y), aw = pxSnap(x + W) - ax, ah = pxSnap(y + Ht) - ay, sq = checkPx(z) * z;

@@ -493,7 +493,7 @@ function placeBars() {
 }
 function placeBar(bar, b) {
   const bw = bar.offsetWidth, bh = bar.offsetHeight;
-  const left = (S.ox + (b.x0 + b.x1 + 1) / 2 * S.z) - bw / 2, top = S.oy + b.y0 * S.z - bh - 8, under = S.oy + (b.y1 + 1) * S.z + 8;
+  const mid = S.ox + (b.x0 + b.x1 + 1) / 2 * S.z, left = (VW.flip ? vw - mid : mid) - bw / 2, top = S.oy + b.y0 * S.z - bh - 8, under = S.oy + (b.y1 + 1) * S.z + 8;
   bar.style.left = Math.max(8, Math.min(vw - bw - 8, left)) + 'px';
   bar.style.top = Math.max(8, Math.min(vh - bh - 8, top >= 8 ? top : under)) + 'px';
 }
@@ -612,7 +612,7 @@ hooks.view = () => {
   const pad = size + gap / 2 + 6, cx = Math.min(Math.max(x + W / 2, pad), vw - pad), cy = Math.min(Math.max(y + Ht / 2, pad), vh - pad), step = (size + gap) / 2, n = extStepNow();
   const at = { top: [cx, y - far], bottom: [cx, y + Ht + off], left: [x - far, cy], right: [x + W + off, cy] };
   document.querySelectorAll('.edge').forEach(el => {
-    const side = el.dataset.edge || el.dataset.shrink, minus = !!el.dataset.shrink, flat = side === 'top' || side === 'bottom', [px, py] = at[side], on = !S.sizeLock && px >= 8 && px <= vw - 8 && py >= 8 && py <= vh - 8;
+    const side = el.dataset.edge || el.dataset.shrink, minus = !!el.dataset.shrink, flat = side === 'top' || side === 'bottom', [px, py] = at[side], on = !S.sizeLock && !VW.flip && px >= 8 && px <= vw - 8 && py >= 8 && py <= vh - 8;
     el.classList.toggle('big', big); el.style.display = on ? 'flex' : 'none';
     if (on) { el.style.left = px + (flat ? (minus ? -step : step) : 0) + 'px'; el.style.top = py + (flat ? 0 : minus ? step : -step) + 'px'; }
     if (minus) el.disabled = n >= (flat ? S.h : S.w);

@@ -7,7 +7,8 @@ let drawId = null, drawTool = null, drawFinger = false, panId = null, panLast = 
 let shadeNow = null, dith = null, gradFrame = 0, penPP = null, shapeKeys = { shift: false, alt: false };
 let penDown = false, lastPenUp = 0, spaceDown = false, tabbing = false, shape = null, lastArt = null, tap = null, lastWheel = 0, placingAxis = false;
 
-function local(e) { const r = view.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; }
+/* Flip view mirrors the stage, so a point is mirrored here once and every tool, pan and pinch lands on the picture as shown. */
+function local(e) { const r = view.getBoundingClientRect(), x = e.clientX - r.left; return { x: VW.flip ? vw - x : x, y: e.clientY - r.top }; }
 function toArt(p) { return { x: Math.floor((p.x - pxSnap(S.ox)) / S.z), y: Math.floor((p.y - pxSnap(S.oy)) / S.z) }; }
 const pastEdge = b => b.x0 < 0 || b.y0 < 0 || b.x1 >= S.w || b.y1 >= S.h;
 /* In iso mode the mirror line snaps to tile corners, the pixel a block's corner sits on, so walls meet exactly. */
@@ -281,11 +282,12 @@ view.addEventListener('wheel', e => {
   e.preventDefault(); const p = local(e), now = performance.now();
   const notch = e.deltaMode === 1 || (Math.abs(e.deltaY) >= 50 && !e.deltaX);
   if (e.ctrlKey || notch) { if (now - lastWheel > 70) { zoomStep(e.deltaY < 0 ? 1 : -1, p.x, p.y); lastWheel = now; } }
-  else { S.ox -= e.deltaX; S.oy -= e.deltaY; requestRender(); }
+  else { S.ox += VW.flip ? e.deltaX : -e.deltaX; S.oy -= e.deltaY; requestRender(); }
 }, { passive: false });
 ['gesturestart', 'gesturechange', 'gestureend'].forEach(n => document.addEventListener(n, e => e.preventDefault()));
 
 /* ---------- keyboard ---------- */
+const VIEW_KEYS = { k: 'flip', y: 'gray', j: 'sil' };
 const KEYS = { b: 'pencil', e: 'eraser', l: 'line', r: 'rect', u: 'ellipse', g: 'fill', i: 'picker', c: 'place', a: 'pick', h: 'shade', d: 'dither', o: 'shadow', t: 'tile', n: 'terrain', q: 'scatter', v: 'marquee', w: 'wand', p: 'pivot', f: 'hand' };
 document.addEventListener('keydown', e => {
   const tg = e.target.tagName; if (tg === 'INPUT' || tg === 'SELECT' || tg === 'TEXTAREA') return;
@@ -312,6 +314,7 @@ document.addEventListener('keydown', e => {
   else if (mod && k === ',') { e.preventDefault(); prefsOpen(); }
   else if (!mod && KEYS[k]) chooseTool(KEYS[k]);
   else if (!mod && k === 'x') swapColors();
+  else if (!mod && VIEW_KEYS[k]) viewSet(VIEW_KEYS[k]);
   else if (k === 'm') setMode(S.mode === 'iso' ? 'flat' : 'iso');
   else if (k === 's') toggleMirror('mirrorX');
   else if ((k === '[' || k === ']') && brushed(heldTool())) setBrush(S.brush + (k === ']' ? 1 : -1));   // a size nothing shows must not change unseen

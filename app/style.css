@@ -179,6 +179,21 @@ input[type="range"] { width: 100%; accent-color: var(--accent); }
 .minimap { position: relative; touch-action: none; cursor: pointer; background: var(--check-a); margin: 6px; }
 .minimap canvas { display: block; image-rendering: pixelated; }
 .minimap canvas + canvas { position: absolute; left: 0; top: 0; image-rendering: auto; }
+.mini { min-width: 212px; }   /* room for the header on a tall, narrow canvas */
+.mini .pophead { gap: 4px; padding-left: 2px; }
+.mini .seg button { padding: 0 8px; }
+.minigrip { flex: none; width: 24px; height: var(--ctl); display: flex; align-items: center; justify-content: center; color: var(--muted); cursor: nwse-resize; touch-action: none; border-radius: 6px; }
+.minigrip:hover { background: var(--hover); color: var(--fg); }
+.minigrip svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; }
+.miniscale { margin: 0 6px 6px; }
+.miniscale[hidden] { display: none; }
+/* says which checking view is on, as a mirrored or gray picture can pass for the art itself */
+.viewbadge { position: absolute; left: 8px; top: 8px; z-index: 3; display: flex; align-items: center; gap: 8px; padding: 0 4px 0 10px; min-height: var(--ctl); font-size: 12px; font-weight: 600; box-shadow: var(--shadow); pointer-events: none; }
+.viewbadge[hidden] { display: none; }
+.viewbadge .chip { pointer-events: auto; }
+.viewbadge .chip[hidden] { display: none; }
+.viewbadge:has(.chip[hidden]) { padding-right: 10px; }
+.sbviews { display: none; }
 /* the reference window sits across from the map, so both can be open */
 .refwin { position: absolute; left: 8px; bottom: 8px; z-index: 4; width: 300px; box-shadow: var(--shadow); overflow: hidden; display: flex; flex-direction: column; }
 .refwin .pophead { cursor: default; touch-action: auto; gap: 4px; }
@@ -387,6 +402,9 @@ input[type="range"] { width: 100%; accent-color: var(--accent); }
   .minimap { width: fit-content; margin: 8px auto; }
   .refwin { position: fixed; left: 0; right: 0; bottom: 0; width: auto; border-radius: 10px 10px 0 0; z-index: 20; padding-bottom: env(safe-area-inset-bottom, 0px); }
   #refWinCv { height: 40vh; height: 40dvh; }
+  .minigrip { cursor: ns-resize; }
+  .railview [data-view] { display: none; }   /* the rail is short on a phone, so the views sit in the status bar */
+  .sbviews { display: inline-flex; gap: 2px; }
 }
 
 /* tips drawer: beside the canvas, and over it where there is no room, as the side panel is */
