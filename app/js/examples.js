@@ -168,7 +168,7 @@ function newTab(tab) {
   document.querySelectorAll('#stTabs button').forEach(b => press(b, b.dataset.tab === tab));
 }
 function openNew() {
-  newFill(); startCont(null); closeSheets();
+  newFill(); startCont(null); closeSheets(); startPhone(false);
   $('startBox').setAttribute('aria-label', 'New'); openSheet('sheetNew'); $('startBox').focus({ preventScroll: true });
 }
 
@@ -195,7 +195,9 @@ function startCont(can) {
   const seen = coachSeen(), tour = $('stTour'); $('stHello').hidden = seen; tour.textContent = seen ? 'Take the tour' : 'Take the 1-minute tour'; tour.classList.toggle('pri', !seen);
   newTab(has ? 'cont' : 'new');
 }
-function startShow() { NW.start = true; $('startBox').setAttribute('aria-label', 'Start'); openSheet('sheetNew'); $('startBox').focus({ preventScroll: true }); }
+/* Only on the start screen, and the second line only while a phone's own default is drawing with a finger. */
+function startPhone(on) { $('stPhone').hidden = !(on && PHONE()); $('stFinger').hidden = !(S.fingerDraws && prefGet('fingers') === null); }
+function startShow() { NW.start = true; startPhone(true); $('startBox').setAttribute('aria-label', 'Start'); openSheet('sheetNew'); $('startBox').focus({ preventScroll: true }); }
 /* Read each time it shows, as coming back from Recovery copies can find fewer. */
 async function startOpen() { const can = await startHeld(); newFill(); startCont(can); startShow(); }
 /* From closeSheets, which every way of closing goes through. A way out that goes somewhere clears `start` first. */
@@ -214,7 +216,7 @@ function initStart() {
   $('stBrand').append(document.querySelector('.topbar .brand').cloneNode(true)); $('stVer').textContent = APP_VERSION;
   const leave = fn => () => { NW.start = false; closeSheets(); fn(); }, away = open => () => { const on = NW.start; NW.start = false; open(); NW.back = on; };
   $('stTour').onclick = leave(coachStart); $('stTips').onclick = leave(() => tipsShow(true));
-  $('stAbout').onclick = away(aboutOpen); $('stPrefs').onclick = away(() => prefsOpen()); $('stAll').onclick = away(recoverOpen);
+  $('stAbout').onclick = away(aboutOpen); $('stPrefs').onclick = away(() => prefsOpen()); $('stFingerPrefs').onclick = away(() => prefsOpen('input')); $('stAll').onclick = away(recoverOpen);
   $('stOpen').onclick = pickOpen; $('newClose').onclick = closeSheets;
   document.querySelectorAll('#stTabs button').forEach(b => { b.onclick = () => newTab(b.dataset.tab); });
   $('startBox').addEventListener('keydown', e => tabInside(e, $('startBox')));

@@ -4,6 +4,7 @@
 
 const LONG_PRESS_MS = 500, LP_SLOP = 10, LABELS_KEY = 'qtiles.labels', COACH_KEY = 'qtiles.onboarded';
 const COARSE = () => window.matchMedia('(pointer: coarse)').matches;
+const PHONE = () => COARSE() && Math.min(screen.width, screen.height) <= 600;   // the screen, not the window, so turning the phone or splitting an iPad changes nothing
 
 /* tool: label under the icon, what it does, what to do with it now */
 const TOOL_HELP = {
@@ -75,7 +76,7 @@ const HELP = [
   ['[data-transform="unwallL"]', 'Turns a left wall back into a flat drawing.'], ['[data-transform="unwallR"]', 'Turns a right wall back into a flat drawing.'],
   ['#asmDone', 'Leaves the assembly.', 'Esc'],
   ['#newClose', 'Closes this and leaves a blank canvas.', 'Esc'], ['.stcard', 'Carries on from this copy.'], ['#stReopen', 'Opens the file you last worked on. The browser may ask first.'], ['#stOpen', 'Opens a project file, or adds a PNG as a new layer.'], ['#stAll', 'Lists every copy this browser keeps.'],
-  ['#stTabs button', 'Shows this part of the screen.'], ['#stTour', 'A short tour of the tools, gestures and layers.'], ['#stTips', 'Leaves a blank canvas and opens tips on pixel art.'], ['#stAbout', 'What qtiles is, where your files live, and the credits.'], ['#stPrefs', 'Labels, theme and other settings that are rarely changed.'],
+  ['#stTabs button', 'Shows this part of the screen.'], ['#stTour', 'A short tour of the tools, gestures and layers.'], ['#stTips', 'Leaves a blank canvas and opens tips on pixel art.'], ['#stAbout', 'What qtiles is, where your files live, and the credits.'], ['#stPrefs', 'Labels, theme and other settings that are rarely changed.'], ['#stFingerPrefs', 'Opens Preferences at Input, where Finger draws is.'],
   ['#exSearch', 'Filters the examples by title, lesson and skill.'], ['#exChips .chip', 'Shows one category of examples.'], ['.excard', 'Opens a copy of this example, with its tips.'],
   ['.stagedot', 'Shows one step of how this was built. Finished shows the whole piece again. This changes nothing in the project.'],
   ['#tipShow', 'Selects what this tip is about, or points at it.'], ['#tipBack', 'The tip before this one.'], ['#tipNext', 'The next tip.'], ['#tipOff', 'Hides example tips. Preferences turns them back on.'],
@@ -251,6 +252,8 @@ function labelsStart() {
 }
 function syncToolHelp() { $('sbTool').textContent = TOOL_NAMES[S.tool] + ':'; $('sbHint').textContent = TOOL_HELP[S.tool][2]; }
 function syncFinger() { $('sbFinger').hidden = !S.fingerDraws; }
+/* A phone has no Pencil, so there a finger draws until someone chooses otherwise. */
+function fingerStart() { const saved = prefGet('fingers'); S.fingerDraws = saved === null ? PHONE() : saved; syncFinger(); }
 
 /* ---------- coach marks ---------- */
 const COACH = [
@@ -320,7 +323,7 @@ function helpEscape() {
 
 function initHelp() {
   document.querySelectorAll('#tools .btn').forEach(b => { const s = document.createElement('span'), t = TOOL_HELP[b.dataset.tool]; s.className = 'tlabel'; s.textContent = t ? t[0] : ''; b.appendChild(s); });
-  S.fingerDraws = prefGet('fingerDraws'); syncFinger(); syncToolHelp(); labelsStart();
+  fingerStart(); syncToolHelp(); labelsStart();
   document.addEventListener('pointerdown', lpDown, true);
   document.addEventListener('pointermove', lpMove, true);
   document.addEventListener('pointerup', e => { lpCancel(); coachTap(e); }, true);

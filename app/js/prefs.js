@@ -3,8 +3,8 @@
    PREFS is the list of every setting. A row's control is made from its entry, or is a `part`: markup in index.html that moves into the row and keeps its id, handlers and sync function. */
 
 const PREFS_KEY = 'qtiles.prefs', OLD_KEYS = 'isopic.', THEMES = ['system', 'light', 'dark'], AUTOSAVE_SECS = [15, 30, 60, 120, 300], HEIGHT_UNITS = ['both', 'levels', 'pixels'];
-const PREF_DEVICE = { labels: null, theme: 'system', fingerDraws: false, tipsOff: false, mapAuto: true, memShown: true, autosave: 30, edgeGrow: 'auto', guides: 'lines', heights: 'both', onboarded: false, animTools: false, animTold: false, startScreen: true, startMode: 'flat', newLast: null };   // labels is null until someone chooses, so a laptop and an iPad each get their own default
-const PREF_OK = { labels: v => v === null || typeof v === 'boolean', theme: v => THEMES.includes(v), autosave: v => AUTOSAVE_SECS.includes(v), edgeGrow: v => v === 'auto' || v === 'ask', guides: v => HG_LEVELS.includes(v), heights: v => HEIGHT_UNITS.includes(v), startMode: v => v === 'flat' || v === 'iso' };
+const PREF_DEVICE = { labels: null, theme: 'system', fingers: null, tipsOff: false, mapAuto: true, memShown: true, autosave: 30, edgeGrow: 'auto', guides: 'lines', heights: 'both', onboarded: false, animTools: false, animTold: false, startScreen: true, startMode: 'flat', newLast: null };   // labels and fingers are null until someone chooses, so a laptop, an iPad and a phone each get their own default
+const PREF_OK = { labels: v => v === null || typeof v === 'boolean', fingers: v => v === null || typeof v === 'boolean', theme: v => THEMES.includes(v), autosave: v => AUTOSAVE_SECS.includes(v), edgeGrow: v => v === 'auto' || v === 'ask', guides: v => HG_LEVELS.includes(v), heights: v => HEIGHT_UNITS.includes(v), startMode: v => v === 'flat' || v === 'iso' };
 const PF = { v: null, cat: 'interface', open: new Set(['interface']), from: null };
 
 /* ---------- device settings ---------- */
@@ -34,6 +34,7 @@ function prefOld() {
 }
 function prefsRead() {
   let saved = null; try { saved = JSON.parse(prefStored(PREFS_KEY)); } catch (_) {}
+  if (saved && typeof saved === 'object' && saved.fingers === undefined && saved.fingerDraws === true) saved.fingers = true;   // the old fingerDraws was saved as false with every other setting, so only true says someone chose it
   const all = Object.assign({}, PREF_DEVICE, prefOld(), saved && typeof saved === 'object' ? saved : null); PF.v = {};
   for (const k in PREF_DEVICE) { const ok = PREF_OK[k] || (v => typeof v === typeof PREF_DEVICE[k]); PF.v[k] = ok(all[k]) ? all[k] : PREF_DEVICE[k]; }
   return PF.v;
@@ -43,8 +44,8 @@ function prefSet(k, v) { (PF.v || prefsRead())[k] = v; try { localStorage.setIte
 
 function themeApply() { const t = prefGet('theme'); if (t === 'system') delete document.documentElement.dataset.theme; else document.documentElement.dataset.theme = t; }
 function setFinger(on) {
-  S.fingerDraws = on; prefSet('fingerDraws', on); syncFinger();
-  toast(on ? 'Fingers draw. Two fingers pan and zoom.' : 'Fingers pan and zoom. Pencil or mouse draws.');
+  prefSet('fingers', on); fingerStart();
+  toast(S.fingerDraws ? 'Fingers draw. Two fingers pan and zoom.' : 'Fingers pan and zoom. Pencil or mouse draws.');
 }
 /* Animation and sprite sheets are set aside, not gone: a project's animations load and save whatever this says. */
 function animToolsSync() {
@@ -76,7 +77,7 @@ const PREFS = [
   { key: 'startMode', cat: 'interface', scope: DEVICE, label: 'New projects start in', desc: 'Which grid the start screen and New have chosen. They remember the last choice here.', kind: 'seg', opts: [['flat', '2D'], ['iso', 'Isometric']], get: () => prefGet('startMode'), set: v => newMode(v), def: 'flat' },
   Object.assign(onOff('prefMap', () => prefGet('mapAuto'), miniAuto), { key: 'mapAuto', cat: 'interface', scope: DEVICE, label: 'Map opens by itself', desc: 'Opens the map on a canvas over 1024 px a side. Opening or closing it by hand turns this off.', def: true, used: '#mini, #miniBtn' }),
   Object.assign(onOff('prefMem', () => prefGet('memShown'), v => { prefSet('memShown', v); memSync(); }), { key: 'memShown', cat: 'interface', scope: DEVICE, label: 'Memory in the status bar', desc: 'Shows roughly how much memory the project takes. It shows over 1 GB whatever this says.', def: true, used: '#sbMem' }),
-  Object.assign(onOff('prefFinger', () => S.fingerDraws, setFinger), { key: 'fingerDraws', cat: 'input', scope: DEVICE, label: 'Finger draws', desc: 'One finger draws instead of moving the view. Two fingers still pan and zoom. The status bar says when this is on.', def: false }),
+  Object.assign(onOff('prefFinger', () => S.fingerDraws, setFinger), { key: 'fingers', cat: 'input', scope: DEVICE, label: 'Finger draws', desc: 'One finger draws instead of moving the view. Two fingers still pan and zoom. On by default on a phone, which has no Pencil. The status bar says when this is on.', def: null }),
   { key: 'guides', cat: 'drawing', scope: DEVICE, label: 'Height guides', desc: 'Dotted lines that show where an object stands and how tall it is. Also under Height guides in the options of Place object and Select object.', clone: '#heightPop .seg', def: 'lines', put: v => { hgSet(v); syncGuides(); }, used: '#guideHeight' },
   { key: 'heights', cat: 'drawing', scope: DEVICE, label: 'Show heights as', desc: 'How the inspector, height guides and status bar give a height.', kind: 'seg', opts: [['both', 'Both'], ['levels', 'Levels'], ['pixels', 'Pixels']], get: () => prefGet('heights'), set: heightsSet, def: 'both', used: '#objSec' },
   { key: 'edgeGrow', cat: 'canvas', scope: DEVICE, label: 'Past the edge', desc: 'What happens when art lands past the canvas edge: extend the canvas, or ask first.', part: 'edgeGrow', def: 'auto', put: v => { edgeSet(v); prefSet('edgeGrow', S.edgeGrow); } },
