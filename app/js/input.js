@@ -5,7 +5,7 @@
 const ptrs = new Map();
 let drawId = null, drawTool = null, drawFinger = false, panId = null, panLast = null, gesture = null;
 let shadeNow = null, dith = null, gradFrame = 0, penPP = null, shapeKeys = { shift: false, alt: false };
-let penDown = false, lastPenUp = 0, spaceDown = false, tabbing = false, shape = null, lastArt = null, tap = null, lastWheel = 0, placingAxis = false;
+let penDown = false, lastPenUp = 0, spaceDown = false, tabbing = false, shape = null, lastArt = null, tap = null, lastWheel = 0, placingAxis = false, outTap = null;
 
 /* Flip view mirrors the stage, so a point is mirrored here once and every tool, pan and pinch lands on the picture as shown. */
 function local(e) { const r = view.getBoundingClientRect(), x = e.clientX - r.left; return { x: VW.flip ? vw - x : x, y: e.clientY - r.top }; }
@@ -217,6 +217,19 @@ function growForShape(run) {
   if (shape) { shape.x0 += g.dx; shape.y0 += g.dy; shape.ax += g.dx; shape.ay += g.dy; shape.ex += g.dx; shape.ey += g.dy; }
   return g;
 }
+/* A tap on the stage around the canvas clears the selection. A drag from there does what the tool does, so its stroke waits until the pointer moves or is held. */
+function outDown(e, p, run) {
+  const a = toArt(p);
+  if (S.tool === 'hand' || placingAxis || !anySel() || (a.x >= 0 && a.y >= 0 && a.x < S.w && a.y < S.h)) return false;
+  outTap = { id: e.pointerId, e, p, t0: performance.now(), run }; return true;
+}
+function outGo(e, p) {
+  const o = outTap; if (!o || o.id !== e.pointerId) return;
+  const tapped = performance.now() - o.t0 < 300;
+  if (p && tapped && Math.hypot(p.x - o.p.x, p.y - o.p.y) <= 4) return;
+  outTap = null;
+  if (!p && tapped) stageClear(); else if (o.run) startStroke(o.e, o.p);
+}
 function abortStroke() { cancelStroke(); pivotAbort(); pvClear(); shape = null; PL.drag = null; pickAbort(); dith = null; TL.drag = null; TR.drag = null; SC.drag = null; GR.line = null; drawId = null; selAbort(); syncDither(); requestRender(); }
 
 view.addEventListener('pointerdown', e => {
@@ -226,15 +239,15 @@ view.addEventListener('pointerdown', e => {
   if (t === 'touch') {
     if (penDown || performance.now() - lastPenUp < 250) return;
     ptrs.set(e.pointerId, { x: p.x, y: p.y, sx: p.x, sy: p.y, type: t });
-    if (ptrs.size === 1) { tap = { t0: performance.now(), max: 1, moved: false }; if (S.tool === 'hand') startPan(e.pointerId); else if (S.fingerDraws || placingAxis || selTool(S.tool) || S.tool === 'pick' || S.tool === 'pivot') startStroke(e, p); else startPan(e.pointerId); }
-    else { if (tap) tap.max = Math.max(tap.max, ptrs.size); if (drawId !== null && drawFinger) abortStroke(); startGesture(); }
+    if (ptrs.size === 1) { tap = { t0: performance.now(), max: 1, moved: false }; const draws = S.tool !== 'hand' && (S.fingerDraws || placingAxis || selTool(S.tool) || S.tool === 'pick' || S.tool === 'pivot'); if (outDown(e, p, draws) && draws) return; if (draws) startStroke(e, p); else startPan(e.pointerId); }
+    else { outTap = null; if (tap) tap.max = Math.max(tap.max, ptrs.size); if (drawId !== null && drawFinger) abortStroke(); startGesture(); }
     return;
   }
   if (t === 'pen') { penDown = true; for (const [id, q] of ptrs) if (q.type === 'touch') ptrs.delete(id); gesture = null; if (drawId !== null && drawFinger) abortStroke(); panId = null; }
   if (t === 'mouse' && (e.button === 1 || e.button === 2 || spaceDown)) { ptrs.set(e.pointerId, { x: p.x, y: p.y, type: t }); startPan(e.pointerId); return; }
   if (t === 'mouse' && e.button !== 0) return;
   ptrs.set(e.pointerId, { x: p.x, y: p.y, type: t }); shapeKeys = { shift: e.shiftKey, alt: e.altKey };
-  if (S.tool === 'hand') startPan(e.pointerId); else startStroke(e, p);
+  if (S.tool === 'hand') startPan(e.pointerId); else if (!outDown(e, p, true)) startStroke(e, p);
 });
 view.addEventListener('pointermove', e => {
   const p = local(e), a = toArt(p);
@@ -245,6 +258,7 @@ view.addEventListener('pointermove', e => {
     if (tap && q.type === 'touch' && Math.hypot(p.x - q.sx, p.y - q.sy) > 12) tap.moved = true;
     q.x = p.x; q.y = p.y;
   }
+  outGo(e, p);
   if (e.pointerId === panId && q) { S.ox += p.x - panLast.x; S.oy += p.y - panLast.y; panLast = { x: p.x, y: p.y }; }
   else if (gesture && e.pointerType === 'touch') gestureMove();
   else if (e.pointerId === drawId && drawTool === 'axis') axisAt(p);
@@ -260,6 +274,7 @@ function pointerEnd(e, cancelled) {
   const t = e.pointerType;
   if (t === 'pen') { penDown = false; lastPenUp = performance.now(); }
   if (refUp(e)) { requestRender(); return; }
+  if (cancelled) outTap = null; else outGo(e, null);
   if (e.pointerId === drawId) { if (cancelled) abortStroke(); else commitStroke(); }
   if (e.pointerId === panId) { panId = null; view.classList.remove('panning'); }
   if (ptrs.delete(e.pointerId) && t === 'touch') {

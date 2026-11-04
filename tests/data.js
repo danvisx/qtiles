@@ -29,8 +29,8 @@ const LAYER_FIELDS = ['id', 'name', 'visible', 'opacity', 'locked', 'kind', 'sha
 const SETTINGS = ['name', 'mode', 'tile', 'level', 'edgeRun', 'gox', 'goy', 'mirrorX', 'mirrorY', 'axisX', 'axisY', 'tileSeed', 'scatterSeed', 'nudgeX', 'nudgeY', 'cell', 'major', 'snap', 'sizeLock', 'light', 'color', 'color2', 'active', 'views', 'sections', 'secOn', 'secW', 'secH', 'anims', 'checklist', 'example', 'tipsDismissed'];
 
 module.exports = async t => {
-  const { ev, ok, fn, w, $, check, wait } = t;
-  const qs = s => w.document.querySelector(s), sheet = id => !$(id).hidden, esc = () => t.key('Escape');
+  const { ev, ok, fn, w, $, check, wait } = t, ls = w.localStorage;
+  const qs = s => w.document.querySelector(s), sheet = id => !$(id).hidden, esc = () => t.key('Escape'), pidNow = () => ev('S.projectId');
 
   /* one project with something in every saved field */
   fn(`
@@ -53,7 +53,7 @@ module.exports = async t => {
     S.projectId = 'abcd-1234-efgh'; S.revision = 4; S.savedAt = '2026-01-02T03:04:05.000Z'; objRefresh();
   `);
   const fields = J(LAYER_FIELDS);
-  const layersNow = () => JSON.parse(ev(`J(S.layers.map(L => Object.fromEntries(${fields}.map(k => [k, L[k] === undefined || L[k] === null || L[k] === false ? '' : L[k]]))))`));
+  const layersNow = () => JSON.parse(ev(`J(S.layers.map(L => Object.fromEntries(${fields}.map(k => [k, L[k] == null || L[k] === false ? '' : L[k]]))))`));
   const pixelsNow = () => ev(`J(S.layers.map(L => T.hash(L.px)))`);
   const recordsNow = () => ev(`J(S.layers.map(T.recs))`);
   const settingsNow = () => JSON.parse(ev(`J(Object.fromEntries(${J(SETTINGS)}.map(k => [k, S[k]])))`));
@@ -123,7 +123,7 @@ module.exports = async t => {
   ev(`newDoc(64, 64, 'rec'); setDirty(false);`); await ev('snapNow()');
   await ev('recoveryList()'); check('a clean project makes no recovery copy', heads().length === 0);
   for (let k = 0; k < 5; k++) { edit(10 + k); await ev('snapNow()'); await wait(2); }
-  check('recovery keeps the newest 3 copies of a project', heads().length === 3 && bodies() === 3 && heads().every(h => h.id > 2) && heads()[0].pid === ev('S.projectId'));
+  check('recovery keeps the newest 3 copies of a project', heads().length === 3 && bodies() === 3 && heads().every(h => h.id > 2) && heads()[0].pid === pidNow());
   const want = drawn(); ev(`setDirty(false); newDoc(64, 64, 'other');`);
   { await ev('startOpen()'); const card = qs('.stcard'); ev(`setColor('#00ff00'); closeSheets();`); const told = $('toast').textContent.includes('Recovery copies'); t.tap(3, 3);
     check('Continue lists one card; closing keeps copies and a blank', !$('stCont').hidden && !!card && w.document.querySelectorAll('.stcard').length === 1 && told && heads().length === 3 && ev('T.painted()') === 1 && !ev('S.example')); ev(`setDirty(false)`); }
@@ -132,22 +132,24 @@ module.exports = async t => {
   qs('.stcard').click(); await wait(30);
   check('restoring gives back exactly that, unsaved', drawn() === want && ev(`S.name === 'rec' && S.dirty`));
   ev(`setDirty(false); newDoc(64, 64, 'other'); setDirty(false);`); await ev('recoverOpen()'); await wait(10);
-  { const drop = () => qs('.recrow .btn.danger'); drop().click(); const asked = heads().length === 3; drop().click(); await wait(30); check('Discard asks once, then removes that copy', asked && heads().length === 2); await dropAll(); }
+  { const n = () => heads().length, drop = () => qs('.recrow .btn.danger'), all = () => ($('recAll').click(), $('recAll').click(), wait(30)); drop().click(); const asked = n(); drop().click(); await wait(30); const one = n();
+    edit(); await ev('snapNow()'); await all(); const kept = n() + heads()[0].pid === 1 + pidNow(); $('recKeep').click(); await all();
+    check('Discard asks once; Delete all keeps the open work, or not', asked === 3 && one === 2 && kept && !n()); ev('setDirty(false)'); }
   check('which copies are offered', fn(`const c = at => ({ id: at, pid: 'a', at }), s = [{ pid: 'a', savedAt: 10 }], n = (h, p, m) => recoveryOffers(h, p, m).length; return [n([c(20)], s), n([c(10)], s), n([c(10)], s, ['a']), n([c(10)], []), recoveryOffers([c(10), c(30), c(20)], [])[0].id].join();`) === '1,0,1,1,30');
   { ev(`newDoc(32, 32, 'mig'); T.l0.px[3] = packHex('#ff0000'); flush(T.l0);`); const legacy = await t.saved();
-    w.localStorage.setItem('isopolis.recovery', J(Object.assign({}, legacy, { app: 'isopolis', name: 'older' }))); w.localStorage.setItem('isopic.recovery', J(legacy));
+    ls.setItem('isopolis.recovery', J(Object.assign({}, legacy, { app: 'isopolis', name: 'older' }))); ls.setItem('isopic.recovery', J(legacy));
     db.full = true; await ev('recoveryMigrate()').catch(() => {}); db.full = false;
-    check('a failed migration keeps the old copies', !!w.localStorage.getItem('isopolis.recovery') && !!w.localStorage.getItem('isopic.recovery') && heads().length === 0);
+    check('a failed migration keeps the old copies', !!ls.getItem('isopolis.recovery') && !!ls.getItem('isopic.recovery') && heads().length === 0);
     await ev('recoveryMigrate()');
-    check('old-name copies move across and restore', heads().length === 2 && !w.localStorage.getItem('isopolis.recovery') && (await ev(`recoverRestore(${J(heads().find(h => h.name === 'older'))})`), await wait(30), ev('T.l0.px[3]')) === RED);
+    check('old-name copies move across and restore', heads().length === 2 && !ls.getItem('isopolis.recovery') && (await ev(`recoverRestore(${J(heads().find(h => h.name === 'older'))})`), await wait(30), ev('T.l0.px[3]')) === RED);
     await dropAll(); ev(`setDirty(false)`); }
-  { w.localStorage.setItem('isopic.sizesTold', '1'); ev('keysMove()');
+  { ls.setItem('isopic.sizesTold', '1'); ev('keysMove()');
     const old = db.old(); old.stores.heads.rows.set(7, { id: 7, pid: 'p', at: 5, name: 'old' }); old.stores.bodies.rows.set(7, { id: 7, o: { tag: 1 } }); old.stores.projects.rows.set('p', { pid: 'p', handle: { h: 1 } });
     db.full = true; await ev('dbMove()'); db.full = false;
     const kept = db.dbs.isopic === old && old.stores.bodies.rows.size === 1 && ev('RC.stuck') && (ev('storageTell()'), $('toast').textContent.includes('could not be moved'));
     await ev('dbMove()'); const h = heads()[0];
-    check('the old name: keys and database move, or stay', kept && w.localStorage.getItem('qtiles.sizesTold') === '1' && w.localStorage.getItem('isopic.sizesTold') === null && !db.dbs.isopic && heads().length === 1 && h.name === 'old' && db.stores.bodies.rows.get(h.id).o.tag === 1 && db.stores.projects.rows.get('p').handle.h === 1);
-    await ev(`snapDrop([${h.id}])`); db.stores.projects.rows.clear(); w.localStorage.removeItem('qtiles.sizesTold'); }
+    check('the old name: keys and database move, or stay', kept && ls.getItem('qtiles.sizesTold') === '1' && ls.getItem('isopic.sizesTold') === null && !db.dbs.isopic && heads().length === 1 && h.name === 'old' && db.stores.bodies.rows.get(h.id).o.tag === 1 && db.stores.projects.rows.get('p').handle.h === 1);
+    await ev(`snapDrop([${h.id}])`); db.stores.projects.rows.clear(); ls.removeItem('qtiles.sizesTold'); }
   { ev(`newDoc(32, 32, 'q'); setDirty(false);`); edit(1); db.full = true; await ev('snapNow()'); db.full = false;
     const told = $('sbSave').textContent.includes('no recovery copy'); await ev('snapNow()'); await wait(5); edit(2); await ev('snapNow()');
     check('a full store is told; the next copy clears it', told && !$('sbSave').textContent.includes('no recovery copy')); }
@@ -156,16 +158,16 @@ module.exports = async t => {
   /* saving to a file, and the guards */
   ev(`setDirty(false); newDoc(32, 32, 'id');`);
   let picks = 0, disk = 1000, writes = [];
-  const handle = { name: 'mine.qtiles.json', getFile: async () => { if (disk === null) { const e = new w.Error('gone'); e.name = 'NotFoundError'; throw e; } return { lastModified: disk }; }, queryPermission: async () => 'granted', createWritable: async () => ({ write: async b => { writes.push(b); }, close: async () => { disk += 1; } }) };
+  const handle = { name: 'mine.qtiles.json', getFile: async () => { if (disk === null) { throw Object.assign(new w.Error(), { name: 'NotFoundError' }); } return { lastModified: disk }; }, queryPermission: async () => 'granted', createWritable: async () => ({ write: async b => { writes.push(b); }, close: async () => { disk += 1; } }) };
   w.showSaveFilePicker = async () => { picks++; return handle; };
-  await ev('saveProject()'); const pid = ev('S.projectId');
+  await ev('saveProject()'); const pid = pidNow();
   const lastText = () => new Promise(r => { const f = new w.FileReader(); f.onload = () => r(JSON.parse(f.result)); f.readAsText(writes[writes.length - 1]); });
   { const o = await lastText(); await ev('saveProject()'); check('a save writes an id and a revision, asking only once', /^[\w-]{36}$/.test(pid) && o.projectId === pid && o.revision === 1 && ev('S.revision') === 2 && picks === 1 && writes.length === 2 && ev('S.dirty') === false); }
   const go = () => (saving = ev('saveProject()'), wait(20)); disk += 500; let n = writes.length, saving; await go();
   check('a file changed on disk stops the save and asks', sheet('sheetConflict') && !$('conOver').hidden && writes.length === n);
-  $('conCopy').click(); await saving; check('Save as copy makes a new file and project', picks === 2 && ev('S.projectId') !== pid && writes.length === n + 1);
-  const pid2 = ev('S.projectId'); disk += 500; await go(); esc(); await saving; const held = writes.length === n + 1 && !sheet('sheetConflict');
-  await go(); $('conOver').click(); await saving; check('Cancel writes nothing, Overwrite the same file', held && writes.length === n + 2 && ev('S.projectId') === pid2);
+  $('conCopy').click(); await saving; check('Save as copy makes a new file and project', picks === 2 && pidNow() !== pid && writes.length === n + 1);
+  const pid2 = pidNow(); disk += 500; await go(); esc(); await saving; const held = writes.length === n + 1 && !sheet('sheetConflict');
+  await go(); $('conOver').click(); await saving; check('Cancel writes nothing, Overwrite the same file', held && writes.length === n + 2 && pidNow() === pid2);
   disk = null; await go(); check('a file that is gone cannot be overwritten', sheet('sheetConflict') && $('conOver').hidden); esc(); await saving; disk = 9000; ev('SV.modified = 9000;');
   { edit(30); let release; handle.createWritable = async () => ({ write: async () => { await new Promise(r => { release = r; }); }, close: async () => {} });
     await go(); edit(31); release(); await saving; check('anything drawn during a save stays unsaved', ev('S.dirty') === true);
@@ -190,6 +192,6 @@ module.exports = async t => {
   ev(`exBlank(64, 64); setDirty(false);`); check('a new blank cannot save over the last file', ev('fileHandle === null && S.projectId === null && SV.fileName === null'));
 
   delete w.showSaveFilePicker; ev('saveBar();');
-  { ev(`window.d0 = deliver; window.got = []; deliver = async (n, b) => { got.push(n); return true; }; newDoc(32, 32, 'dl');`); await ev('saveProject()'); await wait(30); check('a download save also keeps its bytes here', heads().some(h => h.pid === ev('S.projectId')) && ev('got.length') === 1); ev('deliver = d0;'); }
+  { ev(`window.d0 = deliver; window.got = []; deliver = async (n, b) => { got.push(n); return true; }; newDoc(32, 32, 'dl');`); await ev('saveProject()'); await wait(30); check('a download save also keeps its bytes here', heads().some(h => h.pid === pidNow()) && ev('got.length') === 1); ev('deliver = d0;'); }
   delete w.indexedDB; ev(`idbP = null; RC.told = null; RC.failed = null; clearTimeout(RC.timer); RC.timer = null; setDirty(false);`);
 };

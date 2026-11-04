@@ -2,7 +2,7 @@
 
 qtiles is a free, browser-based pixel-art editor for still images, in 2D and isometric: sprites, tiles, characters, props, scenes and backgrounds, including big detailed pieces drawn a little each day. It works with a mouse on a laptop and with Apple Pencil on an iPad.
 
-A project is a single `.json` file that lives wherever you keep it, such as iCloud, Google Drive or OneDrive. There is no account and no server, and the app makes no network requests. It is plain HTML, CSS and JavaScript with no build step.
+A project is a single `.json` file that lives wherever you keep it, such as iCloud, Google Drive or OneDrive. There is no account and no server, and nothing you draw or save ever leaves your device. It is plain HTML, CSS and JavaScript with no build step.
 
 ## Run it
 
@@ -43,3 +43,4 @@ The site is the `app/` folder as it stands, and nothing else is served.
 
 - **Netlify:** `netlify.toml` already sets this up. There is no build command and the publish directory is `app`.
 - **Cloudflare Workers:** `wrangler.jsonc` already sets this up. Name the Worker `qtiles`, leave the build command empty and keep the deploy command `npx wrangler deploy`.
+- **Visitor counts:** on qtiles.app only, the page loads the Cloudflare Web Analytics beacon (page views, no cookies). The domain and token are `SITE` in `app/js/site.js`; an empty token turns it off, and a browser sending Global Privacy Control is not counted.

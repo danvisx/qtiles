@@ -9,7 +9,7 @@
 
   startBlank(); await storageStart();
   await startFirst();
-  fitView(); storageTell();
+  fitView(); storageTell(); setTimeout(siteStart, 0);   // after the start screen has painted
 
   const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches; let ants = 0;
   (function frame(t) {

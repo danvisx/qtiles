@@ -66,6 +66,12 @@ function wandMask(x, y) {
 function contentBox(L) { return maskBox(L.px.map(v => v >>> 24 ? 1 : 0), S.w, S.h); }
 function selectAll() { commitFloat(); selPut(rectMask(0, 0, S.w - 1, S.h - 1)); }
 function selectNone() { commitFloat(); selPut(null); }
+const anySel = () => !!(FL || SEL.mask || OB.sel !== null || OB.ids.length || AS.path.length);
+/* A tap on the stage: a person's own placing, so a float past the edge can ask, and then the selection stays until that is answered. */
+function stageClear() {
+  floatDone(); if (FL) return;
+  selPut(null); asmExit(); objSelect(null);
+}
 function selectInvert() {
   commitFloat(); if (!SEL.mask) { selectAll(); return; }
   selPut(SEL.mask.map(v => v ^ 1));

@@ -320,16 +320,45 @@ function recoverRow(h, projects) {
   row.append(txt, go, drop); return row;
 }
 async function recoverOpen(kept) {
-  if (kept !== true) closeSheets();   // first, as coming back to the start screen is settled as soon as this returns
-  let heads = [], projects = [], missing = [];
+  if (kept !== true) { closeSheets(); press($('recKeep'), true); }   // first, as coming back to the start screen is settled as soon as this returns
+  let heads = [], projects = [], missing = [], used = null;
   try { ({ heads, projects } = await recoveryList()); missing = await missingFiles(projects); } catch (_) {}
+  try { used = (await navigator.storage.estimate()).usage; } catch (_) {}   // the whole site's, as a head holds no size and reading the bodies to add them up would load every project
   const list = heads.slice().sort(newestFirst), last = lastFile(projects), box = $('recList'), re = $('recReopen');
   box.textContent = ''; box.append(...list.map(h => recoverRow(h, projects)));
   $('recEmpty').hidden = !!(list.length || last);
-  re.hidden = !last || missing.includes(last.pid);
+  re.hidden = !last || missing.includes(last.pid); $('recForget').hidden = $('recFile').hidden = !last;
   if (last) { re.textContent = 'Reopen ' + last.fileName; re.onclick = () => reopenLast(last); }
+  $('recHead').hidden = !list.length; $('recKeep').hidden = !list.length || !S.dirty;
+  $('recCount').textContent = list.length + (list.length === 1 ? ' copy' : ' copies') + (used ? ', ' + (used < 1e6 ? Math.ceil(used / 1e3) + ' KB' : (used / 1e6).toFixed(1) + ' MB') : '');
+  recShown = list; delete $('recAll').dataset.sure; recAllSync();
   saveBar();
   if (kept !== true) openSheet('sheetRecover');
+}
+/* Two taps, like Discard. While this project has unsaved changes its newest copy stays unless the switch is off, as it is the only safety net that work has; later work reaches it on the usual timer. */
+let recShown = [];
+const recKept = list => S.dirty && $('recKeep').getAttribute('aria-pressed') === 'true' && list.find(h => h.pid === S.projectId) || null;
+function recAllSync() {
+  const b = $('recAll'), n = recShown.length - (recKept(recShown) ? 1 : 0);
+  b.textContent = b.dataset.sure ? 'Delete ' + n + (n === 1 ? ' copy?' : ' copies?') : 'Delete all'; b.disabled = !n; $('recAllNo').hidden = !b.dataset.sure;
+}
+async function recoverAll() {
+  const b = $('recAll'); if (!b.dataset.sure) { b.dataset.sure = '1'; recAllSync(); return; }
+  delete b.dataset.sure;
+  try {
+    const list = (await recoveryList()).heads.sort(newestFirst), keep = recKept(list), ids = list.filter(h => h !== keep).map(h => h.id);
+    await snapDrop(ids);
+    toast('Deleted ' + ids.length + (ids.length === 1 ? ' recovery copy.' : ' recovery copies.') + (keep ? ' The copy of this project is kept.' : ''));
+  } catch (e) { toast('Could not delete the copies: ' + (e.message || e)); }
+  recoverOpen(true);
+}
+/* Only the handles go: a project's record still says which copies a file holds. */
+async function forgetFiles() {
+  try {
+    await idbRun(['projects'], 'readwrite', st => { const all = st('projects').getAll(); all.onsuccess = () => { for (const p of all.result) if (p.handle) { delete p.handle; st('projects').put(p); } }; });
+    toast('qtiles will no longer offer to reopen that file.');
+  } catch (e) { toast('Could not forget the file: ' + (e.message || e)); }
+  recoverOpen(true); reopenSync();
 }
 
 /* ---------- backup ---------- */
@@ -400,6 +429,8 @@ function initStorage() {
   $('saveInfo').onclick = fileMenuOpen;
   $('fBackup').onclick = () => { closeSheets(); exportBackup(); };
   $('fRecover').onclick = () => recoverOpen();
+  $('recAll').onclick = recoverAll; $('recAllNo').onclick = () => { delete $('recAll').dataset.sure; recAllSync(); }; $('recForget').onclick = forgetFiles;
+  $('recKeep').onclick = () => { press($('recKeep'), $('recKeep').getAttribute('aria-pressed') !== 'true'); recAllSync(); };
   const hist = () => { closeSheets(); togglePop('histPop', $('histPop').hidden); };
   $('fHistory').onclick = hist; $('histBtn').onclick = hist; $('histClear').onclick = historyClear;
   for (const [id, v] of [['conCopy', 'copy'], ['conOver', 'over'], ['oldOpen', 'open'], ['oldRecover', 'recover'], ['histClearOk', 'clear']]) $(id).onclick = () => sheetAnswer(v);

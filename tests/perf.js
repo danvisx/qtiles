@@ -8,7 +8,7 @@ const { boot } = require('./boot');
   try {
     ev(`window.P = { move(L, apply, n) { const r = rng(8), times = []; for (let k = 0; k < n; k++) { const o = L.objects[Math.floor(r() * L.objects.length)], m = Object.assign({}, o, { i: o.i + 1 }), a = performance.now(); apply(L, L.objects.map(q => q === o ? m : q)); times.push(performance.now() - a); } times.sort((a, b) => a - b); return times[n >> 1]; }, run(L, apply) { const a = performance.now(); objRenderAll(L); return { full: performance.now() - a, med: P.move(L, apply, 30) }; } };`);
 
-    ev(`newDoc(2048, 2048, 'perf'); S.tile = 32; S.gox = 1024; S.goy = 0; addObjectLayer();`);
+    const big = (n, x = '') => ev(`newDoc(2048, 2048, '${n}'); S.tile = 32; S.gox = 1024; S.goy = 0; ${x}addObjectLayer();`); big('perf');
     const plain = fn(`const r = rng(5), C = ['#3f8a4f', '#e07a5f', '#3da5d9', '#9a9fb5', '#f2b632'].map(lookFrom), list = []; for (let k = 0; k < 5000; k++) list.push(objNew({ id: objSeq++, i: Math.floor(r() * 120), j: Math.floor(r() * 120), z: k % 7 === 0 ? 16 : 0, w: 1 + Math.floor(r() * 6), d: 1 + Math.floor(r() * 6), h: 8 + Math.floor(r() * 48), look: C[k % 5], outline: ['dark', 'sel', 'none'][k % 3] })); const L = T.L(); L.objects = list; objRenderAll(L); return P.run(L, objEdit);`);
     budget('5000 boxes on 2048 x 2048', plain, 'moving one');
     const mixed = fn(`const L = T.L(), N = Object.keys(SHAPE_DEFS); L.objects = L.objects.map((o, k) => shapeFit(Object.assign({}, o, { type: N[k % N.length], facing: k % 4, w: 4, d: 4 }), { w: 4 })); return P.run(L, objApply);`);
@@ -16,7 +16,7 @@ const { boot } = require('./boot');
     const tex = fn(`const L = T.L(), M = Object.keys(MATERIALS).slice(1); objApply(L, L.objects.map((o, k) => Object.assign({}, o, { look: Object.assign({}, o.look, { material: M[k % M.length], seed: 1 }) }))); return P.run(L, objApply);`);
     budget('5000 textured objects', tex, 'moving a textured one');
 
-    ev(`newDoc(2048, 2048, 'shadows'); S.tile = 32; S.gox = 1024; S.goy = 0; S.light = 'left'; addObjectLayer();`);
+    big('shadows', "S.light = 'left'; ");
     const cast = fn(`const L = T.L(), q = rng(4), N = Object.keys(SHAPE_DEFS), look = lookFrom('#7bb661'), list = []; for (let k = 0; k < 5000; k++) list.push(shapeFit(objNew({ id: objSeq++, type: N[k % N.length], i: Math.floor(q() * 120), j: Math.floor(q() * 120), w: 4, d: 4, h: 16, facing: k % 4, outline: 'none', look, shadow: true }), { w: 4 })); objEdit(L, list); return P.move(L, objEdit, 30);`);
     info('5000 casting objects: local edit median ' + cast.toFixed(1) + ' ms'); check('moving one of 5,000 casters, under 50 ms', cast < 50);
 

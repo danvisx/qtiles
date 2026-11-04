@@ -9,7 +9,7 @@ const ABOUT = {
     'Your project is one .qtiles.json file that you keep where you like: on this device; it is the master copy. To continue another day, choose Open and pick the same file from the same place.',
     'Where a browser can write to a file, the first save asks where and later saves write straight back to it. Elsewhere each save makes a new file: pick the same place and replace the old one.',
     'Recovery copies are a safety net in this browser, and the browser may clear them.',
-    'The app makes no network requests and has no tracking.'
+    'Your drawings never leave your device: the project is a file you keep, and recovery copies stay in this browser.'
   ],
   logo: { name: 'Graphic design icons created by Magnific - Flaticon', url: 'https://www.flaticon.com/free-icons/graphic-design' },
   fonts: [

@@ -558,7 +558,20 @@ input[type="range"] { width: 100%; accent-color: var(--accent); }
 .excard { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; padding: 8px; background: transparent; border: 1px solid var(--line2); border-radius: 8px; text-align: left; font-size: 12px; color: var(--muted); touch-action: manipulation; }
 .excard:hover { background: var(--hover); }
 .newgroups { display: flex; flex-direction: column; gap: 10px; }
-.szcards { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 6px; margin-top: 4px; }
+/* one row per group, scrolled sideways, so picking a size never pushes Create down */
+.szrow { display: flex; align-items: center; gap: 4px; margin-top: 4px; }
+.szcards { position: relative; flex: 1; min-width: 0; display: flex; gap: 6px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: thin; overscroll-behavior-x: contain; padding-bottom: 2px; }
+.szcards .szcard { flex: none; width: 84px; scroll-snap-align: start; }
+.szarrow { flex: none; width: 24px; height: var(--ctl); padding: 0; border: 0; border-radius: 6px; background: transparent; color: var(--muted); display: flex; align-items: center; justify-content: center; }
+.szarrow:hover:not(:disabled) { background: var(--hover); color: var(--fg); }
+.szarrow:disabled { opacity: .35; }
+.szarrow svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+@media (pointer: coarse) { .szarrow { display: none; } }
+/* stays at the foot of whatever scrolls: the column on a wide screen, the body below 1000 px */
+#stNew { padding-bottom: 0; }   /* a sticky box cannot reach into its column's padding, so the footer brings its own */
+.stcol > .newfoot { position: sticky; bottom: 0; z-index: 1; margin: auto -16px 0; padding: 8px 16px 12px; background: var(--panel); border-top: 1px solid var(--line2); }
+.newchoice { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 10px; }
+.newchoice #newRead { flex: 1 1 140px; margin: 0; }
 .szcard { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 4px; background: transparent; border: 1px solid var(--line2); border-radius: 8px; color: var(--muted); font-size: 12px; }
 .szcard:hover { background: var(--hover); }
 .szcard[aria-pressed="true"] { background: var(--sel); border-color: var(--accent-line); color: var(--accent-text); }
@@ -590,6 +603,9 @@ input[type="range"] { width: 100%; accent-color: var(--accent); }
 .sheet h2 { margin: 0; font-size: 15px; font-weight: 600; }
 .sheet p { margin: 0; color: var(--muted); font-size: 12px; }
 .reclist { display: flex; flex-direction: column; gap: 6px; max-height: 40vh; overflow: auto; }
+.rechead { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.rechead > span { flex: 1 1 auto; }
+#recKeep { align-self: flex-start; }
 .recrow { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; padding: 6px 0; border-top: 1px solid var(--line); }
 .recrow > div { flex: 1 1 180px; min-width: 0; display: flex; flex-direction: column; gap: 2px; overflow-wrap: anywhere; }
 .recrow .mono { font-size: 11px; }

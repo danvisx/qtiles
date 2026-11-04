@@ -32,9 +32,9 @@ module.exports = async t => {
   check('undo: make, turn and mirror an assembly', undoExact('asmMake()') && (ev(`asmMake(); objSelectMany(T.L().objects.map(o => o.id)); resetHistory();`), undoExact('asmTurn(1)') && undoExact('asmFlip()')));
 
   { ev(`T.reset(96, 64); ${art} addObjectLayer(); objEdit(T.L(), [T.box({ i: 1, j: 1, w: 4, d: 4, h: 16 })]); S.active = 0; resetHistory();`);
-    const h = ev('H.pos'), plain = ev('T.hash(T.l0.px)'), objs = ev('T.hash(S.layers[1].px)');
-    ev(`usePalette(PALETTES[12]); syncFlat(); objRefresh();`); const moved = ev('T.hash(S.layers[1].px)'); ev(`usePalette(PALETTES[0]); syncFlat(); objRefresh();`);
-    check('a palette change is no undo step; back restores objects', moved !== objs && ev(`H.pos === ${h} && T.hash(T.l0.px) === ${plain} && T.hash(S.layers[1].px) === ${objs}`)); }
+    const h = ev('H.pos'), plain = ev('T.h0'), hs = () => ev('T.hash(S.layers[1].px)'), objs = hs(), pal = n => ev(`usePalette(PALETTES[${n}]); syncFlat(); objRefresh();`);
+    pal(12); const moved = hs(); pal(0);
+    check('a palette change is no undo step; back restores objects', moved !== objs && ev(`H.pos === ${h} && T.h0 === ${plain} && T.hash(S.layers[1].px) === ${objs}`)); }
 
   /* Big steps shrink behind a queue, and unpacking takes as long as it takes. */
   ev(`window.pipe0 = pipe; pipe = async (u8, s) => s.gz ? window.gz(u8) : window.gunz(u8); window.CompressionStream = class { constructor() { this.gz = true; } }; window.DecompressionStream = class { };`);

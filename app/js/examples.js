@@ -125,13 +125,15 @@ function newCards() {
   for (const g of NEW_GROUPS) {
     const box = document.createElement('div'), row = document.createElement('div'), k = NEW_BOX / Math.max(...g.sizes.flat());
     box.className = 'field'; box.dataset.mode = g.mode; box.textContent = g.name; row.className = 'szcards';
+    const line = document.createElement('div'), arrow = (dir, d) => { const b = document.createElement('button'); b.className = 'szarrow'; b.dataset.dir = dir; b.setAttribute('aria-label', (dir < 0 ? 'Smaller ' : 'Larger ') + g.name + ' sizes'); b.innerHTML = '<svg viewBox="0 0 24 24"><path d="' + d + '"/></svg>'; b.onclick = () => row.scrollBy({ left: dir * row.clientWidth * 0.8, behavior: 'smooth' }); return b; };
+    line.className = 'szrow'; row.onscroll = () => szArrows(line);
     for (const [w, h] of g.sizes) {
       const b = document.createElement('button'), fr = document.createElement('span'), out = document.createElement('span'), name = document.createElement('b');
       b.className = 'szcard'; b.dataset.group = g.name; b.dataset.size = w + 'x' + h; b.setAttribute('aria-label', g.name + ', ' + w + ' x ' + h + ' px');
       fr.className = 'szframe'; out.className = 'szbox'; out.style.width = Math.max(2, Math.round(w * k)) + 'px'; out.style.height = Math.max(2, Math.round(h * k)) + 'px'; name.textContent = w + ' x ' + h;
       fr.appendChild(out); b.append(fr, name); b.onclick = () => newPick(g, w, h); row.appendChild(b);
     }
-    box.appendChild(row); host.appendChild(box);
+    line.append(arrow(-1, 'M15 6l-6 6 6 6'), row, arrow(1, 'M9 6l6 6-6 6')); box.appendChild(line); host.appendChild(box);
   }
   for (const [name, w, h, title, line] of NEW_BIG) {
     const g = NEW_GROUPS.find(q => q.name === name), b = document.createElement('button'), fr = document.createElement('span'), out = document.createElement('span'), t = document.createElement('b'), d = document.createElement('span'), k = NEW_BOX / Math.max(w, h);
@@ -142,15 +144,34 @@ function newCards() {
   }
 }
 const newBigPicked = () => NEW_BIG.some(([name, w, h]) => NW.group && NW.group.name === name && numOf('newW') === w && numOf('newH') === h);
-function newMore(on) { $('newMore').hidden = !on; $('newMoreBtn').setAttribute('aria-expanded', on); $('newMoreBtn').textContent = on ? 'Fewer sizes' : 'More sizes'; }
+function newMore(on) { $('newMore').hidden = !on; $('newMoreBtn').setAttribute('aria-expanded', on); $('newMoreBtn').textContent = on ? 'Fewer sizes' : 'More sizes'; newRows(); }
+function szArrows(line) { const r = line.querySelector('.szcards'), [a, b] = line.querySelectorAll('.szarrow'); a.disabled = r.scrollLeft <= 1; b.disabled = r.scrollLeft + r.clientWidth >= r.scrollWidth - 1; }
+/* Only sideways, so a choice never moves the column under the pointer. */
+function newRows() {
+  document.querySelectorAll('#newGroups .szrow').forEach(line => {
+    const r = line.querySelector('.szcards'), b = r.querySelector('[aria-pressed="true"]');
+    if (b) { if (b.offsetLeft < r.scrollLeft) r.scrollLeft = b.offsetLeft; else if (b.offsetLeft + b.offsetWidth > r.scrollLeft + r.clientWidth) r.scrollLeft = b.offsetLeft + b.offsetWidth - r.clientWidth; }
+    szArrows(line);
+  });
+}
+/* Left and right along a group, up and down to the nearest size of the group above or below. */
+function newArrow(e) {
+  const d = { ArrowLeft: [0, -1], ArrowRight: [0, 1], ArrowUp: [-1, 0], ArrowDown: [1, 0] }[e.key], card = e.target.closest && e.target.closest('#newGroups .szcard');
+  if (!d || !card) return;
+  const rows = [...document.querySelectorAll('#newGroups .field:not([hidden]) .szcards')], r = rows.indexOf(card.parentElement), at = [...card.parentElement.children].indexOf(card);
+  const row = rows[r + d[0]]; if (!row) return;
+  const to = row.children[Math.max(0, Math.min(row.children.length - 1, at + d[1]))];
+  e.preventDefault(); if (to !== card || d[0]) { to.click(); to.focus({ preventScroll: true }); }
+}
 function newPick(g, w, h) { NW.group = g; $('newW').value = w; $('newH').value = h; newSync(); }
 function newSync() {
   const w = numOf('newW'), h = numOf('newH'), ok = sizeOk(w, h), g = NW.group;
   document.querySelectorAll('.szcard').forEach(b => press(b, !!g && b.dataset.group === g.name && b.dataset.size === w + 'x' + h));
   press($('newFlat'), NW.mode === 'flat'); press($('newIso'), NW.mode === 'iso');
   document.querySelectorAll('#newGroups .field').forEach(f => { f.hidden = f.dataset.mode !== NW.mode; });
-  $('newRead').textContent = ok ? w + ' x ' + h + ' px = ' + (w * h).toLocaleString('en-US') + ' pixels' : 'Width and height are 1 to 4096 px.';
+  $('newRead').textContent = ok ? (NW.mode === 'iso' ? 'Isometric, ' : '2D, ') + w + ' x ' + h + ' px' + (g && g.lock ? ', locked' : '') : 'Width and height are 1 to 4096 px.';
   $('newOk').disabled = !ok; $('newPv').hidden = !ok;
+  newRows();
   if (ok) { const k = NEW_PV / Math.max(w, h); $('newPv').style.width = Math.max(1, Math.round(w * k)) + 'px'; $('newPv').style.height = Math.max(1, Math.round(h * k)) + 'px'; }
 }
 function newChoice(m) { const a = (prefGet('newLast') || {})[m]; return Array.isArray(a) && sizeOk(a[1], a[2]) ? a : NEW_FIRST[m]; }
@@ -328,6 +349,12 @@ function initStart() {
   if (window.ResizeObserver) new ResizeObserver(coverLay).observe($('cvArt'));
   document.querySelectorAll('#stTabs button').forEach(b => { b.onclick = () => newTab(b.dataset.tab); });
   $('startBox').addEventListener('keydown', e => tabInside(e, $('startBox')));
+  $('newGroups').addEventListener('keydown', newArrow);
+  $('startBox').addEventListener('keydown', e => {   // a button keeps its own Enter, apart from a size card, which is the choice
+    const t = e.target, card = t.closest && t.closest('#stNew .szcard');
+    if (e.key !== 'Enter' || e.defaultPrevented || $('startBox').dataset.phase !== 'start' || !(t === $('startBox') || card) || !$('stNew').getClientRects().length) return;
+    e.preventDefault(); if (card) card.click(); newCreate();
+  });
 }
 
 /* ---------- tip strip ---------- */

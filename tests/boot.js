@@ -43,7 +43,7 @@ async function boot() {
   /* Helpers inside the page, J on both sides. T.doc() is everything undo must put back. */
   global.J = JSON.stringify; ev("window.J = JSON.stringify");
   ev(`window.T = {
-    L: () => activeLayer(), get l0() { return S.layers[0]; },
+    L: () => activeLayer(), get l0() { return S.layers[0]; }, get h0() { return T.hash(T.l0.px); }, get hL() { return T.hash(T.L().px); },
     hash(a) { let h = 7; for (let i = 0; i < a.length; i++) h = (Math.imul(h, 31) + a[i] + i) | 0; return h; },
     recs(L) { return L.objects ? J(L.objects, (k, v) => k === 'fit' ? undefined : v) : null; },
     doc() { return J({ w: S.w, h: S.h, gox: S.gox, goy: S.goy, groups: S.groups, layers: S.layers.map(L => [L.id, L.name, L.kind, L.visible, L.locked, L.opacity, L.group, L.tag, L.shadowFor, L.outlineFor, L.mirrorOf, L.pivot, L.px.length, T.hash(L.px), T.recs(L)]) }); },

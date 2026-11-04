@@ -815,7 +815,7 @@
         <div class="stcards" id="stCards"></div>
         <button class="btn" id="stReopen" hidden></button>
         <button class="btn" id="stOpen">Open a file&hellip;</button>
-        <button class="plink" id="stAll">All recovery copies</button>
+        <button class="plink" id="stAll">Manage copies</button>
       </section>
       <section class="stcol" id="stNew" data-col="new" aria-label="New">
         <h3>New</h3>
@@ -832,8 +832,9 @@
             </div>
           </div>
         </div>
-        <p class="mono" id="newRead"></p>
-        <div class="row wrap" id="newRow"><button class="btn pri" id="newOk">Create</button></div>
+        <div class="newfoot" id="newFoot">
+          <div class="newchoice"><p class="mono" id="newRead" aria-live="polite"></p><div class="row wrap" id="newRow"><button class="btn pri" id="newOk">Create</button></div></div>
+        </div>
       </section>
       <section class="stcol" id="exWrap" data-col="ex" aria-label="Examples">
         <h3>Examples</h3>
@@ -890,7 +891,9 @@
 <div class="scrim" id="sheetRecover" hidden>
   <div class="sheet" role="dialog" aria-labelledby="recTitle">
     <h2 id="recTitle">Recovery copies</h2>
-    <button class="btn pri" id="recReopen" hidden></button>
+    <div class="row wrap" id="recFile" hidden><button class="btn pri" id="recReopen" hidden></button><button class="plink" id="recForget" hidden>Forget the last file</button></div>
+    <div class="rechead" id="recHead" hidden><span class="mono muted" id="recCount"></span><button class="btn danger" id="recAll">Delete all</button><button class="btn" id="recAllNo" hidden>Cancel</button></div>
+    <button class="chip" id="recKeep" aria-pressed="true" hidden>Keep the copy of the project I'm working on</button>
     <div id="recList" class="reclist"></div>
     <p id="recEmpty" hidden>This browser holds no copies.</p>
     <button class="btn" data-close>Close</button>
@@ -1276,6 +1279,7 @@
 <script src="js/export.js"></script>
 <script src="js/examples.js"></script>
 <script src="examples/embedded.js"></script>
+<script src="js/site.js"></script>
 <script src="js/main.js"></script>
 <!--/BUILD:SCRIPTS-->
 </body>
