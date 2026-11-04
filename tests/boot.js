@@ -40,15 +40,16 @@ async function boot() {
 
   for (let k = 0; k < 500 && !ev('typeof NW !== "undefined" && NW.start'); k++) await wait(10);
 
-  /* Helpers inside the page. T.doc() is everything undo must put back. */
+  /* Helpers inside the page, J on both sides. T.doc() is everything undo must put back. */
+  global.J = JSON.stringify; ev("window.J = JSON.stringify");
   ev(`window.T = {
     L: () => activeLayer(), get l0() { return S.layers[0]; },
     hash(a) { let h = 7; for (let i = 0; i < a.length; i++) h = (Math.imul(h, 31) + a[i] + i) | 0; return h; },
-    recs(L) { return L.objects ? JSON.stringify(L.objects, (k, v) => k === 'fit' ? undefined : v) : null; },
-    doc() { return JSON.stringify({ w: S.w, h: S.h, gox: S.gox, goy: S.goy, groups: S.groups, layers: S.layers.map(L => [L.id, L.name, L.kind, L.visible, L.locked, L.opacity, L.group, L.tag, L.shadowFor, L.outlineFor, L.mirrorOf, L.pivot, L.px.length, T.hash(L.px), T.recs(L)]) }); },
+    recs(L) { return L.objects ? J(L.objects, (k, v) => k === 'fit' ? undefined : v) : null; },
+    doc() { return J({ w: S.w, h: S.h, gox: S.gox, goy: S.goy, groups: S.groups, layers: S.layers.map(L => [L.id, L.name, L.kind, L.visible, L.locked, L.opacity, L.group, L.tag, L.shadowFor, L.outlineFor, L.mirrorOf, L.pivot, L.px.length, T.hash(L.px), T.recs(L)]) }); },
     near(p) { return p.every((q, k) => !k || Math.max(Math.abs(q[0] - p[k - 1][0]), Math.abs(q[1] - p[k - 1][1])) <= 1); },
-    painted(L) { L = L || activeLayer(); let n = 0; for (const v of L.px) if (v >>> 24) n++; return n; },
-    fill(x0, y0, x1, y1, hex, L) { L = L || activeLayer(); beginStroke(L); rectP(x0, y0, x1, y1, true, plotLayer, packHex(hex)); endStroke(); },
+    painted(L = activeLayer()) { let n = 0; for (const v of L.px) if (v >>> 24) n++; return n; },
+    fill(x0, y0, x1, y1, hex, L = activeLayer()) { beginStroke(L); rectP(x0, y0, x1, y1, true, plotLayer, packHex(hex)); endStroke(); },
     reset(w, h, mode) { closeSheets(); selectNone(); newDoc(w, h, 'test'); setMode(mode || 'iso'); Object.assign(S, { mirrorX: false, mirrorY: false, tile: 32, edgeRun: 2, level: 0, sizeLock: false, snap: 'pixel', fillAll: true }); S.gox = Math.floor(w / 2) & ~15; S.goy = 0; usePalette(PALETTES[0]); setLight('left'); setColor('#3f8a4f'); S.color2 = '#24593f'; setBrush(1); setTool('pencil'); fitView(); setDirty(false); },
     box(f) { return objNew(Object.assign({ id: objSeq++, outline: 'none', look: lookFrom('#7bb661') }, f)); },
     shape(t, f) { const g = defOf(t); return shapeFit(objNew(Object.assign({ id: objSeq++, type: t, w: g.w, d: g.d, h: g.h(), outline: 'none', look: lookNew(t) }, f)), {}); },
@@ -63,8 +64,8 @@ async function boot() {
   };
   t.ok = (name, f) => t.check(name, f());
   t.fn = s => ev('(() => { ' + s + ' })()');
-  t.load = o => ev('(o => loadProject(JSON.parse(o)))')(JSON.stringify(o));
-  t.saved = async () => JSON.parse(await ev('serialize().then(o => JSON.stringify(o))'));
+  t.load = o => ev('(o => loadProject(JSON.parse(o)))')(J(o));
+  t.saved = async () => JSON.parse(await ev('serialize().then(o => J(o))'));
   return t;
 }
 

@@ -14,7 +14,7 @@ const CK_KINDS = [
   { k: 'soft', name: 'Soft edges', what: 'A partly transparent pixel, often from imported art.', fix: 'Makes each opaque from 50 percent up and empty below.', tick: 'pixels' },
   { k: 'off', name: 'Off palette', what: 'A color that is not in the project palette.', fix: 'Changes each to the nearest palette color, by how alike they look.', tick: 'palette' },
   { k: 'twin', name: 'Near twins', what: 'Two colors used that look almost the same (OKLab distance under ' + CK_TWIN + '), not next to each other on a ramp. The rarer one is marked.' },
-  { k: 'colors', name: 'Colors used', what: 'Opaque colors in what was checked.', tick: 'palette' },
+  { k: 'colors', name: 'Colors used', what: 'Opaque colors in what was checked.', tick: 'count' },
   { k: 'big', name: 'Drawn big', what: 'Every pixel matches its aligned square of 2 x 2 or more: the art was likely drawn or imported at a larger scale.' }
 ];
 const ckKind = k => CK_KINDS.find(K => K.k === k);

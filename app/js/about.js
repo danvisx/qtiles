@@ -17,12 +17,7 @@ const ABOUT = {
     { name: 'JetBrains Mono', by: 'The JetBrains Mono Project Authors', license: 'SIL Open Font License 1.1', file: 'fonts/LICENSE-JetBrainsMono.txt', source: 'https://github.com/JetBrains/JetBrainsMono' },
     { name: 'Momo Trust Display', by: 'The Momo Trust Project Authors', license: 'SIL Open Font License 1.1', file: 'fonts/LICENSE-MomoTrustDisplay.txt', source: 'https://fontsource.org/fonts/momo-trust-display' }
   ],
-  reading: [
-    { name: 'Clip Studio tips: isometric pixel art', url: 'https://tips.clip-studio.com/en-us/articles/4969' },
-    { name: 'Sprite AI: isometric pixel art guide', url: 'https://www.sprite-ai.art/guides/isometric-pixel-art' },
-    { name: 'Isometric NYC', url: 'https://cannoneyed.com/projects/isometric-nyc' },
-    { name: 'Pixelblog 54: isometric pixel art', url: 'https://www.slynyrd.com/blog/2025/1/23/pixelblog-54-isometric-pixel-art' }
-  ]
+  guides: []                        // pixel-art guides the owner recommends, such as videos: { title, url, source }, source a short label such as 'YouTube'
 };
 const ABOUT_CUP = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 9h12v6a5 5 0 01-5 5h-2a5 5 0 01-5-5z"/><path d="M17 10h1.5a2.5 2.5 0 010 5H17"/><path d="M9 3v3M13 3v3"/></svg>';
 const AB = { from: null };
@@ -44,9 +39,7 @@ function aboutCredits() {
     abList(ABOUT.fonts.map(f => { const l = abEl('span', '', 'aboutlinks'); l.append(...abFile('License', f.file), abLink('Source', f.source)); return [f.name + ' by ' + f.by + ', ' + f.license + '.', l]; })),
     abEl('h4', 'Palettes'),
     abList(PALETTES.filter(p => p.credit).map(p => p.credit + '.')),
-    abEl('p', 'Made for qtiles: ' + made + '.'),
-    abEl('h4', 'Reading behind the tips'),
-    abList(ABOUT.reading.map(r => abLink(r.name, r.url)))
+    abEl('p', 'Made for qtiles: ' + made + '.')
   ];
 }
 function aboutBuild() {
@@ -56,6 +49,7 @@ function aboutBuild() {
   host.append(abSection('', brand, abEl('p', ABOUT.what)));
   if (madeBy.name) host.append(abSection('Made by', madeBy.link ? abLink(madeBy.name, madeBy.link) : abEl('p', madeBy.name)));
   host.append(abSection('Your files', ...ABOUT.files.map((t, i) => abEl('p', t + (i === 2 ? last : '')))));
+  if (ABOUT.guides.length) host.append(abSection('Guides', abList(ABOUT.guides.map(g => [abLink(g.title, g.url), ' (' + g.source + ')']))));   // links only: no player, nothing fetched
   host.append(abSection('Credits and licenses', ...aboutCredits()));
   if (license) host.append(abSection('License', abEl('p', license)));
   if (kofi) { const a = abLink('Support on Ko-fi', kofi, 'btn'); a.id = 'aboutKofi'; a.insertAdjacentHTML('afterbegin', ABOUT_CUP); host.append(abSection('Support', a)); }
