@@ -133,10 +133,14 @@ function floatGrow(box, margin) {
 function floatShift(b) {
   const f = fitOf(b); return f.larger ? null : { x: f.l - f.r, y: f.t - f.b };
 }
-/* What a person's own Done, Enter or tap away does. commitFloat stays as it is, as code that calls it carries on straight after and cannot wait for an answer. */
-function floatDone() {
-  if (!FL) return;
-  fitGate(FL.moved ? floatBox(FL) : null, 'The selection', floatShift, q => { if (q) { FL.x += q.x; FL.y += q.y; } commitFloat(); }, () => {});
+/* What a person's own Done, Enter or tap away does. commitFloat stays as it is, as code that calls it carries on straight after and cannot wait for an answer.
+   With Shift, or Keep on the pen, a stamp goes back on the pen once placed: where it was, or at the point tapped. */
+function floatDone(again) {
+  if (!FL) return; const f = FL, more = f.st && (again || SM.keep), x = f.x, y = f.y;
+  fitGate(FL.moved ? floatBox(FL) : null, 'The selection', floatShift, q => {
+    if (q) { FL.x += q.x; FL.y += q.y; } commitFloat();
+    if (more) stmAgain(f, again && again.x !== undefined ? { x: again.x + f.x - x, y: again.y + f.y - y } : null);   // a growth moved the art, and the point with it
+  }, () => {});
 }
 /* Commit restores the source first, so history sees the true pixels: growing the canvas, then one stroke that erases the source and stamps the float. */
 function commitFloat(stamp) {
@@ -173,7 +177,7 @@ function cancelFloat() {
 }
 function nudge(dx, dy) {
   if (!FL) { needSelTool(); if (!liftSel(false)) return; }
-  if (FL.pv && FL.L.onTile) { const s = cellStep(); dx = Math.sign(dx) * s.x; dy = Math.sign(dy) * s.y; }   // a single pixel would snap straight back
+  if (floatPin(FL)) { const s = cellStep(); dx = Math.sign(dx) * s.x; dy = Math.sign(dy) * s.y; }   // a single pixel would snap straight back
   FL.x += dx; FL.y += dy; FL.moved = true; requestRender();
 }
 
@@ -182,7 +186,7 @@ const inFloat = a => a.x >= FL.x && a.y >= FL.y && a.x < FL.x + FL.w && a.y < FL
 const inSel = a => SEL.mask && a.x >= 0 && a.y >= 0 && a.x < S.w && a.y < S.h && SEL.mask[a.y * S.w + a.x];
 function selStart(a, e) {
   const op = e.shiftKey ? 'add' : e.altKey ? 'sub' : SEL.op;
-  if (FL) { selDrag = inFloat(a) ? { kind: 'float', ax: a.x, ay: a.y, x: FL.x, y: FL.y } : null; if (!selDrag) floatDone(); return; }
+  if (FL) { selDrag = inFloat(a) ? { kind: 'float', ax: a.x, ay: a.y, x: FL.x, y: FL.y } : null; if (!selDrag) floatDone(e.shiftKey && a); return; }
   if (inSel(a) && (op === 'set' || e.altKey)) selDrag = { kind: 'lift', ax: a.x, ay: a.y, dup: e.altKey, op };
   else selDrag = { kind: 'new', ax: a.x, ay: a.y, op, wand: drawTool === 'wand' };
   if (selDrag.kind === 'new' && !selDrag.wand) selRect(a);
@@ -297,13 +301,15 @@ function remapBuf(src, op) {
 function applyOp(name) {
   const f = FL, op = BUF_OPS[name](f.w, f.h);
   if (f.pv && PIVOT_OPS[name]) f.pv = PIVOT_OPS[name](f.pv, f.w, f.h);
-  let px = remapBuf(f.px, op), mask = remapBuf(f.mask, op), nh = op.h, top = 0;
+  if (f.st) f.st.pv = f.st.pv && PIVOT_OPS[name] ? PIVOT_OPS[name](f.st.pv, f.w, f.h) : null;   // a projected stamp has no feet to stand on
+  let px = remapBuf(f.px, op), mask = remapBuf(f.mask, op), idx = f.st && remapBuf(f.st.idx, op), nh = op.h, top = 0;
   if (op.center) { f.x += Math.trunc((f.w - op.w) / 2); if (name !== 'top') f.y += Math.trunc((f.h - op.h) / 2); }
   if (op.dy) f.y += op.dy;
   if (op.trim) {
     const b = maskBox(mask, op.w, nh);
-    if (b) { top = b.y0; nh = b.y1 - b.y0 + 1; px = px.slice(top * op.w, (top + nh) * op.w); mask = mask.slice(top * op.w, (top + nh) * op.w); f.y += top; }
+    if (b) { top = b.y0; nh = b.y1 - b.y0 + 1; px = px.slice(top * op.w, (top + nh) * op.w); mask = mask.slice(top * op.w, (top + nh) * op.w); if (idx) idx = idx.slice(top * op.w, (top + nh) * op.w); f.y += top; }
   }
+  if (idx) f.st.idx = idx;
   f.px = px; f.mask = mask; f.w = op.w; f.h = nh; f.moved = true; floatCanvas(f); selRefresh();
 }
 function liftWhole() {
@@ -325,5 +331,5 @@ function mirrorLayer() { commitFloat(); if (liftWhole()) { applyOp('flipH'); end
 
 const SEL_ACTIONS = {
   all: selectAll, none: selectNone, invert: selectInvert, content: selectContent, cut: cutSel, copy: copySel, delete: deleteSel, duplicate: duplicateSel,
-  paste: () => pasteClip(), done: floatDone, cancel: cancelFloat, mirror: mirrorLayer
+  paste: () => pasteClip(), done: () => floatDone(), cancel: cancelFloat, mirror: mirrorLayer, stamp: () => openStampSave()
 };

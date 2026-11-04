@@ -222,15 +222,18 @@ function outlineColor() {
     return memo.get(v);
   };
 }
-/* Past the canvas counts as transparent, so art flush with the edge still gets a whole inside outline. */
-function outlineP(L, plot) {
-  const b = contentBox(L), ns = S.outN === 8 ? N8 : N4, color = outlineColor(), inside = S.outSide === 'inside';
-  const at = (x, y) => x >= 0 && y >= 0 && x < S.w && y < S.h ? L.px[y * S.w + x] : 0;
+/* Each pixel an outline lands on, with the art value beside it that gives its color. `at` is 0 for empty and past its edge, so art flush with the edge still gets a whole inside outline.
+   The character kit (048) walks its role codes with it too. */
+function outlineWalk(at, b, ns, inside, plot) {
   for (let y = b.y0 - 1; y <= b.y1 + 1; y++) for (let x = b.x0 - 1; x <= b.x1 + 1; x++) {
     const v = at(x, y);
-    if (inside) { if ((v >>> 24) && ns.some(n => !(at(x + n[0], y + n[1]) >>> 24))) plot(x, y, color(v)); }
-    else if (!(v >>> 24)) { const n = ns.find(q => at(x + q[0], y + q[1]) >>> 24); if (n) plot(x, y, color(at(x + n[0], y + n[1]))); }
+    if (inside) { if (v && ns.some(n => !at(x + n[0], y + n[1]))) plot(x, y, v); }
+    else if (!v) { const n = ns.find(q => at(x + q[0], y + q[1])); if (n) plot(x, y, at(x + n[0], y + n[1])); }
   }
+}
+function outlineP(L, plot) {
+  const color = outlineColor(), at = (x, y) => x >= 0 && y >= 0 && x < S.w && y < S.h && (L.px[y * S.w + x] >>> 24) ? L.px[y * S.w + x] : 0;
+  outlineWalk(at, contentBox(L), S.outN === 8 ? N8 : N4, S.outSide === 'inside', (x, y, v) => plot(x, y, color(v)));
 }
 /* With its outline layer active, the buttons still act on the source. */
 function outlineSource() { const A = activeLayer(); return layerById(A.outlineFor) || A; }

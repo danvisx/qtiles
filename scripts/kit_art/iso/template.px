@@ -1,0 +1,12 @@
+# Kit template. Letters by role, dark to light: skin abcdef, hair ghijkl, cloth-a mnopqr, cloth-b stuvwx, shoes yzABCD, accessory EFGHIJ, outline KLMNOP. In a mask, # clears.
+name: Isometric
+size: 16 26
+mode: iso
+views: iso
+tile: 32
+# anchors, by view and build: eye, neck, waist, hand, feet, each x y
+anchor: iso average | eye 8 8 | neck 8 13 | waist 8 19 | hand 11 18 | feet 8 24
+anchor: iso slim | eye 8 8 | neck 8 13 | waist 8 19 | hand 10 18 | feet 8 24
+anchor: iso broad | eye 8 8 | neck 8 13 | waist 8 19 | hand 12 18 | feet 8 24
+anchor: iso child | eye 8 12 | neck 8 17 | waist 8 21 | hand 10 20 | feet 8 24
+anchor: iso seated | eye 8 9 | neck 8 14 | waist 8 20 | hand 11 19 | feet 8 24

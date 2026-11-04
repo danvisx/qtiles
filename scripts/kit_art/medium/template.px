@@ -1,0 +1,16 @@
+# Kit template. Letters by role, dark to light: skin abcdef, hair ghijkl, cloth-a mnopqr, cloth-b stuvwx, shoes yzABCD, accessory EFGHIJ, outline KLMNOP. In a mask, # clears.
+name: Medium 2D
+size: 32 32
+mode: 2d
+views: front side
+# anchors, by view and build: eye, neck, waist, hand, feet, each x y
+anchor: front average | eye 16 10 | neck 16 17 | waist 16 24 | hand 21 23 | feet 16 30
+anchor: front slim | eye 16 10 | neck 16 17 | waist 16 24 | hand 20 23 | feet 16 30
+anchor: front broad | eye 16 10 | neck 16 17 | waist 16 24 | hand 22 23 | feet 16 30
+anchor: front child | eye 16 14 | neck 16 21 | waist 16 26 | hand 20 25 | feet 16 30
+anchor: front seated | eye 16 11 | neck 16 18 | waist 16 25 | hand 21 24 | feet 16 30
+anchor: side average | eye 16 10 | neck 16 17 | waist 16 24 | hand 17 23 | feet 16 30
+anchor: side slim | eye 16 10 | neck 16 17 | waist 16 24 | hand 17 23 | feet 16 30
+anchor: side broad | eye 16 10 | neck 16 17 | waist 16 24 | hand 17 23 | feet 16 30
+anchor: side child | eye 16 14 | neck 16 21 | waist 16 26 | hand 17 25 | feet 16 30
+anchor: side seated | eye 16 11 | neck 16 18 | waist 16 25 | hand 17 24 | feet 16 30

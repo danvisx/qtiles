@@ -1,0 +1,202 @@
+# Isometric animals from the examples, mirrored for the second facing.
+
+id: iso-cat
+name: Cat
+category: animals
+mode: iso
+tags: cat, pet, sitting, iso
+pivot: feet
+tile: 16
+facings: mirror
+roles:
+fur = Skin and hair / Red hair
+eyes = Skin and hair / Pale skin
+nose = Skin and hair / Pale skin
+legend:
+b = fur 2
+c = fur 3
+d = fur 4
+E = eyes 6
+n = nose 3
+art:
+..........c....c.
+..........dc..dc.
+..........cdddcc.
+.........cdddddcb
+.........cddEdEdb
+.........cdddnddb
+.........bcddddb.
+.........bcccdb..
+........bcccccb..
+.......bcccccdcb.
+......bccdccccdb.
+...b..bccdcbccdb.
+..bc..bcccbbbccb.
+..bc.bcccbbbbccb.
+..bc.bccccbbbccb.
+...bcbcccbbbcccb.
+...bcccccbbdcccd.
+....bbbbdddbddddd
+
+id: iso-dog
+name: Dog
+category: animals
+mode: iso
+tags: dog, pet, sitting, iso
+pivot: feet
+facings: mirror
+roles:
+fur = Skin and hair / Tan skin
+ears = Skin and hair / Deep skin
+nose = Skin and hair / Black hair
+legend:
+a = fur 1
+b = fur 2
+c = fur 3
+d = fur 4
+e = fur 5
+B = ears 2
+A = ears 3
+E = nose 1
+n = nose 2
+art:
+...........cccc...
+.........cddddddc.
+........AAcddddddc
+.......AAAcdEdddcc
+.......AABcdddddnn
+.......AABcddddnnn
+.......ABBcddeeec.
+........BAbcdeeb..
+........Abcddedb..
+.......bccddeedb..
+.....bbcccddeecb..
+...bbcccccbdeecb..
+..bcccccccbddcdb..
+.bccdccccbbddcdb..
+.bcdcccbbbbddcdb..
+..cdccbbbbbddbdb..
+a.bcccbbbbbddbdb..
+aabccdbbbbbddbdb..
+.aabbddddbdddddd..
+..abbbbbbbbbbbbb..
+
+id: iso-duck
+name: Duck
+category: animals
+mode: iso
+tags: duck, bird, pond, iso
+pivot: feet
+tile: 16
+facings: mirror
+roles:
+feathers = Skin and hair / Tan skin
+beak = Skin and hair / Blond hair
+eyes = Skin and hair / Black hair
+legend:
+c = feathers 3
+d = feathers 5
+e = feathers 6
+a = beak 2
+E = eyes 1
+art:
+....ddd.....
+...deeed....
+...deEeeaa..
+...deeeeaaa.
+....deed....
+.....ded....
+.c...ded....
+.dcddeeeed..
+.ddeeeeeeed.
+..ddeeeeeed.
+..cddeeeedc.
+...ccdddcc..
+.....a..a...
+....aa.aa...
+
+id: iso-rabbit
+name: Rabbit
+category: animals
+mode: iso
+tags: rabbit, bunny, pet, iso
+pivot: feet
+tile: 16
+facings: mirror
+roles:
+fur = Skin and hair / Deep skin
+eyes = Skin and hair / Black hair
+legend:
+n = fur 2
+b = fur 3
+c = fur 4
+d = fur 5
+E = eyes 1
+art:
+....bd.bd..
+....cd.cd..
+....cd.cd..
+....cd.cd..
+....cd.cd..
+....cdcdd..
+...bcddddb.
+...cdEdddd.
+...cddddnd.
+...bcdddd..
+..bcccdb...
+.bccccddb..
+ccccbcddb..
+cbbbbcddb..
+.bbbbcddb..
+..bbbdd.dd.
+
+id: iso-cow
+name: Cow
+category: animals
+mode: iso
+tags: cow, farm, iso
+pivot: feet
+facings: mirror
+roles:
+hide = Skin and hair / Tan skin
+patches = Skin and hair / Black hair
+muzzle = Skin and hair / Pale skin
+hooves = Skin and hair / Black hair
+legend:
+b = hide 3
+Y = hide 3
+c = hide 4
+d = hide 5
+e = hide 6
+f = hide 6
+p = patches 2
+q = patches 3
+E = patches 1
+n = muzzle 2
+V = muzzle 3
+U = muzzle 4
+k = hooves 1
+art:
+........e..e...............
+......eeeeeeee.............
+....eeqqeeeeeeee...........
+..eeqqqqqqeeeeeeee.........
+...eqqqqqqqeeeeeeeee.......
+.pdpeeqqqqeeeeeqqqeeee.....
+.pdpppeqqqeeeeqqqqqqeeee...
+.pdpppppeeeeeqqqqqqqqeeeee.
+.pdppppppdeeqqqqqYqqeeeeYee
+.pdppppppddpeeqqpdffffffdpc
+.pddpppppddpppeppdfEffEfdpp
+.pdddcpppddpppppedffffffccc
+.pdddcpppdddpppppdffffffccc
+kk.ddcddddddpppppcUVVVVUccc
+kk.ddcdpppddddpppUUVVVVUUcc
+kk.ddc..ppppddddpUnUUUUnUcc
+...ddc....ppddddddUUUUUUccc
+...kkk.....UUUUddcdcccccc..
+...kkk.....UUUUddcdcccccb..
+...........V.V.ddcdcc.ccb..
+...............ddcd...ccb..
+...............ddc....kkk..
+...............ddc....kkk..

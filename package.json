@@ -7,7 +7,9 @@
     "test": "npm run build --silent && node tests/smoke.js",
     "perf": "npm run build --silent && node tests/perf.js",
     "examples": "node scripts/make_examples.js",
-    "vehicles": "node scripts/make_vehicles.js"
+    "vehicles": "node scripts/make_vehicles.js",
+    "stamps": "node scripts/make_stamps.js",
+    "kit": "node scripts/make_kit.js"
   },
   "devDependencies": {
     "jsdom": "30.1.3"

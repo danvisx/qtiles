@@ -1,0 +1,173 @@
+# 2D people seen from the side, facing right; the second facing is the mirror.
+
+id: side-walker
+name: Walker, side
+category: characters
+tags: person, adult, side, walking, chibi
+facings: mirror
+roles:
+hair = Skin and hair
+skin = Skin and hair
+top = Brick
+bottom = Deep sea
+shoes = Skin and hair
+outline = Neutrals
+legend:
+o = outline 1
+h = hair 1
+H = hair 2
+s = skin 5
+S = skin 4
+c = top 3
+C = top 2
+p = bottom 3
+P = bottom 2
+f = shoes 2
+art:
+................
+....oooooooo....
+...oHHHHHHHHo...
+..oHHHHHHHHHHo..
+..oHHHHHHHssso..
+..ohHHHHHsssso..
+..ohhHHssssosso.
+..ohhHsssssosso.
+..ohhhsssssssSo.
+...oohsssssSoo..
+....occcccCCo...
+....occcsCCCo...
+....occcCCCCo...
+....oppppPPPo...
+...oppo.oPPo....
+..offo...offfo..
+
+id: side-elder
+name: Older person, side
+category: characters
+tags: person, older, elderly, cane, side, chibi
+facings: mirror
+roles:
+hair = Neutrals
+skin = Skin and hair
+top = Greens
+bottom = Neutrals
+cane = Skin and hair
+shoes = Skin and hair
+outline = Neutrals
+legend:
+o = outline 1
+h = hair 4
+H = hair 5
+s = skin 3
+S = skin 2
+c = top 3
+C = top 2
+p = bottom 3
+P = bottom 2
+k = cane 3
+f = shoes 1
+art:
+................
+................
+....ooooooo.....
+...oHHHHHHHo....
+..oHHHHHsssso...
+..ohHHHssssso...
+..ohhHsssssosso.
+..ohhssssssosso.
+..ohhsssssssSo..
+...oossssssoo...
+...occcccCCo....
+..occcccsCCo.k..
+..occcccCCCokk..
+...oppppPPPo.k..
+...oppooPPo..k..
+..offo.offfo.k..
+
+id: side-child
+name: Child, side
+category: characters
+tags: person, child, kid, side, running, chibi
+facings: mirror
+roles:
+hair = Yellows
+skin = Skin and hair
+top = Deep sea
+bottom = Brick
+shoes = Neutrals
+outline = Neutrals
+legend:
+o = outline 1
+h = hair 2
+H = hair 3
+s = skin 4
+S = skin 3
+c = top 4
+C = top 3
+p = bottom 3
+P = bottom 2
+f = shoes 6
+art:
+................
+................
+................
+....ooooooo.....
+...oHHHHHHHo....
+..oHHHHHHssso...
+..ohHHHsssssso..
+..ohhHssssosso..
+..ohhsssssssSo..
+...oohsssssoo...
+....occcCCCo....
+...osccccCCso...
+....oppppPPo....
+...oppo.oPPo....
+..oppo...oPPo...
+..ofo.....offo..
+
+id: side-umbrella
+name: Walker with an umbrella
+category: characters
+tags: person, adult, rain, umbrella, side, chibi
+facings: mirror
+roles:
+umbrella = Blues
+hair = Neutrals
+skin = Skin and hair
+top = Yellows
+bottom = Neutrals
+handle = Neutrals
+shoes = Skin and hair
+outline = Neutrals
+legend:
+o = outline 1
+U = umbrella 3
+u = umbrella 2
+k = handle 2
+h = hair 1
+H = hair 2
+s = skin 4
+S = skin 3
+c = top 3
+C = top 2
+p = bottom 3
+P = bottom 2
+f = shoes 1
+art:
+....oooooooo....
+..ooUUUUUUuuoo..
+.oUUUUUUUuuuuuo.
+oUUUUUUUuuuuuuuo
+ooooooooooooko..
+....oooooooo.k..
+...oHHHHHHHHok..
+..oHHHHHHHssok..
+..ohHHHHHssssk..
+..ohhHHssssosk..
+..ohhHsssssoskS.
+..ohhhssssssSko.
+...oohssssSSokS.
+....occccccCCsS.
+....oppppPPPo...
+...oppo.oPPo....
+..offo...offfo..

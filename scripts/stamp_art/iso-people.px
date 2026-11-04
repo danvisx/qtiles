@@ -1,0 +1,250 @@
+# Isometric people from the examples, feet a quarter tile below a cell center, mirrored for the second facing.
+
+id: iso-walker
+name: Walker
+category: characters
+mode: iso
+tags: person, adult, walking, iso
+pivot: feet
+facings: mirror
+roles:
+hair = Skin and hair / Deep skin
+skin = Skin and hair / Tan skin
+jacket = Skin and hair / Red hair
+trousers = Skin and hair / Black hair
+belt = Skin and hair / Deep skin
+eyes = Neutrals
+legend:
+h = hair 2
+g = hair 3
+i = hair 4
+r = skin 2
+t = skin 3
+s = skin 4
+a = jacket 1
+b = jacket 2
+c = jacket 3
+d = jacket 4
+k = trousers 1
+p = trousers 2
+q = trousers 3
+o = trousers 4
+Z = belt 1
+Y = belt 2
+E = eyes 1
+art:
+.....hhhhh....
+...hhgggghh...
+..hhggiigghh..
+..hgggiiggsh..
+..hgggsssssr..
+..hgsssEssEr..
+..hhsssssssr..
+...hrsssssr...
+....rrssrr....
+.....rttr.....
+....ddcccb....
+...dddcccbb...
+..dddccccbbb..
+..ddcdcccbbba.
+..dc.dcccbb.a.
+..dc.dcccbb.a.
+..dc.dcccbb.a.
+..st.ccccbb.t.
+..tt.YYZZZZ.tr
+.....qqqqpp...
+.....qqqqpp...
+....oqq.ppp...
+....oqq..ppp..
+...oqq...ppp..
+...oqq....pp..
+..oqq.....pp..
+..oqq.....pp..
+..kkk.....kkk.
+.kkkk.....kkkk
+
+id: iso-child
+name: Child
+category: characters
+mode: iso
+tags: person, child, kid, iso
+pivot: feet
+facings: mirror
+roles:
+hair = Skin and hair / Red hair
+skin = Skin and hair / Tan skin
+shirt = Skin and hair / Pale skin
+shorts = Skin and hair / Black hair
+shoes = Skin and hair / Black hair
+eyes = Neutrals
+legend:
+h = hair 3
+g = hair 4
+i = hair 5
+r = skin 2
+t = skin 3
+s = skin 4
+A = skin 5
+b = shirt 1
+c = shirt 2
+d = shirt 3
+Z = shorts 3
+k = shoes 1
+E = eyes 1
+art:
+....hhhhh....
+..hhgggghh...
+.hhggiigghh..
+.hgggsssssr..
+.hgsssEssEr..
+.hhssssssAr..
+..hrrssrr....
+...ccddcc....
+..ddcdcbbb...
+.ddcdccbbbb..
+.sd.dccbb.t..
+.t..dccbb.t..
+...ZZZZZZ....
+...ZZZZZZ....
+....ZZ.ZZ....
+....ss.tt....
+....ss.tt....
+....ss.tt....
+....ss.tt....
+...kkk.kkk...
+...kkk.kkk...
+
+id: iso-courier
+name: Courier
+category: characters
+mode: iso
+tags: person, adult, delivery, parcel, work, iso
+pivot: feet
+facings: mirror
+roles:
+uniform = Skin and hair / Blond hair
+hair = Skin and hair / Black hair
+skin = Skin and hair / Pale skin
+parcel = Skin and hair / Tan skin
+tape = Skin and hair / Pale skin
+trousers = Skin and hair / Black hair
+eyes = Neutrals
+legend:
+Z = uniform 1
+B = uniform 1
+b = uniform 2
+a = uniform 3
+c = uniform 4
+e = uniform 5
+d = uniform 4
+h = hair 2
+g = hair 3
+r = skin 3
+t = skin 4
+s = skin 5
+m = parcel 2
+n = parcel 3
+w = parcel 4
+V = tape 2
+W = tape 3
+k = trousers 1
+p = trousers 2
+q = trousers 3
+E = eyes 1
+art:
+......bbbbb.......
+.....baaaaab......
+....baaccaaab.....
+....baaaaaaabBBB..
+....hbbbbbbbBBBB..
+....hgsssssr......
+....hgssEsEr......
+....hhsssssr......
+.....hrsssr.......
+......rttr........
+.....ddccbb.......
+....dddccbbb......
+...dddwwwwbbb.....
+...dwwwwwwwwb.....
+..wwwWWwwwwwww.bb.
+.wwwwwwWWwwwwwwwss
+.nddwwwwwWWwwwwwrs
+.nddnwwwwwwWwwwmm.
+.nddnWnwwwwwwmmmm.
+.nssnWnnnwwmmVmmm.
+.nssnWnnnnmmmVmmm.
+.nnnnWnnnnmmmVmmm.
+.nnnnWnnnnmmmVmmm.
+...nnWnnnnmmmVmmm.
+.....WnnnnmmmVm...
+.....qqnnnmmmV....
+.....qqp.nmp......
+.....qqp..pp......
+.....qqp..pp......
+.....kkkk.kkkk....
+.....kkkk.kkkk....
+
+id: iso-gardener
+name: Gardener
+category: characters
+mode: iso
+tags: person, adult, garden, rake, hat, work, iso
+pivot: feet
+facings: mirror
+roles:
+hat = Yellows
+skin = Skin and hair
+shirt = Neutrals
+vest = Brick
+trousers = Greens
+boots = Skin and hair
+handle = Skin and hair
+rake = Neutrals
+eyes = Skin and hair
+legend:
+h = hat 1
+i = hat 2
+j = hat 3
+r = skin 4
+t = skin 4
+s = skin 5
+b = shirt 4
+c = shirt 5
+g = vest 4
+e = trousers 2
+f = trousers 3
+k = boots 2
+y = handle 3
+z = handle 3
+m = rake 3
+n = rake 4
+E = eyes 1
+art:
+.................y.
+.....iiiiii......yz
+....ijjjjjjii.....z
+...ijjjjjjjjhi....z
+.iijjjjjjjjjhhii..z
+iiiiiiiiiiiihhhhh.z
+..hhhsssssssrhh...z
+....hsssEssEr.....z
+....hsssssssr.....z
+.....rsssssr......z
+......rttrr.......z
+....ggcccbbgg.....z
+...gggcccbbggg....z
+...ggccc.cbbgg....z
+..gggccc.cbbgg..rsz
+..ggfcccccbbgg.rssz
+..gf.ffffeee.g.rrsz
+..gf.ffffeee.gg.rrz
+..ss.ffffeee...gg.z
+..st.ffffeee......z
+.....ffffeeee.....z
+.....ff...eee.....n
+.....ff...ee.....nn
+.....ff...ee.....nn
+.....ff...ee.....nm
+.....ff...ee.....mm
+....kkkk..kkk.....m
+....kkkkk.kkkk.....

@@ -1,0 +1,16 @@
+# Kit template. Letters by role, dark to light: skin abcdef, hair ghijkl, cloth-a mnopqr, cloth-b stuvwx, shoes yzABCD, accessory EFGHIJ, outline KLMNOP. In a mask, # clears.
+name: Chibi 2D
+size: 16 16
+mode: 2d
+views: front side
+# anchors, by view and build: eye, neck, waist, hand, feet, each x y
+anchor: front average | eye 8 6 | neck 8 9 | waist 8 12 | hand 11 11 | feet 8 14
+anchor: front slim | eye 8 6 | neck 8 9 | waist 8 12 | hand 10 11 | feet 8 14
+anchor: front broad | eye 8 6 | neck 8 9 | waist 8 12 | hand 12 11 | feet 8 14
+anchor: front child | eye 8 7 | neck 8 10 | waist 8 12 | hand 10 11 | feet 8 14
+anchor: front seated | eye 8 5 | neck 8 8 | waist 8 11 | hand 11 10 | feet 8 14
+anchor: side average | eye 8 6 | neck 8 9 | waist 8 12 | hand 8 11 | feet 8 14
+anchor: side slim | eye 8 6 | neck 8 9 | waist 8 12 | hand 8 11 | feet 8 14
+anchor: side broad | eye 8 6 | neck 8 9 | waist 8 12 | hand 8 11 | feet 8 14
+anchor: side child | eye 8 7 | neck 8 10 | waist 8 12 | hand 8 11 | feet 8 14
+anchor: side seated | eye 8 5 | neck 8 8 | waist 8 11 | hand 8 10 | feet 8 14

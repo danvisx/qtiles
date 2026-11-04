@@ -40,7 +40,7 @@ async function boot() {
 
   for (let k = 0; k < 500 && !ev('typeof NW !== "undefined" && NW.start'); k++) await wait(10);
 
-  /* Helpers inside the page. T.doc() is everything undo must put back; hashes keep comparing it cheap. */
+  /* Helpers inside the page. T.doc() is everything undo must put back. */
   ev(`window.T = {
     L: () => activeLayer(), get l0() { return S.layers[0]; },
     hash(a) { let h = 7; for (let i = 0; i < a.length; i++) h = (Math.imul(h, 31) + a[i] + i) | 0; return h; },
@@ -61,6 +61,7 @@ async function boot() {
     const a = D(), h = ev('H.pos'), go = (s, want) => { for (let k = 0; k < n; k++) ev(s); return D() === want; }; if (typeof run === 'function') run(); else ev(run); const b = D();
     return a !== b && ev('H.pos') === h + n && go('undo()', a) && go('redo()', b) && go('undo()', a);
   };
+  t.ok = (name, f) => t.check(name, f());
   t.fn = s => ev('(() => { ' + s + ' })()');
   t.load = o => ev('(o => loadProject(JSON.parse(o)))')(JSON.stringify(o));
   t.saved = async () => JSON.parse(await ev('serialize().then(o => JSON.stringify(o))'));

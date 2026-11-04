@@ -579,7 +579,7 @@ function render() {
   }
   if (PV.outBox) { const b = PV.outBox; hatchOut(c, pvOutImage(), x + b.x0 * z, y + b.y0 * z, (b.x1 - b.x0 + 1) * z, (b.y1 - b.y0 + 1) * z, x, y, W, Ht); }
   c.strokeStyle = TH.canvasEdge; c.lineWidth = 1; c.strokeRect(ax - 0.5, ay - 0.5, aw + 1, ah + 1);   // after what sticks out, so the edge shows across it
-  refFrame(c);
+  refFrame(c); ckDraw(c, x, y, z);
   if (SEL.edges || SEL.rect || OB.edges) {
     const ex = x + (FL ? FL.x * z : 0), ey = y + (FL ? FL.y * z : 0), e = SEL.edges || [], o = OB.edges || [], ox = x + OB.x * z, oy = y + OB.y * z;
     c.beginPath(); c.lineWidth = 1;

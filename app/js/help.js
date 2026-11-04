@@ -15,7 +15,7 @@ const TOOL_HELP = {
   ellipse: ['Ellipse', 'Draws an ellipse or circle with even steps, as an outline at the brush size or filled.', 'drag from corner to corner. Shift keeps a circle, Alt draws from the center.'],
   fill: ['Fill', 'Fills the connected area of one color.', 'tap an area to fill it.'],
   picker: ['Picker', 'Takes a color from the canvas.', 'tap the canvas to take that color.'],
-  place: ['Place', 'Places shapes and library items as objects that stay editable. Dotted guides show where it will stand and how tall it is.', 'tap to place at the size in the options, or drag a footprint.'],
+  place: ['Place', 'Places shapes and library items as objects that stay editable, or stamps of pixel art from the Library. Dotted guides show where an object will stand and how tall it is.', 'tap to place at the size in the options, or drag a footprint.'],
   pick: ['Select', 'Selects objects to move, change or delete. Dotted guides show where they stand and how tall they are.', 'tap an object, or drag across empty canvas to select several.'],
   shade: ['Shade', 'Steps pixels lighter or darker along their palette ramp, at the brush size.', 'drag over pixels. Each moves one ramp step per stroke.'],
   dither: ['Dither', 'Paints a pattern of two colors, as a brush or a gradient.', 'drag to paint the pattern.'],
@@ -113,6 +113,20 @@ const HELP = [
   ['#perfect', 'At brush size 1, takes out the doubled corner a quick stroke leaves, so lines stay one pixel thin. Remembered for 2D and Isometric separately.'],
   ['#fillAll', 'Fill stops at colors on any layer.'], ['#fillOne', 'Fill reads only the active layer.'],
   ['#placeTabShapes', 'Place shapes you set up yourself.'], ['#placeTabLib', 'Place ready-made items.'],
+  ['#libKindStamps', 'Pixel art to place like a paste: characters, animals, things, icons and effects.'], ['#libKindObjects', 'Objects that stay editable: buildings, nature, props and vehicles.'],
+  ['#stmSearch', 'Filters the stamps by name or tag.'], ['#stmCats .chip', 'Shows one category. Mine holds the stamps you saved.'], ['#stmGrid .shapecard', 'Puts this stamp on the pen as a floating selection. Drag it, then Done or Enter places it.'],
+  ['#stmFaces button', 'Another drawing of the same stamp, facing another way. Flip in the selection bar mirrors it.'], ['#stmRows select', 'The palette ramp this part of the stamp is painted with. The steps keep their places along the new ramp.'],
+  ['#stmShuffle', 'Picks other ramps for the stamp\'s parts. Outlines stay, and skin moves only among ramps named for skin.'], ['#stmOwn', 'Puts back the ramps the stamp came with, or the nearest ones in this palette.'],
+  ['#stmKeep', 'After placing, another copy goes on the pen, for a row or a crowd. Shift with Enter or a tap does the same once.'], ['#stmDel', 'Removes your stamp from this project. Copies already placed stay.'],
+  ['#kitOpen, #charKit', 'Builds a character from parts: body, head, hair, clothes and accessories, in four templates. It lands on a new Character layer.'],
+  ['#kitFrom', 'Loads a preset kept in this project, or one of the cast, to change from there.'], ['#kitTpls button', 'The size and view the character is drawn for. Parts that exist in both carry over.'],
+  ['#kitShuffle', 'Picks other parts and colors at random, from the next seed. A slot or the colors with Keep on stay as they are.'], ['#kitUndo', 'Goes back to the character before the last shuffle or preset.'],
+  ['#kitSeed', 'The number the shuffle starts from. The same seed gives the same character on the same palette.'], ['#kitOut button', 'None, a dark line around the character, or sel-out: each edge two steps darker than the color inside it.'],
+  ['#kitKeepColors', 'Shuffle leaves the colors alone.'], ['[data-lock]', 'Shuffle leaves this slot alone.'], ['#kitColors select', 'The palette ramp this part of the character is painted with.'], ['#kitOwn', 'Puts back the colors the character started with, or the nearest ramps on this palette.'],
+  ['#kitSlots .shapecard', 'Wears this part. A part greyed out cannot be worn with one already chosen.'], ['#kitName', 'The name for the layer, the stamp or the preset. Empty, it is made from the hair and top.'],
+  ['#kitAdd', 'Adds the character on a new Character layer at the middle of the view, its pivot on the feet, with its other view on a second layer. One undo step.'],
+  ['#kitStampBtn', 'Keeps the character as a stamp in this project, under Mine and Characters, with its colors still changeable.'], ['#kitPreset', 'Keeps the choices in this project, to build the character again or vary it. A preset of the same name is replaced.'],
+  ['[data-sel="stamp"]', 'Keeps the selected pixels as a stamp in this project, under Mine, to place again and recolor.'], ['#stmSaveOk', 'Saves the stamp.'],
   ['#libSearch', 'Filters the library by name.'], ['#libCats .chip', 'Shows one category.'], ['#libGrid .shapecard', 'Puts this item on the pen. Then tap the canvas.'],
   ['#libTurnL', 'Turns the item a quarter turn before placing.'], ['#libTurnR', 'Turns the item a quarter turn before placing.', 'R'], ['#libMirror', 'Mirrors the item before placing.', 'M'],
   ['#libDel', 'Removes your item from this project\'s library. Placed copies stay.'], ['#libExport', 'Saves your items to a .qtiles-lib.json file.'], ['#libImport', 'Adds items from a .qtiles-lib.json file.'],
@@ -185,6 +199,11 @@ const HELP = [
   ['[data-view="flip"]', 'Shows the canvas mirrored left to right, to catch lopsided shapes. Drawing lands where you point on the mirrored picture. The art itself is not flipped.', 'K'],
   ['[data-view="gray"]', 'Shows the art in gray by its lightness (Rec. 709), to check that the values read. The palette stays in color, and the art is unchanged.', 'Y'],
   ['[data-view="sil"]', 'Fills every painted pixel with one color, to check that the shape reads on its own. The art is unchanged.', 'J'],
+  ['#ckLayer', 'Checks the active layer.'], ['#ckShown', 'Checks every shown layer together, as it looks. Fix is not offered, as it would change one layer only.'], ['#ckSel', 'Checks the active layer inside the selection.'],
+  ['#ckRun', 'Scans for stray pixels, doubled corners, uneven runs, banding, soft edges, colors off the palette, near twins and art drawn big, and lists what it finds. A big canvas shows progress and can be canceled.'],
+  ['#ckPrev, #ckNext', 'Moves the view to the previous or next mark of this kind, at 8x or closer.'], ['#ckFix', 'Fixes every mark of this kind, after you confirm, as one undo step.'],
+  ['#ckYes', 'Changes the marked pixels, as one undo step.'], ['#ckNo', 'Leaves the pixels as they are.'], ['#ckUnhide', 'Shows the kinds of check you ignored again.'],
+  ['#ckTip, #tipsCheck', 'Opens the tip on what the checks find and what they miss.'], ['#guideChecks', 'Shows the marks of the kind chosen in Checks. They are never part of the art or its exports.'],
   ['#silOne', 'Silhouette for the active layer only, to check one sprite in a scene.'],
   ['.refrow .vname', 'Chooses this reference for the controls below.'], ['.refrow [aria-label^="Hide"], .refrow [aria-label^="Show"]', 'Turns this reference off without removing it, or on again.'], ['.refrow [aria-label^="Lock"], .refrow [aria-label^="Unlock"]', 'A locked reference cannot be moved, scaled or turned by accident.'], ['.refrow [aria-label^="Remove"]', 'Takes this reference out of the project. The toast can bring it back.'],
   ['#refAbove', 'Draws the reference over the art, to trace it. The picker takes its color wherever it shows.'], ['#refBelow', 'Draws the reference under the art, so what you paint covers it. The picker takes its color only where the art is empty.'],
@@ -217,6 +236,9 @@ const GESTURES = [
   ['Hand tool', 'Pencil, mouse or one finger moves the view'],
   ['Size chip, in the status bar', 'Shows canvas, grid and brush. Tap to change them']
 ];
+
+/* 2D has no objects, so there the tool places stamps only, and says so (setMode). */
+const PLACE_HELP = { iso: TOOL_HELP.place, flat: ['Place', 'Places stamps: small pixel art that lands as plain pixels on the active layer, to edit like anything drawn.', 'tap a stamp in the panel, drag it into place, then Enter or Done.'] };
 
 /* A trailing "(Ctrl+Z)" in an aria-label or title is the shortcut. */
 const splitKey = s => { const m = /^(.*\S)\s*\(([^()]+)\)\.?$/.exec(s || ''); return m ? [m[1], m[2]] : [s || '', '']; };

@@ -25,7 +25,7 @@ const S = {
   lineSnap: true, rectFill: false, ovalFill: false, ovalCircle: false, ovalCenter: false, fillAll: true,
   light: 'left', shadeDir: -1,
   objType: 'box', objFacing: 0, objP: {}, objW: 4, objD: 4, objH: 0, objMat: {}, objOutline: 'dark', objShadow: true, objHalf: false, objFree: false, objAdd: false, objDrag: 'move', objFoot: false, objGap: '', level: 0,   // objH 0 is the shape's default height; level 0 means the default, half the tile width
-  library: [], libPick: null, libPose: { turn: 0, flip: false }, placeTab: 'shapes',   // the project's own library items, and the item on the pen
+  library: [], libPick: null, libPose: { turn: 0, flip: false }, placeTab: 'shapes', stamps: [], kitPresets: [],   // the project's own library items and stamps, and the item on the pen
   scMode: 'paint', scSpacing: 2, scJitter: 40, scSize: 0, scDensity: 100, scBrush: 1, scTurn: true, scAvoid: true, scatterSeed: 1, scVariants: [],
   terMode: 'raise', terBrush: 1, terSide: 'dirt', terSlopes: false, terMat: { materialTop: 'grass' },
   ditherMode: 'brush', ditherPat: 'checker', ditherLevel: 8, ditherClear: false,
@@ -306,9 +306,9 @@ function mergeDown() {
 
 /* ---------- document ---------- */
 function newDoc(w, h, name) {
-  S.w = w; S.h = h; S.layers = []; S.groups = []; S.active = 0; S.library = []; S.libPick = null; S.example = null; S.tipsDismissed = false; S.checklist = []; S.anims = []; S.animAt = 0; S.sizeLock = false; S.brush = 1; S.cell = cellDefault(w, h); S.major = majorDefault(S.cell, w, h); S.snap = 'pixel';
+  S.w = w; S.h = h; S.layers = []; S.groups = []; S.active = 0; S.library = []; S.stamps = []; S.kitPresets = []; S.libPick = null; S.example = null; S.tipsDismissed = false; S.checklist = []; S.anims = []; S.animAt = 0; S.sizeLock = false; S.brush = 1; S.cell = cellDefault(w, h); S.major = majorDefault(S.cell, w, h); S.snap = 'pixel';
   hooks.unbind && hooks.unbind();   // a new project must not save over the last one's file
-  selReset(); sceneReset(); refReset(); S.layers.push(makeLayer('Layer 1')); S.gox = Math.floor(w / 2); S.goy = 0; S.nudgeX = 0; S.nudgeY = 0; S.axisX = w - 1; S.axisY = h - 1;
+  selReset(); sceneReset(); refReset(); ckReset(); S.layers.push(makeLayer('Layer 1')); S.gox = Math.floor(w / 2); S.goy = 0; S.nudgeX = 0; S.nudgeY = 0; S.axisX = w - 1; S.axisY = h - 1;
   if (name) S.name = name;
   resetHistory(); hooks.layers && hooks.layers(); hooks.canvas && hooks.canvas(); hooks.tips && hooks.tips(); requestRender();
 }
@@ -334,7 +334,7 @@ function applyResize(nw, nh, dx, dy) {
   const put = (layers, w, h, sign) => {
     const pw = sign > 0 ? ow : nw, ph = sign > 0 ? oh : nh;
     const act = S.layers[S.active], at = act ? layers.findIndex(L => L.id === act.id) : -1;   // a live shadow may have come or gone since, so the list can be shorter than the index
-    S.layers = layers; S.active = at >= 0 ? at : Math.min(S.active, layers.length - 1); S.w = w; S.h = h; selResized(pw, ph, sign * dx, sign * dy); S.ox -= sign * dx * S.z; S.oy -= sign * dy * S.z; S.gox += sign * dx; S.goy += sign * dy; S.axisX += sign * 2 * dx; S.axisY += sign * 2 * dy; sceneShift(sign * dx, sign * dy); refShift(sign * dx, sign * dy); pvOutClear();
+    S.layers = layers; S.active = at >= 0 ? at : Math.min(S.active, layers.length - 1); S.w = w; S.h = h; selResized(pw, ph, sign * dx, sign * dy); S.ox -= sign * dx * S.z; S.oy -= sign * dy * S.z; S.gox += sign * dx; S.goy += sign * dy; S.axisX += sign * 2 * dx; S.axisY += sign * 2 * dy; ckShift(sign * dx, sign * dy); sceneShift(sign * dx, sign * dy); refShift(sign * dx, sign * dy); pvOutClear();
     hooks.layers && hooks.layers(); hooks.canvas && hooks.canvas(); requestRender();
   };
   put(newL, nw, nh, 1);

@@ -2,7 +2,7 @@
 /* qtiles entry point: wires the pieces together and runs the render loop. */
 
 (async function main() {
-  keysMove(); themeApply(); readTheme(); resizeView(); initUI(); initGroups(); initHelp(); initTips(); initFiles(); initRefs(); initStorage(); initExamples();
+  keysMove(); themeApply(); readTheme(); resizeView(); initUI(); initGroups(); initHelp(); initTips(); initFiles(); initRefs(); initChecks(); initStorage(); initExamples();
   new ResizeObserver(() => { resizeView(); }).observe($('stage'));
   window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', readTheme);
   new MutationObserver(readTheme).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });

@@ -18,17 +18,17 @@ const { boot } = require('./boot');
 
     ev(`newDoc(2048, 2048, 'shadows'); S.tile = 32; S.gox = 1024; S.goy = 0; S.light = 'left'; addObjectLayer();`);
     const cast = fn(`const L = T.L(), q = rng(4), N = Object.keys(SHAPE_DEFS), look = lookFrom('#7bb661'), list = []; for (let k = 0; k < 5000; k++) list.push(shapeFit(objNew({ id: objSeq++, type: N[k % N.length], i: Math.floor(q() * 120), j: Math.floor(q() * 120), w: 4, d: 4, h: 16, facing: k % 4, outline: 'none', look, shadow: true }), { w: 4 })); objEdit(L, list); return P.move(L, objEdit, 30);`);
-    info('5000 casting objects: local edit median ' + cast.toFixed(1) + ' ms'); check('moving one of 5,000 casting objects with its shadow, under 50 ms', cast < 50);
+    info('5000 casting objects: local edit median ' + cast.toFixed(1) + ' ms'); check('moving one of 5,000 casters, under 50 ms', cast < 50);
 
     const hills = fn(`const m = new Map(), look = lookFrom('#7bb661'); for (let j = 0; j < 64; j++) for (let i = 0; i < 64; i++) { const v = 2 + Math.sin(i / 6) + Math.cos(j / 5) + Math.sin((i + j) / 9), n = Math.max(0, Math.min(8, Math.round(v * 1.2))); if (n) m.set(cellKey(i, j), { i, j, n, look, key: 'k' }); } const a = performance.now(), n = terrainRects(m).length; return { n, ms: performance.now() - a };`);
     info('64 x 64 terrain: ' + hills.n + ' boxes in ' + hills.ms.toFixed(1) + ' ms'); check('a 64 x 64 rolling map stays under 2,000 boxes', hills.n < 2000);
 
     ev(`newDoc(1024, 1024, 'scatter'); S.tile = 32; S.level = 0; S.gox = 512; S.goy = 64; usePalette(PALETTES[0]); syncFlat(); addObjectLayer(); setTool('scatter'); Object.assign(S, { scMode: 'paint', scSpacing: 1, scJitter: 100, scVariants: [{ id: 'tree-small' }], scDensity: 100, scAvoid: false });`);
     const trees = fn(`const a = (x, y) => ({ x, y }), s = performance.now(); scatterStart(a(40, 120)); for (let k = 1; k <= 260; k++) scatterMove(a(40 + k * 3.5, 120 + (k % 40) * 8)); scatterEnd(); const ms = performance.now() - s, r = performance.now(); scReroll(); return { ms, reroll: performance.now() - r, n: T.L().objects.length };`);
-    info('scatter of ' + trees.n + ' trees: ' + trees.ms.toFixed(0) + ' ms, reroll ' + trees.reroll.toFixed(0) + ' ms'); check('scattering 200 trees, and a reroll, take under a second each', trees.n >= 200 && trees.ms < 1000 && trees.reroll < 1000);
+    info('scatter of ' + trees.n + ' trees: ' + trees.ms.toFixed(0) + ' ms, reroll ' + trees.reroll.toFixed(0) + ' ms'); check('200 trees, and a reroll, under a second each', trees.n >= 200 && trees.ms < 1000 && trees.reroll < 1000);
 
     ev(`newDoc(4096, 4096, 'lim'); addLayer(); S.tile = 8; S.z = 8; render(); S.z = 0.125; S.tile = 32; S.ox = S.oy = 0; render();`);
-    check('a frame at 4096 x 4096 reads only the tiles it shows', ev('CP.tiles.size') <= 12 && ev('mipLevel(S.z, dpr)') === 3);
+    check('a 4096 x 4096 frame reads only the tiles shown', ev('CP.tiles.size') <= 12 && ev('mipLevel(S.z, dpr)') === 3);
     { ev(`resetHistory(); addObjectLayer(); const L = T.L(), recs = []; for (let k = 0; k < 500; k++) recs.push(T.box({ i: k % 40, j: (k / 40) | 0, w: 1, d: 1, h: 8 })); window.n0 = H.bytes; objEdit(L, recs); window.n1 = H.bytes; objEdit(L, recs.slice(1)); window.n2 = H.bytes;`);
       info('500 objects on 4096 x 4096 cost ' + ev('n1 - n0') + ' bytes to place and ' + ev('n2 - n1') + ' to delete one'); check('object layers keep only records in history', ev('n1 - n0') < 5000 && ev('n2 - n1') < 9000); }
   } catch (e) { t.errors.push(e.stack || String(e)); }

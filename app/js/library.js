@@ -134,16 +134,16 @@ function libPickBox() {
 
 /* ---------- files ---------- */
 async function libExport() {
-  if (!S.library.length) { toast('Save something to the library first.'); return; }
-  const text = JSON.stringify({ app: LIB_FORMAT, version: 1, items: S.library.map(({ mine, ...x }) => x) });
+  if (!S.library.length && !S.stamps.length) { toast('Save something to the library first.'); return; }
+  const text = JSON.stringify({ app: LIB_FORMAT, version: 1, items: S.library.map(({ mine, ...x }) => x), stamps: S.stamps.length ? S.stamps.map(stmSaved) : undefined });
   if (await deliver(safeName() + '.qtiles-lib.json', new Blob([text], { type: 'application/json' }))) toast('Library exported.');
 }
 /* An item with an id the project already holds replaces it, so a re-import updates rather than doubles. */
 function libImport(o) {
-  if (!libLike(o) || !Array.isArray(o.items)) { toast('This is not a qtiles library file.'); return 0; }
-  const list = cleanLibrary(o.items); list.forEach(libAdd);
-  toast(list.length ? 'Imported ' + list.length + (list.length === 1 ? ' item.' : ' items.') : 'No items found in that file.');
-  return list.length;
+  if (!libLike(o) || !(Array.isArray(o.items) || Array.isArray(o.stamps))) { toast('This is not a qtiles library file.'); return 0; }
+  const list = cleanLibrary(o.items), marks = cleanStamps(o.stamps), n = list.length + marks.length; list.forEach(libAdd); marks.forEach(stmAdd);
+  toast(n ? 'Imported ' + n + (n === 1 ? ' item.' : ' items.') : 'No items found in that file.');
+  return n;
 }
 function libLoad() { LIB.built = LIB_BUILT.map(x => cleanItem(x, false)).filter(Boolean); syncLibrary(); }
 
@@ -184,8 +184,8 @@ function syncLibrary() {
   for (const b of host.children) { press(b, b.dataset.lib === S.libPick); libThumb(b.firstChild, libFind(b.dataset.lib)); }
   $('libEmpty').hidden = list.length > 0;
   $('libEmpty').textContent = 'Nothing here yet. Select objects, then Save to library in the inspector.';
-  $('libPose').hidden = !picked; $('libDel').hidden = !(picked && picked.mine); $('libExport').disabled = !S.library.length;
-  syncScatter();
+  $('libPose').hidden = !picked; $('libDel').hidden = !(picked && picked.mine); $('libExport').disabled = !S.library.length && !S.stamps.length;
+  stmSync(); syncScatter();
 }
 function openLibSave() {
   const o = asmSet()[0]; if (!o) return;

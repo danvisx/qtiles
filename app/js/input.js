@@ -134,7 +134,7 @@ function startStroke(e, p) {
   if (selTool(drawTool)) { drawId = e.pointerId; selStart(a, e); return; }
   if (drawTool === 'shadow') { if (startEllipse(a)) drawId = e.pointerId; return; }   // it writes to the shadow layer, so a locked source does not stop it
   if (drawTool === 'pick') { drawId = e.pointerId; PK.alt = e.altKey; pickStart(a, e.shiftKey); return; }
-  if (drawTool === 'place') { if (placeStart(a)) drawId = e.pointerId; return; }
+  if (drawTool === 'place') { if (stmView()) toast('Tap a stamp in the panel to put it on the pen.'); else if (placeStart(a)) drawId = e.pointerId; return; }
   if (drawTool === 'terrain') { if (terrainStart(a)) drawId = e.pointerId; return; }
   if (drawTool === 'scatter') { if (scatterStart(a)) drawId = e.pointerId; return; }
   if (drawTool === 'pivot') { if (pivotStart(a)) drawId = e.pointerId; return; }
@@ -253,7 +253,7 @@ view.addEventListener('pointermove', e => {
     PK.alt = e.altKey; shapeKeys = { shift: e.shiftKey, alt: e.altKey };
     for (const ce of (list.length ? list : [e])) moveStroke(toArt(local(ce)));
     if (e.pointerType !== 'touch') hover = toArt(p);   // growing the canvas shifts art coordinates
-  } else if ((S.tool === 'place' || S.tool === 'terrain') && S.mode === 'iso' && drawId === null && !placingAxis && e.pointerType !== 'touch') (S.tool === 'place' ? placeHover : terrainHover)(a);
+  } else if ((S.tool === 'place' || S.tool === 'terrain') && S.mode === 'iso' && !(S.tool === 'place' && stmView()) && drawId === null && !placingAxis && e.pointerType !== 'touch') (S.tool === 'place' ? placeHover : terrainHover)(a);
   requestRender();
 });
 function pointerEnd(e, cancelled) {
@@ -299,7 +299,7 @@ document.addEventListener('keydown', e => {
   if (objKey(k, mod, e.shiftKey)) { e.preventDefault(); return; }
   const arrow = { arrowleft: [-1, 0], arrowright: [1, 0], arrowup: [0, -1], arrowdown: [0, 1] }[k], sel = FL || SEL.mask;
   if (arrow && sel) { e.preventDefault(); const n = e.shiftKey ? 8 : 1; nudge(arrow[0] * n, arrow[1] * n); }
-  else if (k === 'enter' && FL) floatDone();
+  else if (k === 'enter' && FL) floatDone(e.shiftKey);
   else if (k === 'escape' && FL) cancelFloat();
   else if ((k === 'delete' || k === 'backspace') && sel) { e.preventDefault(); deleteSel(); }
   else if (mod && k === 'a') { e.preventDefault(); selectAll(); }

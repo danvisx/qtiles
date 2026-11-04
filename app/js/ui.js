@@ -26,6 +26,7 @@ const ICON = {
   views: '<svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="1.5"/><path d="M12 4v16M4 12h16"/></svg>',
   canvas: '<svg viewBox="0 0 24 24"><path d="M4 8V4h4M16 4h4v4M20 16v4h-4M8 20H4v-4"/></svg>',
   grid: '<svg viewBox="0 0 24 24"><path d="M4 9h16M4 15h16M9 4v16M15 4v16"/></svg>',
+  scan: '<svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6"/><path d="M15 15l5 5M8 10.5l2 2 3-3.5"/></svg>',
   photo: '<svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="1.5"/><circle cx="8.5" cy="10" r="1.5"/><path d="M21 16l-5-5L6 19"/></svg>'
 };
 function iconBtn(svg, label, fn, pressed) {
@@ -46,7 +47,7 @@ const TOOL_NAMES = { pencil: 'Pencil', eraser: 'Eraser', line: 'Line', rect: 'Re
 const heldTool = () => S.tool === 'hand' ? S.toolBefore : S.tool;
 function setTool(t) {
   if (t === 'hand' && S.tool === 'hand') t = S.toolBefore;
-  if (objTool(t) && S.mode !== 'iso') { toast('Objects need Iso mode.'); return; }
+  if (t === 'pick' && S.mode !== 'iso') { toast('Objects need Iso mode.'); return; }
   if (t === 'tile' && S.mode !== 'iso') { toast('Tiles need Iso mode.'); return; }
   if (t === 'terrain' && S.mode !== 'iso') { toast('Terrain needs Iso mode.'); return; }
   if (t === 'scatter' && S.mode !== 'iso') { toast('Scatter needs Iso mode.'); return; }
@@ -98,6 +99,7 @@ const PANELS = [
   { key: 'symmetry', id: 'symSec', pill: 'Symmetry', icon: 'mirror', hint: 'Repeats what you paint across a mirror line.', meta: () => S.mirrorX && S.mirrorY ? 'Four-way' : S.mirrorX ? 'Left-right' : S.mirrorY ? 'Top-bottom' : 'Off' },
   { key: 'shadow', id: 'shadowSec', pill: 'Shadow', rail: 'shadow', hint: 'Cast a shadow from a layer, or outline it.' },
   { key: 'reference', id: 'refSec', pill: 'Reference', icon: 'photo', hint: 'Photos and pictures to trace over or look at. They are never part of the art.', meta: () => RF.list.length ? String(RF.list.length) : '' },
+  { key: 'checks', id: 'checkSec', pill: 'Checks', icon: 'scan', hint: 'Scans the art for stray pixels, jaggies and color problems. Hints, not rules.', meta: () => CK.res && CK.res.box ? CK_KINDS.filter(K => K.k !== 'colors' && !CK.hide.has(K.k)).reduce((n, K) => n + CK.res.kinds[K.k].n, 0) + ' found' : '' },
   { key: 'views', id: 'sceneSec', pill: 'Views', icon: 'views', hint: 'Saved views, the minimap and sections of a big canvas.' },
   { key: 'canvas', id: 'canvasSec', pill: 'Canvas', icon: 'canvas', hint: 'Canvas size and its lock.', meta: () => S.w + ' x ' + S.h },
   { key: 'grid', id: 'gridSec', pill: 'Grid', icon: 'grid', hint: 'Grid display, guides and snap.', meta: () => S.mode === 'iso' ? 'Iso' : '2D' }
@@ -135,7 +137,7 @@ function panelArrange() {
 /* What shows and what its title says. Cheap enough for every layer or selection change, and it touches nothing that scrolls. */
 function panelSync() {
   if (!PN.ready) return;
-  const light = LIGHT_TOOLS.includes(heldTool()); $('lightField').hidden = !light;
+  const light = LIGHT_TOOLS.includes(heldTool()) && !(heldTool() === 'place' && stmView()); $('lightField').hidden = !light;
   $('optSec').hidden = !light && !document.querySelector('.opts > div:not([hidden])');
   for (const p of PANELS) {
     const sec = $(p.id); if (p.when) sec.hidden = !p.when() && PN.forced !== p.key;
@@ -214,10 +216,13 @@ function panelInit() {
 function setMode(m) {
   S.mode = m; pvClear(); press($('modeIso'), m === 'iso'); press($('modeFlat'), m === 'flat');
   if (m === 'iso') S.snap = S.snap === 'corner' ? 'tile' : S.snap === 'cell' ? 'pixel' : S.snap; else if (S.snap === 'tile') S.snap = 'corner';   // each grid has its own choices
-  for (const t of ['place', 'pick', 'tile', 'terrain', 'scatter']) document.querySelector('[data-tool="' + t + '"]').hidden = m !== 'iso';
+  for (const t of ['pick', 'tile', 'terrain', 'scatter']) document.querySelector('[data-tool="' + t + '"]').hidden = m !== 'iso';
+  const pl = document.querySelector('[data-tool="place"]'); TOOL_NAMES.place = m === 'iso' ? 'Place object' : 'Place stamp'; TOOL_HELP.place = PLACE_HELP[m];   // 2D has stamps and no objects
+  pl.setAttribute('aria-label', TOOL_NAMES.place + ' (C)'); pl.title = TOOL_NAMES.place + ' (C)';
   $('lineSnap').hidden = m !== 'iso'; $('axisSnap').hidden = m !== 'iso'; $('isoTools').hidden = m !== 'iso'; $('secCells').textContent = '16 \u00d7 16 ' + (m === 'iso' ? 'tiles' : 'cells');
   const t = heldTool();
-  if (m !== 'iso' && (objTool(t) || t === 'tile' || t === 'terrain' || t === 'scatter')) setTool('pencil');
+  if (m !== 'iso' && (t === 'pick' || t === 'tile' || t === 'terrain' || t === 'scatter')) setTool('pencil');
+  else if (t === 'place') { syncLibrary(); if (PN.ready) panelTool(); syncToolHelp(); }
   syncGrid(); setDirty(true); requestRender();
 }
 function setBrush(n) { S.brush = Math.max(1, Math.min(8, n)); syncBrush(); requestRender(); }
@@ -338,7 +343,7 @@ function initSizes() {
 }
 
 /* ---------- guides ---------- */
-const GUIDE_LINE = { grid: 'var(--grid-major)', accent: 'var(--accent-line)' };
+const GUIDE_LINE = { grid: 'var(--grid-major)', accent: 'var(--accent-line)', danger: 'var(--danger)' };
 let gridWas = 'cells';
 /* One row per overlay on the canvas. `line` draws a sample of its line, `need` says why it cannot show right now. A row with `pref` lives in that row of Preferences, not in the Grid section. */
 const GUIDES = [
@@ -350,6 +355,7 @@ const GUIDES = [
   { id: 'guideSec', name: () => 'Sections', line: '<path d="M1 7h18M10 0v14"/>', color: 'accent', on: () => S.secOn, set: secShow },
   { id: 'seamGuard', name: () => 'Seam guard', pref: 'seamGuard', line: '<path d="M10 0v14" stroke-width="3"/>', color: 'accent', on: () => S.seamGuard, set: v => { S.seamGuard = v; setDirty(true); }, need: () => !S.secOn && 'Needs Sections' },
   { id: 'guideHeight', name: () => 'Height guides', iso: true, note: () => HG_NAMES[S.guides], line: '<path d="M4 13V3M16 13V3M4 13l6-3 6 3" stroke-dasharray="1 2"/>', color: 'accent', on: () => S.guides !== 'off', set: v => hgSet(v ? HG.was : 'off') },
+  { id: 'guideChecks', name: () => 'Check marks', line: '<circle cx="10" cy="7" r="4.5"/>', color: 'danger', on: () => CK.shown, set: v => { CK.shown = v; }, need: () => !CK.res && 'Check art first' },
   { id: 'objFootOpt', name: () => 'Footprints', pref: 'footprints', line: '<path d="M10 3l8 4-8 4-8-4z"/>', color: 'accent', on: () => S.objFoot, set: v => { S.objFoot = v; setDirty(true); }, need: () => S.mode !== 'iso' && 'In Iso only' }
 ];
 const guidesShown = () => GUIDES.filter(g => !g.pref && (S.mode === 'iso' || !g.iso));
@@ -481,10 +487,10 @@ function dragPop(p) {
 hooks.sel = () => {
   const any = !!(FL || SEL.mask); $('selBar').hidden = !any;
   document.querySelectorAll('.float-only').forEach(b => { b.hidden = !FL; });
-  ['none', 'cut', 'copy', 'delete', 'duplicate'].forEach(k => document.querySelectorAll('[data-sel="' + k + '"]').forEach(b => { b.disabled = !any; }));
+  ['none', 'cut', 'copy', 'delete', 'duplicate', 'stamp'].forEach(k => document.querySelectorAll('[data-sel="' + k + '"]').forEach(b => { b.disabled = !any; }));
   if (!any) { document.querySelectorAll('.selmore').forEach(d => { d.hidden = true; }); }
   document.querySelectorAll('[data-selop]').forEach(b => press(b, b.dataset.selop === SEL.op));
-  press($('wandAll'), SEL.wandAll); press($('wandOne'), !SEL.wandAll); syncDither(); panelSync();
+  press($('wandAll'), SEL.wandAll); press($('wandOne'), !SEL.wandAll); syncDither(); stmBarSync(); panelSync();
 };
 /* An action bar sits just above what it acts on, or below it when there is no room, and stays inside the stage. */
 function placeBars() {
@@ -808,7 +814,7 @@ function initUI() {
   $('perfect').onclick = () => { prefSet('perfect', Object.assign({}, prefGet('perfect'), { [S.mode === 'iso' ? 'iso' : 'flat']: !perfectOn() })); syncBrush(); };
   $('fillAll').onclick = () => { S.fillAll = true; press($('fillAll'), true); press($('fillOne'), false); };
   $('fillOne').onclick = () => { S.fillAll = false; press($('fillAll'), false); press($('fillOne'), true); };
-  initObjects(); initTerrain(); initHeightGuides(); initAssembly(); initScatter(); initLibrary(); initCharacters();
+  initObjects(); initTerrain(); initHeightGuides(); initAssembly(); initScatter(); initKit(); initStamps(); initLibrary(); initCharacters();
 
   /* selection */
   document.addEventListener('click', e => {

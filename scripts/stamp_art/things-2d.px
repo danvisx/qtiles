@@ -1,0 +1,598 @@
+# 2D things: household, food and plants. They stand on their bottom row, so a pivot is under the middle of it.
+
+id: cup
+name: Cup
+category: household
+tags: cup, tea, kitchen, drink
+pivot: feet
+roles:
+cup = Neutrals
+tea = Skin and hair
+outline = Neutrals
+legend:
+c = cup 6
+a = cup 5
+b = cup 4
+t = tea 2
+o = outline 1
+art:
+.oooooooo...
+octtttttco..
+ocaaaaaaboo.
+ocaaaaaabbbo
+ocaaaaaabobo
+ocaaaaaabobo
+ocaaaaaabbbo
+.oaaaaabboo.
+..obbbbbo...
+...ooooo....
+
+id: plant-pot
+name: Plant pot
+category: household
+tags: plant, pot, leaves, houseplant
+pivot: feet
+roles:
+leaves = Greens
+pot = Brick
+outline = Neutrals
+legend:
+c = leaves 5
+a = leaves 4
+b = leaves 3
+d = leaves 2
+P = pot 4
+p = pot 3
+q = pot 2
+o = outline 1
+art:
+.....o...o....
+...ooao.oao...
+..oaaaooacao..
+.oacaboaaabo..
+..oabbaoabbao.
+...obbdbbboo..
+..oaabodobaao.
+.oacabodobabo.
+.ooobbodobboo.
+oPPPPPPPPpppqo
+.ooPPPPPppqoo.
+..oPPPPPppqo..
+...oPPPppqo...
+...oPPPppqo...
+....oooooo....
+
+id: lamp
+name: Lamp
+category: household
+tags: lamp, light, table, room
+pivot: feet
+roles:
+shade = Yellows
+base = Neutrals
+outline = Neutrals
+legend:
+c = shade 5
+a = shade 4
+b = shade 3
+k = base 4
+m = base 3
+q = base 2
+o = outline 1
+art:
+....ooooo....
+...ocaaabo...
+..ocaaaaabo..
+..ocaaaaabo..
+.ocaaaaaaabo.
+.ocaaaaaaabo.
+obbbbbbbbbbbo
+.oooookooooo.
+.....oko.....
+.....omo.....
+....oomoo....
+...okkmmqo...
+..okkkmmqqo..
+...ooooooo...
+
+id: chair
+name: Chair
+category: household
+tags: chair, seat, furniture, wood
+pivot: feet
+roles:
+wood = Skin and hair
+seat = Brick
+outline = Neutrals
+legend:
+a = wood 3
+b = wood 2
+c = wood 4
+S = seat 3
+s = seat 2
+o = outline 1
+art:
+.oo.........
+ocbo........
+oabo........
+oabo........
+oabo........
+oabooooooo..
+oaSSSSSSSso.
+oaaaaaaaaabo
+oaboooooabo.
+oabo...oabo.
+oabo...oabo.
+obbo...obbo.
+.oo.....oo..
+
+id: book
+name: Book
+category: household
+tags: book, reading, cover
+pivot: feet
+roles:
+cover = Blues
+pages = Neutrals
+outline = Neutrals
+legend:
+a = cover 3
+b = cover 2
+c = cover 4
+p = pages 6
+q = pages 5
+o = outline 1
+art:
+...oooooooo..
+..ocaaaaaaao.
+..ocaaaaaaabo
+.ocaaaaaaaabo
+.ocaaccccaabo
+.ocaaaaaaabo.
+.ocaaaaaaabo.
+ocaaaaaaaabo.
+oppppppppqbo.
+oqqqqqqqqbo..
+.ooooooooo...
+
+id: laptop
+name: Laptop
+category: household
+tags: laptop, computer, work, screen
+pivot: feet
+roles:
+case = Neutrals
+screen = Deep sea
+outline = Neutrals
+legend:
+a = case 4
+b = case 3
+c = case 5
+S = screen 3
+s = screen 2
+l = screen 4
+o = outline 1
+art:
+...oooooooooooo...
+..oaaaaaaaaaaaao..
+..oaSSSSSSSSSsao..
+..oaSlSSSSSSSsao..
+..oaSSSSSSSSssao..
+..oaSSSSSSSsssao..
+..oaSSSSSSsssbao..
+..oaaaaaaaaaaaao..
+.occcccccccccccco.
+ocbbbbbbbbbbbbbbco
+oaaaaaaaaaaaaaaaao
+.oooooooooooooooo.
+
+id: clock
+name: Clock
+category: household
+tags: clock, time, wall
+pivot: feet
+roles:
+rim = Brick
+face = Neutrals
+hands = Neutrals
+outline = Neutrals
+legend:
+a = rim 3
+b = rim 2
+f = face 6
+g = face 5
+h = hands 1
+o = outline 1
+art:
+....ooooo....
+...oaaaaao...
+..oafffffao..
+.oaffffhffbo.
+oafffffhfffbo
+oafffffhfffbo
+oafffffhhhgbo
+oaffffffffgbo
+oafffffffggbo
+.oaffffgggbo.
+..obggggbbo..
+...obbbbbo...
+....ooooo....
+
+id: bread
+name: Bread
+category: food
+tags: bread, loaf, bakery
+pivot: feet
+roles:
+crust = Yellows
+crumb = Skin and hair
+outline = Neutrals
+legend:
+c = crust 3
+a = crust 2
+b = crust 1
+o = outline 1
+art:
+....oooooooo...
+...ocaaaaaaao..
+..occaccaccabo.
+.ocaaaaaaaaaabo
+ocaaaaaaaaaaabo
+oaaaaaaaaaaabbo
+obbbbbbbbbbbbo.
+.oooooooooooo..
+
+id: apple
+name: Apple
+category: food
+tags: apple, fruit
+pivot: feet
+roles:
+skin = Brick
+leaf = Greens
+stem = Skin and hair
+outline = Neutrals
+legend:
+c = skin 5
+a = skin 3
+b = skin 2
+l = leaf 4
+s = stem 2
+o = outline 1
+art:
+......o.oo..
+.....osollo.
+...ooosllo..
+..oaaasaao..
+.oacaaaaabo.
+oaccaaaaaabo
+oacaaaaaaabo
+oaaaaaaaabbo
+oaaaaaaaabbo
+.oaaaaaabbo.
+..oaabbbbo..
+...oooooo...
+
+id: cake
+name: Cake
+category: food
+tags: cake, birthday, party, sweet
+pivot: feet
+roles:
+icing = Pinks
+sponge = Yellows
+filling = Brick
+candle = Blues
+flame = Yellows
+outline = Neutrals
+legend:
+i = icing 2
+j = icing 1
+s = sponge 4
+t = sponge 3
+r = filling 3
+k = candle 3
+f = flame 3
+o = outline 1
+art:
+.......o.......
+......ofo......
+......oko......
+..oooookooooo..
+.oiiiiiiiiiijo.
+oiiiijiiiijiijo
+osisssjsssjssto
+ossssssssssssto
+orrrrrrrrrrrrro
+ossssssssssssto
+ossssssssssssto
+ottttttttttttto
+.ooooooooooooo.
+
+id: coffee
+name: Coffee
+category: food
+tags: coffee, mug, drink, hot, cafe
+pivot: feet
+roles:
+mug = Brick
+coffee = Skin and hair
+steam = Neutrals
+outline = Neutrals
+legend:
+a = mug 4
+b = mug 3
+c = mug 5
+t = coffee 2
+u = coffee 3
+o = outline 1
+z = #f2f3f7
+art:
+...z..z......
+....z..z.....
+.oozoozooo...
+octtuuuutco..
+ocaaaaaaaboo.
+ocaaaaaaabbbo
+ocaaaaaaabobo
+ocaaaaaaabbbo
+ocaaaaaaaboo.
+.oaaaaaabbo..
+..oooooooo...
+
+id: cheese
+name: Cheese
+category: food
+tags: cheese, wedge, food
+pivot: feet
+roles:
+cheese = Yellows
+outline = Neutrals
+legend:
+c = cheese 5
+a = cheese 4
+b = cheese 3
+d = cheese 2
+o = outline 1
+art:
+.........oo...
+......ooocco..
+...oooccccaao.
+.ooccccccaaaao
+occccccaaaaabo
+oaadaaaaadaabo
+oaaaaadaaaabbo
+oadaaaaaaabbo.
+oaaaabbbbbbo..
+obbbbbooooo...
+.ooooo........
+
+id: carrot
+name: Carrot
+category: food
+tags: carrot, vegetable
+pivot: feet
+roles:
+root = Brick
+leaves = Greens
+outline = Neutrals
+legend:
+c = root 5
+a = root 4
+b = root 3
+l = leaves 4
+m = leaves 3
+o = outline 1
+art:
+....o.o.
+...olomo
+..olmlo.
+..oaaabo
+..ocaabo
+.ocaabbo
+.ocaabo.
+.oaabbo.
+.oaabo..
+oaabo...
+oabo....
+.oo.....
+
+id: flower
+name: Flower
+category: plants
+tags: flower, daisy, garden, bloom
+pivot: feet
+roles:
+petals = Pinks
+centre = Yellows
+stem = Greens
+outline = Neutrals
+legend:
+p = petals 2
+q = petals 1
+c = centre 3
+s = stem 3
+l = stem 4
+o = outline 1
+art:
+...ooo...
+..opppo..
+.oppoppo.
+oppcccpqo
+.opcccqo.
+oppcccqqo
+.oqpoqqo.
+..oosoo..
+.olosooo.
+.ollsollo
+..ossolo.
+...osoo..
+....o....
+
+id: tree
+name: Tree
+category: plants
+tags: tree, oak, garden, park, nature
+pivot: feet
+roles:
+leaves = Greens
+trunk = Skin and hair
+outline = Neutrals
+legend:
+c = leaves 5
+a = leaves 4
+b = leaves 3
+d = leaves 2
+t = trunk 3
+u = trunk 2
+o = outline 1
+art:
+......ooooo........
+....ooaaaaaoo......
+...oaacaaaaaboo....
+..oaccaaaaaaabbo...
+.oacaaaaaaabbbbbo..
+.oaaaaaaaabbabbbbo.
+.oaaaaabbbbbbbbdbo.
+oaaacaaaabbbbbbdbbo
+oaaaaaaabbbbbbddbbo
+.oabbbbbbbbbddddbo.
+..obbbdbbbddddbbo..
+...obddddtudddbo...
+....ooottuooooo....
+......ottuo........
+......ottuo........
+.....otttuuo.......
+....ottoouuuo......
+.....oo..ooo.......
+
+id: bush
+name: Bush
+category: plants
+tags: bush, shrub, hedge, garden
+pivot: feet
+roles:
+leaves = Greens
+outline = Neutrals
+legend:
+c = leaves 5
+a = leaves 4
+b = leaves 3
+d = leaves 2
+o = outline 1
+art:
+.....ooo..ooo.....
+...ooaaaooaaao....
+..oaacaaaacaaboo..
+.oaccaaaaaaaabbbo.
+oacaaaaaaaabbbbbo.
+oaaaaaaaabbabbbbbo
+oaaaabbbbbbbbbbdbo
+oabbbbbbbbbbbddbbo
+.obbbbddbbbdddbbo.
+..oodddddddddooo..
+....ooooooooo.....
+
+id: cactus
+name: Cactus
+category: plants
+tags: cactus, desert, pot, succulent
+pivot: feet
+roles:
+cactus = Greens
+flower = Pinks
+pot = Brick
+outline = Neutrals
+legend:
+c = cactus 4
+a = cactus 3
+b = cactus 2
+f = flower 2
+P = pot 4
+p = pot 3
+o = outline 1
+art:
+....oo.....
+...offo....
+..ocaabo...
+.oocaabo...
+ococaaboo..
+ocacaaboco.
+ocaaaaboabo
+.ocaaaboabo
+..ocaaaaabo
+..ocaabooo.
+.oocaaboo..
+oPPPPPPPpo.
+oPPPPPPPpo.
+.oPPPPPpo..
+.oPPPPPpo..
+..oooooo...
+
+id: sunflower
+name: Sunflower
+category: plants
+tags: sunflower, flower, tall, garden
+pivot: feet
+roles:
+petals = Yellows
+centre = Skin and hair
+stem = Greens
+outline = Neutrals
+legend:
+p = petals 3
+q = petals 2
+c = centre 2
+d = centre 1
+s = stem 3
+l = stem 4
+o = outline 1
+art:
+....o.o....
+...opopo...
+..opppppo..
+.oppcccppo.
+oppcdcdcqqo
+.opcccccqo.
+oppcdcdcqqo
+.oqqcccqqo.
+..oqqqqqo..
+...oqoso...
+..oooso....
+.ollosooo..
+..ollsollo.
+...oosllo..
+....osoo...
+....oso....
+.....o.....
+
+id: mushroom
+name: Mushroom
+category: plants
+tags: mushroom, toadstool, forest
+pivot: feet
+roles:
+cap = Brick
+spots = Neutrals
+stalk = Neutrals
+outline = Neutrals
+legend:
+a = cap 3
+b = cap 2
+w = spots 6
+s = stalk 6
+t = stalk 5
+o = outline 1
+art:
+....ooooo....
+...oaaaaaoo..
+..oawaaaaabo.
+.oaaaaawaabbo
+oawwaaaaaabbo
+oaaaaaaawabbo
+.obbbbbbbbbo.
+..oosssstoo..
+...ossssto...
+...ossssto...
+..ossssssto..
+...ooooooo...

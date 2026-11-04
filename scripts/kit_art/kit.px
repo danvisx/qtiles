@@ -1,0 +1,9 @@
+# The kit's roles and the colors each starts with, as "role = Palette / Ramp" (a ramp alone is the qtiles palette's). A ramp is resampled to six steps, dark to light.
+# Parts write a role's steps as letters: skin abcdef, hair ghijkl, cloth-a mnopqr, cloth-b stuvwx, shoes yzABCD, accessory EFGHIJ, outline KLMNOP.
+skin = Skin and hair / Tan skin
+hair = Skin and hair
+cloth-a = Brick
+cloth-b = Deep sea
+shoes = Neutrals
+accessory = Yellows
+outline = Neutrals

@@ -30,9 +30,12 @@ const PIVOT_OPS = {
   flipH: (p, w) => ({ x: w - p.x, y: p.y }), flipV: (p, w, h) => ({ x: p.x, y: h - p.y }), rot180: (p, w, h) => ({ x: w - p.x, y: h - p.y }),
   rot90: (p, w, h) => ({ x: h - p.y, y: p.x }), rot270: (p, w) => ({ x: p.y, y: w - p.x })
 };
+/* The pivot a float lands by: a whole layer's under Place on tile, or a stamp's (047) in Iso, and in 2D with Snap = Cell, where its feet stand on a cell's bottom edge. */
+const floatPin = f => f.pv && f.L.onTile ? f.pv : f.st && f.st.pv && (S.mode === 'iso' || cellBrush()) ? f.st.pv : null;
 function floatSnap() {
-  const f = FL; if (!f || !f.pv || !f.L.onTile) return;
-  const c = cellCenter(f.x + f.pv.x, f.y + f.pv.y); f.x = c.x - f.pv.x; f.y = c.y - f.pv.y;
+  const f = FL, p = f && floatPin(f); if (!p) return;
+  const x = f.x + p.x, y = f.y + p.y, c = cellCenter(x, y), feet = p !== f.pv && S.mode !== 'iso';
+  f.x = c.x - p.x; f.y = (feet ? Math.round(y / S.cell) * S.cell : c.y) - p.y;
 }
 function pivotStart(a) {
   commitFloat(); const L = activeLayer();

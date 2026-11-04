@@ -1,0 +1,600 @@
+# 2D people, 16 x 16, front-facing, chibi proportions: a big head, eyes two pixels tall, feet on the bottom row.
+# The roles and legend of the first carry over to the next stamp until one gives its own.
+
+id: chibi-walker
+name: Walker
+category: characters
+tags: person, adult, front, chibi
+roles:
+hair = Skin and hair
+skin = Skin and hair
+top = Blues
+bottom = Deep sea
+shoes = Skin and hair
+outline = Neutrals
+legend:
+o = outline 1
+h = hair 1
+H = hair 2
+s = skin 5
+S = skin 4
+c = top 3
+C = top 2
+p = bottom 3
+P = bottom 2
+f = shoes 2
+art:
+................
+....oooooooo....
+...oHHHHHHHHo...
+..oHHHHHHHHHho..
+..oHHHHHHHHhho..
+..oHsssssssSho..
+..oHsossssoSho..
+..ohsossssoSho..
+..ohsssssssSho..
+...oossssSSoo...
+...occcccCCCo...
+..osccccccCCSo..
+...occccCCCCo...
+...oppppPPPPo...
+...oppo..oPPo...
+...offo..offo...
+
+id: chibi-long-hair
+name: Long hair
+category: characters
+tags: person, adult, front, chibi
+roles:
+hair = Brick
+skin = Skin and hair
+top = Greens
+bottom = Neutrals
+shoes = Skin and hair
+outline = Neutrals
+legend:
+o = outline 1
+h = hair 1
+H = hair 2
+s = skin 5
+S = skin 4
+c = top 4
+C = top 3
+p = bottom 3
+P = bottom 2
+f = shoes 2
+art:
+................
+....oooooooo....
+...oHHHHHHHHo...
+..oHHHHHHHHHho..
+.oHHHHHHHHHHhho.
+.oHHsssssssShho.
+.oHHossssoSShho.
+.oHHossssoSShho.
+.oHhssssssSShho.
+.oHhossssSSohho.
+.ohhoccccCCohho.
+..oosccccCCSoo..
+...occccCCCCo...
+...oppppPPPPo...
+...oppo..oPPo...
+...offo..offo...
+
+id: chibi-chef
+name: Chef
+category: characters
+tags: person, adult, front, chibi, cook, kitchen, work
+roles:
+hat = Neutrals
+hair = Skin and hair
+skin = Skin and hair
+top = Neutrals
+bottom = Neutrals
+scarf = Brick
+shoes = Skin and hair
+outline = Neutrals
+legend:
+o = outline 1
+W = hat 6
+w = hat 5
+h = hair 1
+H = hair 2
+s = skin 4
+S = skin 3
+c = top 6
+C = top 5
+r = scarf 3
+p = bottom 2
+P = bottom 2
+f = shoes 1
+art:
+...oooo..oooo...
+..oWWWWooWWwwo..
+..oWWWWWWWWwwo..
+...oWWWWWWwwo...
+...oWWWWWWwwo...
+..oHsssssssSho..
+..oHsossssoSho..
+..ohsossssoSho..
+..ohsssssssSho..
+...oorrrrrrroo..
+...occcrrcCCo...
+..oSccccccCCSo..
+...occcccCCCo...
+...oppppPPPPo...
+...oppo..oPPo...
+...offo..offo...
+
+id: chibi-nurse
+name: Nurse
+category: characters
+tags: person, adult, front, chibi, health, hospital, work
+roles:
+hair = Neutrals
+skin = Skin and hair
+top = Deep sea
+bottom = Deep sea
+shoes = Neutrals
+badge = Brick
+outline = Neutrals
+legend:
+o = outline 1
+h = hair 1
+H = hair 2
+s = skin 3
+S = skin 2
+c = top 4
+C = top 3
+p = bottom 4
+P = bottom 3
+f = shoes 6
+b = badge 3
+art:
+................
+....oooooooo....
+...oHHHHHHHHo...
+..oHHHHHHHHHho..
+..oHHHHHHHHhho..
+..oHsssssssSho..
+..oHsossssoSho..
+..ohsossssoSho..
+..ohsssssssSho..
+.ohhoossssSSohho
+.ohhocccccCCohho
+..oSccccccbCSo..
+...occcccCCCo...
+...oppppPPPPo...
+...oppo..oPPo...
+...offo..offo...
+
+id: chibi-courier
+name: Courier
+category: characters
+tags: person, adult, front, chibi, delivery, parcel, cap, work
+roles:
+cap = Yellows
+hair = Skin and hair
+skin = Skin and hair
+top = Yellows
+bottom = Neutrals
+parcel = Skin and hair
+shoes = Neutrals
+outline = Neutrals
+legend:
+o = outline 1
+K = cap 3
+k = cap 2
+h = hair 1
+H = hair 2
+s = skin 5
+S = skin 4
+c = top 3
+C = top 2
+p = bottom 3
+P = bottom 2
+N = parcel 4
+n = parcel 3
+t = parcel 5
+f = shoes 1
+art:
+................
+....oooooooo....
+...oKKKKKKKKo...
+..oKKKKKKKKKko..
+..oKKKKKKKKKko..
+.okkkkkkkkkkkko.
+..oHsossssoSho..
+..ohsossssoSho..
+..ohsssssssSho..
+...oossssSSoo...
+..oNNNNNNtnnno..
+.sNNNNNNNtnnnnS.
+.oNNNNNNNtnnnno.
+..oNNNNNNtnnno..
+...oppo..oPPo...
+...offo..offo...
+
+id: chibi-gardener
+name: Gardener
+category: characters
+tags: person, adult, front, chibi, garden, hat, overalls, work
+roles:
+hat = Yellows
+hair = Skin and hair
+skin = Skin and hair
+top = Brick
+overalls = Greens
+shoes = Skin and hair
+outline = Neutrals
+legend:
+o = outline 1
+K = hat 4
+k = hat 3
+h = hair 2
+H = hair 3
+s = skin 3
+S = skin 2
+c = top 4
+C = top 3
+V = overalls 3
+v = overalls 2
+f = shoes 1
+art:
+................
+.....oooooo.....
+....oKKKKKKo....
+...oKKKKKKKko...
+.ooKKKKKKKKKkoo.
+okkkkkkkkkkkkkko
+.ooHsssssssShoo.
+..oHsossssoSho..
+..ohsossssoSho..
+...oossssSSoo...
+...ocVVVVvvCo...
+..oscVVVVvvCSo..
+...oVVVVVvvvo...
+...oVVVVvvvvo...
+...oVVo..ovvo...
+...offo..offo...
+
+id: chibi-elder
+name: Older person
+category: characters
+tags: person, older, elderly, grandparent, cane, front, chibi
+roles:
+hair = Neutrals
+skin = Skin and hair
+top = Pinks
+bottom = Neutrals
+cane = Skin and hair
+shoes = Skin and hair
+outline = Neutrals
+legend:
+o = outline 1
+h = hair 4
+H = hair 5
+s = skin 5
+S = skin 4
+c = top 2
+C = top 1
+p = bottom 3
+P = bottom 2
+k = cane 3
+f = shoes 2
+art:
+................
+....oooooooo....
+...oHHHHHHHHo...
+..oHHHsssssHho..
+..oHHsssssssho..
+..oHssssssssho..
+..ohsossssoSho..
+..ohsossssoSho..
+..ohsssssssSho..
+...oossSSSSoo...
+...occcccCCCo.k.
+..osccccccCCSok.
+...occccCCCCo.k.
+...oppppPPPPo.k.
+...oppo..oPPo.k.
+...offo..offo.k.
+
+id: chibi-reader
+name: Reader
+category: characters
+tags: person, adult, book, reading, glasses, front, chibi
+roles:
+hair = Yellows
+skin = Skin and hair
+top = Pinks
+bottom = Deep sea
+book = Brick
+pages = Neutrals
+shoes = Skin and hair
+outline = Neutrals
+legend:
+o = outline 1
+h = hair 1
+H = hair 2
+s = skin 5
+S = skin 4
+c = top 2
+C = top 1
+p = bottom 3
+P = bottom 2
+B = book 3
+b = book 2
+w = pages 6
+g = pages 5
+f = shoes 2
+art:
+................
+....oooooooo....
+...oHHHHHHHHo...
+..oHHHHHHHHHho..
+..oHHHHHHHHhho..
+..oHsssssssSho..
+..oHgggsssgggo..
+..ohgogsssgogo..
+..ohsssssssSho..
+...oossssSSoo...
+...occcccCCCo...
+..oBBBBwwbbbbo..
+..sBBBBwwbbbbS..
+..oBBBBwwbbbbo..
+...oppo..oPPo...
+...offo..offo...
+
+id: chibi-musician
+name: Musician
+category: characters
+tags: person, adult, music, guitar, front, chibi
+roles:
+hair = Neutrals
+skin = Skin and hair
+top = Brick
+bottom = Deep sea
+guitar = Yellows
+neck = Skin and hair
+shoes = Skin and hair
+outline = Neutrals
+legend:
+o = outline 1
+h = hair 1
+H = hair 2
+s = skin 3
+S = skin 2
+c = top 3
+C = top 2
+p = bottom 3
+P = bottom 2
+G = guitar 2
+g = guitar 1
+k = neck 2
+f = shoes 1
+art:
+................
+....oooooooo....
+...oHHHHHHHHo...
+..oHHHHHHHHHho..
+..oHHHHHHHHhho..
+..oHsssssssSho..
+..oHsossssoSho..
+..ohsossssoSho..
+..ohsssssssSho..
+...oossssSSoo.ko
+...occcccCCCokk.
+..osccGGGGgkSo..
+..oGGGGGGgko....
+..oGGGoGGggoo...
+..oGGGGGGgoPo...
+...ooooo.offo...
+
+id: chibi-dog-walker
+name: Walking the dog
+category: characters
+tags: person, adult, dog, lead, leash, walking, front, chibi
+roles:
+hair = Skin and hair
+skin = Skin and hair
+top = Greens
+bottom = Neutrals
+lead = Brick
+shoes = Skin and hair
+outline = Neutrals
+legend:
+o = outline 1
+h = hair 1
+H = hair 2
+s = skin 4
+S = skin 3
+c = top 3
+C = top 2
+p = bottom 3
+P = bottom 2
+L = lead 3
+f = shoes 1
+art:
+................
+....oooooooo....
+...oHHHHHHHHo...
+..oHHHHHHHHHho..
+..oHHHHHHHHhho..
+..oHsssssssSho..
+..oHsossssoSho..
+..ohsossssoSho..
+..ohsssssssSho..
+...oossssSSoo...
+...occcccCCCo...
+..osccccccCCSL..
+...occccCCCCo.L.
+...oppppPPPPo..L
+...oppo..oPPo..L
+...offo..offo..L
+
+id: chibi-office
+name: Office worker
+category: characters
+tags: person, adult, office, tie, glasses, work, front, chibi
+roles:
+hair = Skin and hair
+skin = Skin and hair
+top = Neutrals
+tie = Brick
+bottom = Neutrals
+shoes = Neutrals
+outline = Neutrals
+legend:
+o = outline 1
+h = hair 1
+H = hair 2
+s = skin 4
+S = skin 3
+c = top 6
+C = top 5
+T = tie 3
+g = top 4
+p = bottom 2
+P = bottom 2
+f = shoes 1
+art:
+................
+....oooooooo....
+...oHHHHHHHHo...
+..oHHHHHHHHHho..
+..oHHHHHHhhhho..
+..oHsssssssSho..
+..oHgggsssgggo..
+..ohgogsssgogo..
+..ohsssssssSho..
+...oossssSSoo...
+...occcTTCCCo...
+..osccTTTcCCSo..
+...occcTCCCCo...
+...oppppPPPPo...
+...oppo..oPPo...
+...offo..offo...
+
+id: chibi-child
+name: Child
+category: characters
+tags: person, child, kid, front, chibi
+roles:
+hair = Yellows
+skin = Skin and hair
+top = Pinks
+bottom = Blues
+shoes = Brick
+outline = Neutrals
+legend:
+o = outline 1
+h = hair 2
+H = hair 3
+s = skin 5
+S = skin 4
+c = top 2
+C = top 1
+p = bottom 3
+P = bottom 2
+f = shoes 2
+art:
+................
+................
+................
+....oooooooo....
+...oHHHHHHHHo...
+..oHHHHHHHHHho..
+..oHsssssssSho..
+..oHsossssoSho..
+..ohsossssoSho..
+..ohssssssSSho..
+...ooossssSoo...
+....occccCCo....
+...osccccCCSo...
+....oppoPPPo....
+....oppooPPo....
+....offo.ffo....
+
+id: chibi-beard
+name: Bearded person
+category: characters
+tags: person, adult, beard, front, chibi
+roles:
+hair = Brick
+skin = Skin and hair
+top = Deep sea
+bottom = Neutrals
+shoes = Skin and hair
+outline = Neutrals
+legend:
+o = outline 1
+h = hair 1
+H = hair 2
+s = skin 5
+S = skin 4
+c = top 3
+C = top 2
+p = bottom 3
+P = bottom 2
+f = shoes 1
+art:
+................
+....oooooooo....
+...oHHHHHHHHo...
+..oHHHHHHHHHho..
+..oHHHHHHHHhho..
+..oHsssssssSho..
+..oHsossssoSho..
+..ohsossssoSho..
+..ohHHssssHhho..
+...oHHHHHhhho...
+...ocoHHhhoCo...
+..oscccooCCCSo..
+...occccCCCCo...
+...oppppPPPPo...
+...oppo..oPPo...
+...offo..offo...
+
+id: chibi-student
+name: Student with a backpack
+category: characters
+tags: person, young, school, backpack, bag, front, chibi
+roles:
+hair = Neutrals
+skin = Skin and hair
+top = Yellows
+bottom = Deep sea
+pack = Brick
+shoes = Neutrals
+outline = Neutrals
+legend:
+o = outline 1
+h = hair 1
+H = hair 2
+s = skin 2
+S = skin 1
+c = top 3
+C = top 2
+p = bottom 3
+P = bottom 2
+K = pack 3
+k = pack 2
+f = shoes 6
+art:
+................
+....oooooooo....
+...oHHHHHHHHo...
+..oHHHHHHHHHho..
+..oHHHHHHHHhho..
+..oHsssssssSho..
+..oHsossssoSho..
+..ohsossssoSho..
+..ohsssssssSho..
+...oossssSSoo...
+..oKcccccCCCko..
+..oKcccccCCCko..
+..oSoccccCCCoS..
+...oppppPPPPo...
+...oppo..oPPo...
+...offo..offo...

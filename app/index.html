@@ -83,7 +83,7 @@
     <div class="selbar island" id="selBar" role="toolbar" aria-label="Selection actions" hidden>
       <div class="row">
         <button class="chip" data-sel="cut">Cut</button><button class="chip" data-sel="copy">Copy</button><button class="chip" data-sel="paste">Paste</button><button class="chip" data-sel="delete">Delete</button>
-        <button class="chip" data-more="moreFlip">Flip</button><button class="chip" data-more="moreRotate">Rotate</button><button class="chip" data-more="moreProject">Project</button>
+        <button class="chip" data-more="moreFlip">Flip</button><button class="chip" data-more="moreRotate">Rotate</button><button class="chip" data-more="moreProject">Project</button><button class="chip" data-sel="stamp">Save as stamp</button>
         <button class="chip float-only" data-sel="done">Done</button><button class="chip float-only" data-sel="cancel">Cancel</button>
       </div>
       <div class="row selmore" id="moreFlip" hidden><button class="chip" data-transform="flipH">Horizontal</button><button class="chip" data-transform="flipV">Vertical</button></div>
@@ -239,8 +239,18 @@
           </div>
         </div>
         <div data-for="place" hidden>
-          <div class="seg wide" role="group" aria-label="Place from"><button id="placeTabShapes" aria-pressed="true">Shapes</button><button id="placeTabLib" aria-pressed="false">Library</button></div>
+          <div class="seg wide" id="placeFrom" role="group" aria-label="Place from"><button id="placeTabShapes" aria-pressed="true">Shapes</button><button id="placeTabLib" aria-pressed="false">Library</button></div>
           <div id="placeLib" class="gap-top" hidden>
+            <div class="seg wide" id="libKinds" role="group" aria-label="Library shows"><button id="libKindStamps" aria-pressed="false">Stamps</button><button id="libKindObjects" aria-pressed="true">Objects</button></div>
+            <div id="libStamps" class="gap-top" hidden>
+            <button class="btn kitopen" id="kitOpen">New character&hellip;</button>
+            <input id="stmSearch" type="text" inputmode="search" placeholder="Search names and tags" aria-label="Search the stamps" autocomplete="off">
+            <div class="row gap-top wrap" id="stmCats" role="group" aria-label="Stamp category"></div>
+            <div class="shapes gap-top" id="stmGrid"></div>
+            <p class="hint" id="stmEmpty" hidden></p>
+            <p class="hint">Tap a stamp to put it on the pen, then drag it into place. It lands as plain pixels on the active layer. Pick its colors in the Selection section.</p>
+            </div>
+            <div id="libObjects">
             <input id="libSearch" type="text" inputmode="search" placeholder="Search" aria-label="Search the library" autocomplete="off">
             <div class="row gap-top wrap" id="libCats" role="group" aria-label="Category"></div>
             <div class="shapes gap-top" id="libGrid"></div>
@@ -249,9 +259,11 @@
               <div class="row"><button class="btn grow" id="libTurnL">Turn left</button><button class="btn grow" id="libTurnR" title="R">Turn right</button><button class="btn grow" id="libMirror" title="M">Mirror</button></div>
               <button class="btn danger gap-top" id="libDel">Remove from library</button>
             </div>
+            <p class="hint">Tap an item, then tap the canvas.</p>
+            </div>
             <div class="row gap-top"><button class="btn grow" id="libExport">Export mine</button><button class="btn grow" id="libImport">Import</button></div>
             <input id="libInput" type="file" accept=".qtiles-lib.json,.isopic-lib.json,.json,application/json" hidden>
-            <p class="hint">Tap an item, then tap the canvas. Your own items are saved in this project. Use Export to take them to another one.</p>
+            <p class="hint">Your own items and stamps are saved in this project. Use Export to take them to another one.</p>
           </div>
           <div id="placeShapes" class="gap-top">
           <div id="shapeCards"></div>
@@ -411,6 +423,13 @@
 
     <section class="sec" id="selSec">
       <h3 class="h">Selection</h3>
+      <div class="stmbar" id="stmBar" hidden>
+        <div class="row between"><b id="stmName"></b><span class="hint" id="stmBy"></span></div>
+        <div class="seg wide gap-top" id="stmFaces" role="group" aria-label="Facing" hidden><button data-face="0" aria-pressed="true">Facing 1</button><button data-face="1" aria-pressed="false">Facing 2</button></div>
+        <div id="stmRows"></div>
+        <div class="row gap-top"><button class="btn grow" id="stmShuffle">Shuffle</button><button class="btn grow" id="stmOwn">Its own colors</button></div>
+        <div class="row gap-top"><button class="chip" id="stmKeep" aria-pressed="false">Keep on the pen</button><button class="btn danger" id="stmDel" hidden>Remove stamp</button></div>
+      </div>
       <div class="row">
         <button class="chip" data-sel="all" title="Select all (Ctrl+A)">All</button>
         <button class="chip" data-sel="none" title="Deselect (Ctrl+D)">None</button>
@@ -430,6 +449,7 @@
         <button class="chip" data-sel="paste" title="Paste (Ctrl+V)">Paste</button>
         <button class="chip" data-sel="delete" title="Delete">Delete</button>
         <button class="chip" data-sel="duplicate" title="Duplicate (Ctrl+J, or Alt-drag)">Duplicate</button>
+        <button class="chip" data-sel="stamp">Save as stamp</button>
       </div>
       <div class="field gap-top">Flip and rotate
         <div class="row">
@@ -493,6 +513,7 @@
     <section class="sec" id="charSec">
       <h3 class="h">Character</h3>
       <p class="hint" id="charNote">Tap the layer's type tag and choose Character to give it a pivot and use it as a frame.</p>
+      <button class="btn" id="charKit">New character&hellip;</button>
       <div id="charOnly" hidden>
         <div class="row between"><span class="muted">Pivot</span><span class="mono" id="charPivot">Not set</span></div>
         <div class="row gap-top wrap">
@@ -606,6 +627,22 @@
         <p class="hint" id="refAdjustNote" hidden></p>
         <button class="btn gap-top" id="refMakeBtn">Make a pixel layer from this reference&hellip;</button>
       </div>
+    </section>
+
+    <section class="sec" id="checkSec">
+      <h3 class="h">Checks</h3>
+      <div class="field">Check
+        <div class="seg wide" role="group" aria-label="What to check"><button id="ckLayer" data-ck="layer" aria-pressed="true">Active layer</button><button id="ckShown" data-ck="shown" aria-pressed="false">Shown art</button><button id="ckSel" data-ck="sel" aria-pressed="false">Selection</button></div>
+      </div>
+      <div class="row gap-top"><button class="btn" id="ckRun">Check art</button></div>
+      <p class="hint" id="ckNote"></p>
+      <div class="frames gap-top" id="ckList"></div>
+      <div class="row gap-top" id="ckStep" hidden><button class="btn" id="ckPrev">Previous</button><span class="mono ckat" id="ckAt"></span><button class="btn" id="ckNext">Next</button><button class="btn" id="ckFix">Fix&hellip;</button></div>
+      <div id="ckAsk" hidden><p class="hint" id="ckAskText"></p><div class="row gap-top"><button class="chip" id="ckYes">Fix</button><button class="chip" id="ckNo">Cancel</button></div></div>
+      <p class="hint" id="ckOnly" hidden>Fix changes one layer, so it is offered when the active layer or a selection was checked.</p>
+      <div class="row gap-top" id="ckIgnored" hidden><span class="hint" id="ckIgnoredText"></span><button class="chip" id="ckUnhide">Show all</button></div>
+      <p class="hint">Hints, not rules: hand anti-aliasing and deliberate texture get marked too.</p>
+      <button class="plink" id="ckTip">Read the tip on art checks</button>
     </section>
 
     <section class="sec" id="canvasSec">
@@ -1050,6 +1087,39 @@
   </div>
 </div>
 
+<div class="scrim" id="sheetKit" hidden>
+  <div class="sheet kit" role="dialog" aria-label="New character">
+    <div class="row between"><h2>New character</h2><span class="hint">Starter art, redraw it</span></div>
+    <p>A part for each slot, from a kit where every part fits every other. Add to canvas puts it on a new Character layer with its pivot on the feet; from there it is pixels to draw on.</p>
+    <div class="kitpv"><canvas id="kitBig" aria-label="The character at 6x"></canvas><canvas id="kitOne" aria-label="The character at 1x"></canvas></div>
+    <p id="kitViews"></p>
+    <div class="kitcols">
+      <div>
+        <label class="field">Start from<select id="kitFrom"></select></label>
+        <div class="field gap-top">Template<div class="seg wide wrap" id="kitTpls" role="group" aria-label="Template"></div></div>
+        <div class="row gap-top wrap"><button class="btn" id="kitShuffle">Shuffle</button><button class="btn" id="kitUndo">Undo shuffle</button><label class="field kitseed">Seed<input id="kitSeed" type="number" min="1" step="1" inputmode="numeric"></label></div>
+        <div class="field gap-top">Outline<div class="seg wide" id="kitOut" role="group" aria-label="Outline"><button data-out="none">None</button><button data-out="dark">Dark</button><button data-out="sel">Sel-out</button></div></div>
+        <div class="field gap-top"><div class="row between">Colors<button class="chip" id="kitKeepColors" aria-pressed="false">Keep</button></div></div>
+        <div id="kitColors"></div>
+        <button class="btn gap-top" id="kitOwn">Starting colors</button>
+        <label class="field gap-top">Name<input id="kitName" type="text" maxlength="40"></label>
+      </div>
+      <div id="kitSlots"></div>
+    </div>
+    <div class="row wrap"><button class="btn pri" id="kitAdd">Add to canvas</button><button class="btn" id="kitStampBtn">Save as stamp</button><button class="btn" id="kitPreset">Save as preset</button><button class="btn" data-close>Cancel</button></div>
+  </div>
+</div>
+
+<div class="scrim" id="sheetStamp" hidden>
+  <div class="sheet" role="dialog" aria-label="Save as stamp">
+    <h2>Save as stamp</h2>
+    <p>The selected pixels, kept in this project under Mine. Colors on a palette ramp can be changed to another ramp when you place it.</p>
+    <label class="field">Name<input id="stmSaveName" type="text" maxlength="40" aria-label="Stamp name"></label>
+    <label class="field gap-top">Category<select id="stmCat"></select></label>
+    <div class="row gap-top"><button class="btn pri" id="stmSaveOk">Save</button><button class="btn" data-close>Cancel</button></div>
+  </div>
+</div>
+
 <div class="scrim" id="sheetLibAll" hidden>
   <div class="sheet" role="dialog" aria-label="Update all instances">
     <h2>Update all instances?</h2>
@@ -1183,6 +1253,10 @@
 <script src="library/vehicles.js"></script>
 <script src="library/street.js"></script>
 <script src="library/terrain.js"></script>
+<script src="js/stamps.js"></script>
+<script src="library/stamps.js"></script>
+<script src="js/kit.js"></script>
+<script src="library/kit.js"></script>
 <script src="js/scatter.js"></script>
 <script src="js/trees.js"></script>
 <script src="js/solids.js"></script>
@@ -1190,6 +1264,7 @@
 <script src="js/groups.js"></script>
 <script src="js/scene.js"></script>
 <script src="js/ref.js"></script>
+<script src="js/checks.js"></script>
 <script src="js/input.js"></script>
 <script src="js/tips.js"></script>
 <script src="js/help.js"></script>

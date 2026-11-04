@@ -34,7 +34,8 @@ const TIPS = [
     { id: 'work-sizes', title: 'Canvas, brush, cell and tile', body: 'The canvas is the whole drawing, measured in pixels. A brush is a square of pixels. A cell is one square of the 2D grid, and a tile one diamond of the isometric grid. The size chip in the status bar shows all of them, and tapping it shows how they fit.', art: 'sizes', link: { label: 'Open Sizes', pop: 'sizesPop' } },
     { id: 'work-brush', title: 'Brush size', body: 'A brush is a square of pixels, 1 to 8 wide, whatever the grid. The pixel under the pointer is the center for odd sizes, and the upper left of the center four for even sizes. The outline on the canvas shows exactly what a press will paint.', link: { label: 'Open the Pencil', tool: 'pencil' } },
     { id: 'work-cells', title: 'Cells and snapping', body: 'In 2D the grid is made of cells. The size chip or Preferences sets their size. The cell under the pointer is tinted. With Snap on Cell the brush paints whole cells and counts in cells. On Cell corners, lines and rectangles end on the grid.', link: { label: 'Show Snap', mark: '#gridSnap' } },
-    { id: 'work-aa', title: 'No anti-aliasing', body: 'Every pixel is a palette color or empty. If you import art, check that soft edges have not come along with it.' }
+    { id: 'work-aa', title: 'No anti-aliasing', body: 'Every pixel is a palette color or empty. If you import art, check that soft edges have not come along with it.', link: { label: 'Show Check art', mark: '#ckRun' } },
+    { id: 'work-checks', title: 'Art checks', body: 'Check art, in the Checks section, marks stray pixels, doubled corners, uneven runs, banding, soft edges, colors off the palette, near twins and art drawn at a larger scale. They are hints, not rules: uneven runs and banding also mark hand anti-aliasing and deliberate texture, so judge each mark. Fix is offered only where the answer is clear, and is one undo step.', link: { label: 'Show Check art', mark: '#ckRun' } }
   ] },
   { id: 'char', title: 'Characters', tips: [
     { id: 'char-facing', title: 'Two facings, then mirror', body: 'Draw one figure facing the viewer and one facing away. Mirroring those gives all four directions.', link: { label: 'Show Mirror to other facing', mark: '#charMirror' } },
@@ -98,7 +99,9 @@ function tipCard(t) {
 }
 function checkRow(c) {
   const row = document.createElement('label'), box = document.createElement('input'); row.className = 'tipcheck'; box.type = 'checkbox'; box.dataset.check = c.id; box.checked = S.checklist.includes(c.id);
-  box.onchange = () => checkTick(c.id, box.checked); row.append(box, c.text); return row;
+  const text = document.createElement('span'), seen = ckTick(c.id); text.textContent = c.text; box.onchange = () => checkTick(c.id, box.checked); row.append(box, text);
+  if (seen) { const s = document.createElement('span'); s.className = 'refsub cktick'; s.textContent = 'Last check: ' + seen; text.appendChild(s); }   // beside the item, but the person still ticks it
+  return row;
 }
 /* Ticks belong to the project, so one is a change to save, but not a step of the art's history. */
 function checkTick(id, on) {
@@ -120,6 +123,7 @@ function tipsRender() {
     const el = document.createElement('section'), read = document.createElement('span'); el.className = 'sec'; el.dataset.tips = 'checklist';
     const h = head(el, 'Checklist'); read.id = 'checkRead'; read.className = 'mono'; read.textContent = checkDone() + ' of ' + CHECKLIST.length; h.classList.add('row', 'between'); h.appendChild(read);
     for (const c of items) el.appendChild(checkRow(c));
+    const run = document.createElement('button'); run.className = 'chip'; run.id = 'tipsCheck'; run.textContent = 'Check art'; run.onclick = ckRun; el.appendChild(run);
     host.appendChild(el); shown += items.length;
   }
   $('tipsNone').hidden = shown > 0;

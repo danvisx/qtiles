@@ -43,6 +43,20 @@ def px_stale():
     return False
 
 
+def stamps_stale():
+    """A source in scripts/stamp_art newer than app/library/stamps.js, or no stamps.js yet."""
+    made = app / "library" / "stamps.js"
+    srcs = list((root / "scripts" / "stamp_art").glob("*.px"))
+    return not made.exists() or any(f.stat().st_mtime > made.stat().st_mtime for f in srcs)
+
+
+def kit_stale():
+    """A source in scripts/kit_art newer than app/library/kit.js, or no kit.js yet."""
+    made = app / "library" / "kit.js"
+    srcs = list((root / "scripts" / "kit_art").rglob("*.px"))
+    return not made.exists() or any(f.stat().st_mtime > made.stat().st_mtime for f in srcs)
+
+
 def bundle():
     head = re.search(r"<!--BUILD:HEAD-->(.*?)<!--/BUILD:HEAD-->", html, re.S).group(1)
     # the bundle is one file: the mark goes in as data, and what only a served site reads stays out
@@ -64,6 +78,21 @@ def bundle():
     return out
 
 
+if stamps_stale():
+    # plain Node, no jsdom: the stamps are data, and the build stops on a bad source with its file and line
+    try:
+        made = subprocess.run(["node", str(root / "scripts" / "make_stamps.js")])
+    except FileNotFoundError:
+        sys.exit("Building the stamps needs Node.")
+    if made.returncode:
+        sys.exit("The stamps did not build. Fix the source named above.")
+if kit_stale():
+    try:
+        made = subprocess.run(["node", str(root / "scripts" / "make_kit.js")])
+    except FileNotFoundError:
+        sys.exit("Building the character kit needs Node.")
+    if made.returncode:
+        sys.exit("The character kit did not build. Fix the source named above.")
 embed_examples()
 out = bundle()
 if px_stale():

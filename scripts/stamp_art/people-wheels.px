@@ -1,0 +1,102 @@
+# People on wheels, side views facing right; the second facing is the mirror.
+
+id: side-cyclist
+name: Cyclist
+category: characters
+tags: person, adult, bicycle, bike, cycling, side
+facings: mirror
+roles:
+helmet = Brick
+skin = Skin and hair
+top = Greens
+bottom = Neutrals
+frame = Blues
+tyres = Neutrals
+shoes = Skin and hair
+outline = Neutrals
+legend:
+o = outline 1
+K = helmet 3
+k = helmet 2
+s = skin 4
+S = skin 3
+c = top 4
+C = top 3
+p = bottom 2
+P = bottom 1
+F = frame 3
+G = frame 2
+t = tyres 2
+x = tyres 3
+f = shoes 2
+art:
+.............oKKKKo.....
+............oKKKKKKo....
+.............osssoso....
+............ossssssso...
+...........oocsssSoo....
+.........ooccCcooo......
+........occccSo.........
+.......occccooSoo.......
+........opoo..oSso......
+......kkPPppo..oG.......
+........FFPPpFFFG.......
+........F.oopo.F.G......
+...ttt...F.opFF..Gttt...
+..t...t..FopF....tG..t..
+.t.....t..Fffo..t.G...t.
+.t..GGGGGGFoo...t..G..t.
+.t.....t........t.....t.
+..t...t..........t...t..
+...ttt............ttt...
+
+id: side-wheelchair
+name: Wheelchair user
+category: characters
+tags: person, adult, wheelchair, accessible, side
+facings: mirror
+roles:
+hair = Skin and hair
+skin = Skin and hair
+top = Pinks
+bottom = Deep sea
+chair = Neutrals
+wheel = Neutrals
+shoes = Skin and hair
+outline = Neutrals
+legend:
+o = outline 1
+h = hair 1
+H = hair 2
+s = skin 4
+S = skin 3
+c = top 2
+C = top 1
+p = bottom 3
+P = bottom 2
+k = chair 4
+K = chair 3
+w = wheel 2
+x = wheel 3
+f = shoes 2
+art:
+......oooo......
+.....oHHHHo.....
+....oHHHHHso....
+....ohHHsoso....
+....ohhssssso...
+....ohssssSo....
+.....oSsSSo.....
+..kkocccCo......
+...koccccCo.....
+...koccccCo.....
+...kocccsCoo....
+...kopppppPPo...
+...kwppppppPPo..
+...KKKKKKKKPPo..
+..wk....w.oPPo..
+..w..x..w.oPPo..
+..w.....w.oPPfo.
+...w...w..offKK.
+....www....ok...
+............ww..

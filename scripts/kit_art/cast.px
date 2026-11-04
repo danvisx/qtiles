@@ -1,0 +1,492 @@
+# The cast (048): presets made with the kit, built from the parts each time the app starts, so a better part makes better people. They show as stamps under Characters.
+# A preset names a part for each slot, up to two accessories, an outline (none, dark or sel), and colors for any role, as "role = Palette / Ramp".
+# Roles a preset leaves out take kit.px's colors. Starter art by Claude.
+
+preset: small-baker
+name: Baker
+template: small
+body: average
+head: round
+eyes: dots
+hair: bun
+top: apron
+bottom: leggings
+shoes: sneakers
+skin = Skin and hair / Pale skin
+hair = Skin and hair / Red hair
+cloth-a = Greens
+cloth-b = Neutrals
+
+preset: small-student
+name: Student
+template: small
+body: slim
+head: long
+eyes: glasses
+hair: short
+top: hoodie
+bottom: trousers
+shoes: sneakers
+accessory: backpack
+skin = Skin and hair / Deep skin
+hair = Skin and hair / Black hair
+cloth-a = Deep sea
+cloth-b = Neutrals
+accessory = Brick
+
+preset: small-grandparent
+name: Grandparent with a cane
+template: small
+body: broad
+head: square
+eyes: glasses
+hair: buzz
+top: sweater
+bottom: trousers
+shoes: formal
+accessory: cane
+skin = Skin and hair / Tan skin
+hair = Neutrals
+cloth-a = Brick
+cloth-b = Earth and stone / Granite
+accessory = Skin and hair
+
+preset: small-runner
+name: Runner
+template: small
+body: slim
+head: round
+eyes: dots
+hair: tied
+top: t-shirt
+bottom: shorts
+shoes: sneakers
+skin = Skin and hair / Tan skin
+hair = Skin and hair / Blond hair
+cloth-a = Yellows
+cloth-b = Deep sea
+
+preset: small-commuter
+name: Commuter
+template: small
+body: average
+head: long
+eyes: dots
+hair: short
+top: coat
+bottom: trousers
+shoes: formal
+accessory: bag, phone
+skin = Skin and hair / Pale skin
+hair = Skin and hair
+cloth-a = Earth and stone / Sand
+cloth-b = Neutrals
+accessory = Brick
+
+preset: small-kid
+name: Child with a backpack
+template: small
+body: child
+head: round
+eyes: dots
+hair: braids
+top: dress
+bottom: leggings
+shoes: sneakers
+accessory: backpack
+skin = Skin and hair / Deep skin
+hair = Skin and hair / Black hair
+cloth-a = Dusk (cool) / Rose
+cloth-b = Greens
+accessory = Yellows
+
+preset: small-gardener
+name: Gardener
+template: small
+body: broad
+head: round
+eyes: dots
+hair: cap-hair
+top: shirt
+bottom: overalls
+shoes: boots
+skin = Skin and hair / Deep skin
+hair = Skin and hair / Black hair
+cloth-a = Greens
+cloth-b = Deep sea
+accessory = Yellows
+
+preset: small-reader
+name: Reader on a bench
+template: small
+body: seated
+head: long
+eyes: glasses
+hair: long
+top: sweater
+bottom: skirt
+shoes: formal
+accessory: scarf
+skin = Skin and hair / Pale skin
+hair = Skin and hair / Blond hair
+cloth-a = Foliage and water / Pine
+cloth-b = Dusk (cool) / Night
+accessory = Brick
+
+preset: small-shopper
+name: Shopper
+template: small
+body: average
+head: round
+eyes: dots
+hair: hijab
+top: jacket
+bottom: trousers
+shoes: sneakers
+accessory: bag
+skin = Skin and hair / Tan skin
+cloth-a = Deep sea
+cloth-b = Neutrals
+accessory = Dusk (cool) / Violet
+
+preset: medium-courier
+name: Courier
+template: medium
+body: average
+head: square
+eyes: dots
+hair: cap-hair
+top: jacket
+bottom: shorts
+shoes: sneakers
+accessory: backpack
+skin = Skin and hair / Deep skin
+hair = Skin and hair / Black hair
+cloth-a = Yellows
+cloth-b = Neutrals
+accessory = Brick
+
+preset: medium-elder
+name: Older person with a cane
+template: medium
+body: slim
+head: long
+eyes: glasses
+hair: bun
+top: coat
+bottom: skirt
+shoes: formal
+accessory: cane, scarf
+skin = Skin and hair / Pale skin
+hair = Neutrals
+cloth-a = Dusk (cool) / Violet
+cloth-b = Neutrals
+accessory = Brick
+
+preset: medium-child
+name: Child
+template: medium
+body: child
+head: round
+eyes: dots
+hair: curly
+top: t-shirt
+bottom: shorts
+shoes: sandals
+skin = Skin and hair / Deep skin
+hair = Skin and hair / Black hair
+cloth-a = Greens
+cloth-b = Deep sea
+
+preset: medium-musician
+name: Musician
+template: medium
+body: average
+head: round
+eyes: lines
+hair: long
+top: jacket
+bottom: leggings
+shoes: boots
+accessory: earrings, sunglasses
+skin = Skin and hair / Tan skin
+hair = Skin and hair / Black hair
+cloth-a = Neutrals
+cloth-b = Dusk (cool) / Night
+accessory = Yellows
+
+preset: medium-gardener
+name: Gardener in a sun hat
+template: medium
+body: broad
+head: round
+eyes: dots
+hair: short
+top: shirt
+bottom: overalls
+shoes: boots
+accessory: hat
+skin = Skin and hair / Tan skin
+hair = Skin and hair / Red hair
+cloth-a = Brick
+cloth-b = Deep sea
+accessory = Earth and stone / Sand
+
+preset: medium-office
+name: Office worker
+template: medium
+body: average
+head: long
+eyes: glasses
+hair: short
+top: shirt
+bottom: trousers
+shoes: formal
+accessory: phone
+skin = Skin and hair / Pale skin
+hair = Skin and hair
+cloth-a = Warm morning / Sky
+cloth-b = Neutrals
+accessory = Neutrals
+
+preset: medium-wheels
+name: Seated, for a wheelchair
+template: medium
+body: seated
+head: round
+eyes: dots
+hair: tied
+top: hoodie
+bottom: trousers
+shoes: sneakers
+skin = Skin and hair / Deep skin
+hair = Skin and hair / Red hair
+cloth-a = Foliage and water / Leaf
+cloth-b = Neutrals
+
+preset: medium-scholar
+name: Student in a hijab
+template: medium
+body: slim
+head: long
+eyes: dots
+hair: hijab
+top: sweater
+bottom: skirt
+shoes: sneakers
+accessory: backpack
+skin = Skin and hair / Tan skin
+cloth-a = Earth and stone / Sand
+cloth-b = Dusk (cool) / Night
+accessory = Dusk (cool) / Rose
+
+preset: medium-parent
+name: Parent
+template: medium
+body: broad
+head: square
+eyes: dots
+hair: bald
+top: t-shirt
+bottom: trousers
+shoes: sneakers
+accessory: bag
+skin = Skin and hair / Deep skin
+cloth-a = Warm morning / Sky
+cloth-b = Earth and stone / Slate
+accessory = Brick
+
+preset: chibi-cook
+name: Cook
+template: chibi
+body: average
+head: round
+eyes: dots
+hair: short
+top: apron
+bottom: trousers
+shoes: formal
+skin = Skin and hair / Tan skin
+hair = Skin and hair / Black hair
+cloth-a = Neutrals
+cloth-b = Brick
+
+preset: chibi-kid
+name: Small child
+template: chibi
+body: child
+head: round
+eyes: dots
+hair: bun
+top: dress
+bottom: none
+shoes: sandals
+skin = Skin and hair / Pale skin
+hair = Skin and hair / Blond hair
+cloth-a = Dusk (cool) / Rose
+cloth-b = Greens
+
+preset: chibi-grandparent
+name: Grandparent
+template: chibi
+body: broad
+head: square
+eyes: glasses
+hair: buzz
+top: sweater
+bottom: trousers
+shoes: formal
+accessory: cane
+skin = Skin and hair / Deep skin
+hair = Neutrals
+cloth-a = Greens
+cloth-b = Neutrals
+accessory = Skin and hair
+
+preset: chibi-skater
+name: Skater
+template: chibi
+body: slim
+head: round
+eyes: lines
+hair: cap-hair
+top: hoodie
+bottom: shorts
+shoes: sneakers
+skin = Skin and hair / Deep skin
+hair = Skin and hair / Black hair
+cloth-a = Greens
+cloth-b = Neutrals
+accessory = Brick
+
+preset: chibi-walker
+name: Walker in a hijab
+template: chibi
+body: average
+head: round
+eyes: dots
+hair: hijab
+top: coat
+bottom: trousers
+shoes: boots
+accessory: bag
+skin = Skin and hair / Tan skin
+cloth-a = Earth and stone / Clay
+cloth-b = Neutrals
+accessory = Deep sea
+
+preset: chibi-sitter
+name: Sitting with braids
+template: chibi
+body: seated
+head: long
+eyes: dots
+hair: braids
+top: shirt
+bottom: skirt
+shoes: sneakers
+skin = Skin and hair / Deep skin
+hair = Skin and hair / Black hair
+cloth-a = Yellows
+cloth-b = Deep sea
+accessory = Brick
+
+preset: iso-walker
+name: Walker with a bag
+template: iso
+body: average
+head: round
+eyes: dots
+hair: short
+top: jacket
+bottom: trousers
+shoes: sneakers
+accessory: bag
+skin = Skin and hair / Pale skin
+hair = Skin and hair
+cloth-a = Deep sea
+cloth-b = Neutrals
+accessory = Brick
+
+preset: iso-child
+name: Child with a backpack
+template: iso
+body: child
+head: round
+eyes: dots
+hair: curly
+top: t-shirt
+bottom: shorts
+shoes: sneakers
+accessory: backpack
+skin = Skin and hair / Deep skin
+hair = Skin and hair / Black hair
+cloth-a = Yellows
+cloth-b = Deep sea
+accessory = Greens
+
+preset: iso-elder
+name: Older person with a cane
+template: iso
+body: slim
+head: square
+eyes: glasses
+hair: bun
+top: coat
+bottom: skirt
+shoes: formal
+accessory: cane
+skin = Skin and hair / Tan skin
+hair = Neutrals
+cloth-a = Brick
+cloth-b = Neutrals
+accessory = Skin and hair
+
+preset: iso-worker
+name: Worker in overalls
+template: iso
+body: broad
+head: round
+eyes: dots
+hair: cap-hair
+top: shirt
+bottom: overalls
+shoes: boots
+skin = Skin and hair / Deep skin
+hair = Skin and hair / Black hair
+cloth-a = Brick
+cloth-b = Deep sea
+accessory = Yellows
+
+preset: iso-friend
+name: Friend in a hijab
+template: iso
+body: average
+head: long
+eyes: dots
+hair: hijab
+top: dress
+bottom: leggings
+shoes: sneakers
+accessory: phone
+skin = Skin and hair / Tan skin
+cloth-a = Greens
+cloth-b = Neutrals
+accessory = Dusk (cool) / Rose
+
+preset: iso-sitter
+name: Sitting in a sweater
+template: iso
+body: seated
+head: round
+eyes: dots
+hair: long
+top: sweater
+bottom: trousers
+shoes: sneakers
+accessory: scarf
+skin = Skin and hair / Pale skin
+hair = Skin and hair / Red hair
+cloth-a = Deep sea
+cloth-b = Neutrals
+accessory = Yellows

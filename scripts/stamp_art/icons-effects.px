@@ -1,0 +1,494 @@
+# 2D icons at 16 x 16, and still effects: a bright core and a few cooler pixels outside it, no outline and no blur.
+
+id: icon-heart
+name: Heart
+category: icons
+tags: heart, love, like, health
+mode: both
+roles:
+heart = Brick
+outline = Neutrals
+legend:
+c = heart 5
+a = heart 3
+b = heart 2
+o = outline 1
+art:
+................
+................
+...ooo...ooo....
+..oaaao.oaaao...
+.oacaaaoaaaabo..
+.occaaaaaaaabo..
+.ocaaaaaaaaabo..
+.oaaaaaaaaabbo..
+..oaaaaaaabbo...
+...oaaaaabbo....
+....oaaabbo.....
+.....oabbo......
+......obo.......
+.......o........
+................
+................
+
+id: icon-star
+name: Star
+category: icons
+tags: star, favourite, rating
+mode: both
+roles:
+star = Yellows
+outline = Neutrals
+legend:
+c = star 4
+a = star 3
+b = star 2
+o = outline 1
+art:
+................
+................
+.......o........
+......oco.......
+.....ocabo......
+.ooooocabooooo..
+occccccaaabbbbo.
+.ocaaaaaaaabbo..
+..ocaaaaaabbo...
+...oaaaaaabo....
+..ocaaabaaabo...
+..oaabooobabo...
+.oaboo...oobbo..
+..oo.......oo...
+................
+................
+
+id: icon-home
+name: Home
+category: icons
+tags: home, house, start
+mode: both
+roles:
+roof = Brick
+wall = Yellows
+door = Skin and hair
+outline = Neutrals
+legend:
+r = roof 3
+R = roof 2
+w = wall 5
+v = wall 4
+d = door 2
+o = outline 1
+art:
+................
+.......o........
+......oro.......
+.....orrR.......
+....orrrRR......
+...orrrrRRR.....
+..orrrrrRRRR....
+.orrrrrrRRRRR...
+..owwwwwwwvvo...
+..owwwwwwwvvo...
+..owwwddwwvvo...
+..owwwddwwvvo...
+..owwwddwwvvo...
+...ooooooooo....
+................
+................
+
+id: icon-gear
+name: Gear
+category: icons
+tags: gear, settings, cog
+mode: both
+roles:
+gear = Neutrals
+outline = Neutrals
+legend:
+a = gear 4
+b = gear 3
+o = outline 1
+art:
+................
+................
+.......oo.......
+.....ooaaoo.....
+....oaoaaoao....
+...oaaaaaaaao...
+...ooaaooaaoo...
+..oaaao..oaaao..
+..oaaao..oabbo..
+...ooaaooaboo...
+...oaaabbbbbo...
+....obobbobo....
+.....oobboo.....
+.......oo.......
+................
+................
+
+id: icon-mail
+name: Mail
+category: icons
+tags: mail, letter, message, email
+mode: both
+roles:
+paper = Neutrals
+flap = Neutrals
+outline = Neutrals
+legend:
+w = paper 6
+v = paper 5
+f = flap 4
+o = outline 1
+art:
+................
+................
+................
+.ooooooooooooo..
+owwwwwwwwwwwwwo.
+owfwwwwwwwwwfwo.
+owwfwwwwwwwfvwo.
+owwwfwwwwwfwvwo.
+owwwwfffffwwvwo.
+owwwwwwwwwwwvwo.
+owwwwwwwwwvvvwo.
+ovvvvvvvvvvvvvo.
+.ooooooooooooo..
+................
+................
+................
+
+id: icon-bell
+name: Bell
+category: icons
+tags: bell, alert, notification, ring
+mode: both
+roles:
+bell = Yellows
+outline = Neutrals
+legend:
+c = bell 4
+a = bell 3
+b = bell 2
+o = outline 1
+art:
+................
+................
+.......o........
+......oao.......
+....ooaaboo.....
+...ocaaaabbo....
+...ocaaaabbo....
+...ocaaaabbo....
+..occaaaaabbo...
+..ocaaaaaabbo...
+.oaaaaaaaabbbo..
+.oaaaaaaabbbbo..
+..oooobbooooo...
+......oo........
+................
+................
+
+id: icon-play
+name: Play
+category: icons
+tags: play, start, video, music
+mode: both
+roles:
+button = Greens
+outline = Neutrals
+legend:
+c = button 4
+a = button 3
+b = button 2
+o = outline 1
+art:
+................
+................
+...oo...........
+..ocaoo.........
+..ocaaaoo.......
+..ocaaaaaoo.....
+..ocaaaaaaaoo...
+..ocaaaaaaaabo..
+..ocaaaaaabbo...
+..ocaaaabboo....
+..ocaabboo......
+..oabboo........
+...ooo..........
+................
+................
+................
+
+id: icon-check
+name: Check
+category: icons
+tags: check, tick, done, yes
+mode: both
+roles:
+tick = Greens
+outline = Neutrals
+legend:
+a = tick 4
+b = tick 3
+o = outline 1
+art:
+................
+................
+................
+............oo..
+...........oabo.
+..........oabbo.
+..oo.....oabbo..
+.oabo...oabbo...
+.oabbo.oabbo....
+..oabboabbo.....
+...oabbbbo......
+....oabbo.......
+.....ooo........
+................
+................
+................
+
+id: icon-cross
+name: Cross
+category: icons
+tags: cross, close, no, delete
+mode: both
+roles:
+cross = Brick
+outline = Neutrals
+legend:
+a = cross 4
+b = cross 3
+o = outline 1
+art:
+................
+................
+...oo......oo...
+..oabo....oabo..
+..oabbo..oabbo..
+...oabbooabbo...
+....oabbabbo....
+.....oabbbo.....
+....oabbabbo....
+...oabbooabbo...
+..oabbo..oabbo..
+..oabo....oabo..
+...oo......oo...
+................
+................
+................
+
+id: icon-arrow
+name: Arrow
+category: icons
+tags: arrow, right, next, direction
+mode: both
+roles:
+arrow = Blues
+outline = Neutrals
+legend:
+a = arrow 3
+b = arrow 2
+o = outline 1
+art:
+................
+................
+........o.......
+.......oao......
+.......oaao.....
+..ooooooaaao....
+.oaaaaaaaaaao...
+.oaaaaaaaaaabo..
+.obbbbbbbbbbo...
+..oooooobbbo....
+.......obbo.....
+.......obo......
+........o.......
+................
+................
+................
+
+id: fx-sparkle
+name: Sparkle
+category: effects
+tags: sparkle, shine, magic, glint
+mode: both
+roles:
+glint = Yellows
+legend:
+w = glint 6
+y = glint 5
+a = glint 3
+art:
+.....a.....
+.....y.....
+.....y.....
+....ywy....
+a.yywwwyy.a
+....ywy....
+.....y.....
+.....y...a.
+.....a..aya
+.........a.
+
+id: fx-smoke
+name: Puff of smoke
+category: effects
+tags: smoke, puff, cloud, dust
+mode: both
+roles:
+smoke = Neutrals
+legend:
+w = smoke 6
+c = smoke 5
+b = smoke 4
+a = smoke 3
+art:
+....cccc.....
+..ccwwwwcc...
+.cwwwwwwwcbb.
+cwwwwcwwwcbbb
+cwwwwwccwcbbb
+.cwwccccccbb.
+..ccbbccbbb..
+a..bbb..bb..a
+..a.......a..
+
+id: fx-splash
+name: Splash
+category: effects
+tags: splash, water, drop, wet
+mode: both
+roles:
+water = Blues
+legend:
+w = water 4
+b = water 3
+a = water 2
+l = #ffffff
+art:
+..b....l....b.
+...w..bw..w...
+.a..w.ww.w..a.
+...bwlwwlwb...
+..bbwwwwwwbb..
+.abbbbbbbbbba.
+aaaa......aaaa
+
+id: fx-dust
+name: Dust
+category: effects
+tags: dust, step, skid, land
+mode: both
+roles:
+dust = Skin and hair
+legend:
+w = dust 6
+c = dust 5
+b = dust 4
+art:
+..cc.......cc..
+.cwwc..c..cwwc.
+cwwwwccwccwwwwc
+.bccbbbbbbbccb.
+...b......b....
+
+id: fx-glow
+name: Glow
+category: effects
+tags: glow, light, bright, lamp
+mode: both
+roles:
+glow = Yellows
+legend:
+w = glow 6
+y = glow 5
+c = glow 4
+b = glow 3
+art:
+....b.b.b....
+..b..ccc..b..
+...ccyyycc...
+b.cyywwwyyc.b
+..cywwwwwyc..
+b.cyywwwyyc.b
+...ccyyycc...
+..b..ccc..b..
+....b.b.b....
+
+id: fx-fire
+name: Small fire
+category: effects
+tags: fire, flame, campfire, burn
+mode: both
+roles:
+flame = Yellows
+heat = Brick
+logs = Skin and hair
+legend:
+w = flame 6
+y = flame 4
+c = flame 3
+r = heat 3
+k = logs 2
+K = logs 3
+art:
+.....r.....
+....rr..r..
+...rcr..rr.
+..rrccr.rcr
+..rcyycrrcr
+.rcyywycccr
+.rcywwwyycr
+..ryywwyyr.
+KKKkKKKkKKk
+.kKKKkKKKk.
+
+id: fx-raindrop
+name: Rain drop
+category: effects
+tags: rain, drop, water, weather
+mode: both
+roles:
+water = Blues
+legend:
+l = #ffffff
+w = water 4
+b = water 3
+a = water 2
+art:
+...a...
+...b...
+..bwb..
+..bwb..
+.bwwwb.
+.blwwb.
+bwlwwwb
+bwwwwwb
+.bwwwa.
+..aaa..
+
+id: fx-snowflake
+name: Snowflake
+category: effects
+tags: snow, snowflake, winter, cold
+mode: both
+roles:
+ice = Blues
+legend:
+l = #ffffff
+w = ice 4
+b = ice 3
+art:
+....l....
+.w.lwl.w.
+..wlwlw..
+w..www..w
+llwwlwwll
+b..www..b
+..wlwlw..
+.w.lwl.w.
+....l....

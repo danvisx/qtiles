@@ -1,0 +1,331 @@
+# 2D animals, side views facing right (the frog faces front). The second facing is the mirror.
+
+id: animal-dog
+name: Dog
+category: animals
+tags: dog, pet, puppy, side
+pivot: feet
+facings: mirror
+roles:
+fur = Skin and hair
+muzzle = Skin and hair
+nose = Neutrals
+outline = Neutrals
+legend:
+a = fur 4
+b = fur 3
+c = muzzle 5
+n = nose 1
+e = outline 1
+o = outline 1
+art:
+...........oo.....
+..........obboo...
+.........obaaabo..
+.o.......oaaaeaco.
+obo.....oaaaaaccno
+.oboooooaaaaabboo.
+.oaaaaaaaaaaboo...
+.oaaaaaaaaaacco...
+.oaaaaaaaaaccco...
+.oaboooaboobco....
+.oabo.oabo.obco...
+.obbo.obbo.obbo...
+..oo...oo...oo....
+
+id: animal-cat
+name: Cat
+category: animals
+tags: cat, pet, kitten, side
+pivot: feet
+facings: mirror
+roles:
+fur = Neutrals
+nose = Pinks
+outline = Neutrals
+legend:
+a = fur 3
+b = fur 2
+n = nose 2
+e = outline 1
+o = outline 1
+art:
+...........o..o..
+..........oaooao.
+..........oaaoaao
+.o........oaaaaao
+oao.......oaeaeao
+oao...oooooaaanao
+oaooooaaaaaaaabo.
+.oaaaaaaaaaaabo..
+..oaaaaaaaaabo...
+..oabooaoooabo...
+..oabooabooabo...
+..obboobboobbo...
+...oo..oo..oo....
+
+id: animal-bird
+name: Bird
+category: animals
+tags: bird, sparrow, garden, side
+pivot: feet
+facings: mirror
+roles:
+feathers = Skin and hair
+wings = Skin and hair
+breast = Skin and hair
+beak = Yellows
+legs = Brick
+outline = Neutrals
+legend:
+a = feathers 3
+b = wings 2
+c = breast 5
+Y = beak 3
+k = legs 3
+e = outline 1
+o = outline 1
+art:
+......ooo...
+.....oaaaoo.
+....oaaaeaYo
+...ooaaaaao.
+..obbaaaacco
+.obbbbaaccco
+obbbbbbacco.
+.oooobbbbo..
+.....okoko..
+....okkokko.
+.....oo.oo..
+
+id: animal-duck
+name: Duck
+category: animals
+tags: duck, bird, pond, water, side
+pivot: feet
+facings: mirror
+roles:
+feathers = Neutrals
+wing = Neutrals
+belly = Neutrals
+beak = Yellows
+outline = Neutrals
+legend:
+a = feathers 6
+b = wing 5
+c = belly 5
+Y = beak 3
+e = outline 1
+o = outline 1
+art:
+......ooo....
+.....oaaaooo.
+....oaaaeaYYo
+....oaaaaaYo.
+.o...oaaaoo..
+oaooooaaaoo..
+oaaaaaaaaaao.
+oaaabbbbaaaco
+.oaaabbbaacco
+..occcccccco.
+...ooYooYoo..
+...oYYoYYo...
+....oo.oo....
+
+id: animal-rabbit
+name: Rabbit
+category: animals
+tags: rabbit, bunny, pet, side
+pivot: feet
+facings: mirror
+roles:
+fur = Neutrals
+tail = Neutrals
+nose = Pinks
+outline = Neutrals
+legend:
+a = fur 5
+b = fur 4
+c = tail 6
+n = nose 2
+e = outline 1
+o = outline 1
+art:
+.......oo...
+......oabo..
+......oabo..
+......oaabo.
+.....oaaaao.
+..o..oaeaano
+.ocooaaaaao.
+occoaaaaabo.
+.oaaaaaabbo.
+.oaaaaaabbo.
+.oaaaaaobbo.
+..obbboaabo.
+...ooo.ooo..
+
+id: animal-fish
+name: Fish
+category: animals
+tags: fish, water, sea, pond, side
+facings: mirror
+roles:
+scales = Yellows
+fins = Brick
+belly = Yellows
+outline = Neutrals
+legend:
+a = scales 3
+b = fins 4
+c = belly 4
+e = outline 1
+o = outline 1
+art:
+......oooo.....
+.o...oaaaao....
+obo.oaaaaaaoo..
+obboaaaaaaaeao.
+obbbaaaaaaaaaao
+obboaaccccccao.
+obo.oacccccao..
+.o...occccoo...
+......oooo.....
+
+id: animal-horse
+name: Horse
+category: animals
+tags: horse, farm, side
+pivot: feet
+facings: mirror
+roles:
+coat = Skin and hair
+mane = Skin and hair
+muzzle = Skin and hair
+hooves = Neutrals
+outline = Neutrals
+legend:
+a = coat 3
+b = coat 2
+c = muzzle 4
+m = mane 1
+k = hooves 2
+e = outline 1
+o = outline 1
+art:
+..................oo....
+.................obbo...
+................obaabo..
+...............oaaaaabo.
+..............oaaaaeaao.
+..oo.........oaaaaoaaaco
+.ommo.ooooooooaaao.occo.
+ommmooaaaaaaaaaaao..oo..
+ommooaaaaaaaaaaaabo.....
+omo.oaaaaaaaaaaaabo.....
+.o..oaaaaaaaaaaaabo.....
+....oaaobbooooaaobo.....
+....oaboobo..oabobo.....
+....oaboobo..oabobo.....
+....oaboobo..oabobo.....
+....okkooko..okkoko.....
+.....oo..o....oo.o......
+
+id: animal-cow
+name: Cow
+category: animals
+tags: cow, farm, side
+pivot: feet
+facings: mirror
+roles:
+hide = Neutrals
+patches = Neutrals
+muzzle = Pinks
+horns = Yellows
+hooves = Neutrals
+outline = Neutrals
+legend:
+a = hide 6
+b = hide 5
+d = patches 2
+c = muzzle 2
+n = muzzle 1
+y = horns 5
+m = patches 2
+k = hooves 2
+e = outline 1
+o = outline 1
+art:
+................o..o..
+...............oyooyo.
+.o............obaaaabo
+omo.oooooooooooaeaaeao
+omooaaaaaaaaaaoaaaaaao
+.omaaddaaaaddaaacccco.
+..oadddaaaaddaaacnnco.
+..oaadaaaaaaaaaaoccco.
+..oaaaaaadddaaaboooo..
+..oaaaaaaddaaaabo.....
+..oaboobooooabobo.....
+..oaboobo..oabobo.....
+..okkooko..okkoko.....
+...oo..o....oo.o......
+
+id: animal-sheep
+name: Sheep
+category: animals
+tags: sheep, lamb, farm, wool, side
+pivot: feet
+facings: mirror
+roles:
+wool = Neutrals
+face = Neutrals
+outline = Neutrals
+legend:
+a = wool 6
+b = wool 5
+d = face 2
+n = face 1
+e = outline 1
+o = outline 1
+art:
+.............oo....
+...oooooooo.oddooo.
+..oaaaaaaaaoddeddno
+.oaaaaaaaaaaaddddo.
+oaaaaaaaaaaaaaboo..
+oaaaaaaaaaaaabbo...
+.oaaaaaaaaaabbo....
+..obbbbbbbbbbo.....
+...oddoooooddo.....
+...oddo...oddo.....
+....oo.....oo......
+
+id: animal-frog
+name: Frog
+category: animals
+tags: frog, pond, front
+pivot: feet
+roles:
+skin = Greens
+belly = Greens
+mouth = Greens
+outline = Neutrals
+legend:
+a = skin 4
+b = skin 3
+c = belly 5
+n = mouth 2
+e = outline 1
+o = outline 1
+art:
+...oo....oo.....
+..oaao..oaao....
+.oaeeaooaeeao...
+.oaaaaaaaaaao...
+oaaaaaaaaaaaao..
+oaannnnnnnnaao..
+.oaaaaaaaaaaoo..
+oaabcccccccbaao.
+oaaboccccccobaao
+.ooo.oooooo.ooo.

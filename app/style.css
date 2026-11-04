@@ -202,6 +202,14 @@ input[type="range"] { width: 100%; accent-color: var(--accent); }
 .refrow.active { background: var(--sel); }
 .refrow .vname { display: flex; flex-direction: column; justify-content: center; line-height: 1.2; }
 .refsub { font-size: 11px; font-weight: 400; color: var(--muted); }
+.ckrow.active { background: var(--sel); }
+.vrow.ckrow .vname { display: flex; flex-direction: column; justify-content: center; line-height: 1.2; height: auto; min-height: var(--ctl); padding: 4px 6px; white-space: normal; }
+.vrow.ckrow .vname:disabled { opacity: 1; }
+.vrow.ckrow.none .vname, .ckrow.none .ckn { opacity: .55; }
+.ckn { flex: none; padding: 0 4px; }
+.ckat { padding: 0 6px; }
+.tipcheck > span { padding: 3px 0; }
+.cktick { display: block; }
 .refsw { width: 20px; height: 20px; border-radius: 4px; border: 1px solid var(--line2); flex: none; }
 .rmpvs { align-items: flex-start; }
 .rmpvs canvas { max-width: 100%; image-rendering: pixelated; background: var(--check-a); border: 1px solid var(--line2); }
@@ -289,6 +297,27 @@ input[type="range"] { width: 100%; accent-color: var(--accent); }
 .shapecard:hover { background: var(--hover); }
 .shapecard[aria-pressed="true"] { background: var(--sel); border-color: var(--accent-line); color: var(--accent-text); }
 .shapecard canvas { width: 48px; height: 48px; image-rendering: pixelated; }
+.shapecard .starter { color: var(--muted); font-size: 10px; font-weight: 400; }
+.stmbar { margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--line2); }
+.stmrole { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 2px 8px; margin-top: 8px; text-transform: capitalize; }
+.stmrole select { grid-column: 1 / -1; text-transform: none; }
+.stmsw { display: flex; gap: 1px; }
+.stmsw i { width: 12px; height: 12px; border-radius: 2px; box-shadow: inset 0 0 0 1px var(--line2); }
+/* the character kit (048) */
+.kitopen { width: 100%; margin-bottom: 8px; }
+.sheet.kit { max-width: 880px; }
+.kitpv { flex: none; display: flex; align-items: flex-end; gap: 16px; overflow-x: auto; padding: 8px; border-radius: 8px; background: var(--bg); }
+.kitpv canvas, .kitparts canvas { image-rendering: pixelated; flex: none; }
+.kitcols { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr); gap: 16px; }
+.seg.wrap { flex-wrap: wrap; }
+.kitseed { flex-direction: row; align-items: center; gap: 6px; }
+.kitseed input { width: 72px; }
+.kitslot + .kitslot { margin-top: 10px; }
+.kitparts { display: flex; gap: 4px; overflow-x: auto; padding: 4px 0; }
+.kitparts .shapecard { flex: none; min-width: 72px; }
+.kitparts .shapecard canvas { width: auto; height: auto; }
+.kitparts .shapecard:disabled { opacity: .4; }
+@media (max-width: 600px) { .kitcols { grid-template-columns: minmax(0, 1fr); } }
 .mats canvas { width: 64px; height: 64px; }
 .hint.warn { color: var(--danger); }
 .guides { display: flex; flex-direction: column; margin-top: 4px; }

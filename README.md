@@ -21,6 +21,22 @@ npm test
 
 This needs Node and Python 3. It bundles `app/` into `dist/qtiles.html` and runs the headless test against that page. `npm run perf` runs the timing budgets, which `npm test` leaves out.
 
+## Stamps
+
+The stamps in the Library are text in `scripts/stamp_art/*.px`, one letter per pixel, with roles that map to palette ramps; `scripts/make_stamps.js` describes the format. `npm test` rebuilds `app/library/stamps.js` when a source changes. To look at every stamp at 8x on one image:
+
+```
+npm run stamps -- --sheet stamps.png
+```
+
+## Character kit
+
+New character builds a person from parts: a body, head, eyes, hair, top, bottom, shoes and up to two accessories, in four templates (16 x 16, 16 x 32 and 32 x 32 in 2D, and isometric). Each part is text in `scripts/kit_art/<template>/<slot>/<part>.px`, drawn by role with no outline of its own; the kit adds the outline around the whole character. `scripts/kit_art/cast.px` holds the 30 characters that show as stamps under Characters, rebuilt from the parts each time the app starts. `scripts/make_kit.js` describes the format, refuses a part that uses a letter outside the roles or does not fit its template, and checks every body with every top and bottom for spills, holes and gaps. To draw every part and the cast at 8x:
+
+```
+npm run kit -- --sheet kit.png              # add --cast for the cast alone, --only small for one template, --check to list what the fit check finds
+```
+
 ## Deploy it
 
 The site is the `app/` folder as it stands, and nothing else is served.
