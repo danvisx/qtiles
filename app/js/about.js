@@ -47,7 +47,7 @@ function aboutBuild() {
   brand.append(document.querySelector('.topbar .brand').cloneNode(true), abEl('span', 'Version ' + APP_VERSION, 'mono'));
   host.textContent = ''; $('aboutVer').textContent = 'qtiles ' + APP_VERSION;
   host.append(abSection('', brand, abEl('p', ABOUT.what)));
-  if (madeBy.name) host.append(abSection('Made by', madeBy.link ? abLink(madeBy.name, madeBy.link) : abEl('p', madeBy.name)));
+  if (madeBy.name) host.append(abSection('Maintained by', madeBy.link ? abLink(madeBy.name, madeBy.link) : abEl('p', madeBy.name)));
   host.append(abSection('Your files', ...ABOUT.files.map((t, i) => abEl('p', t + (i === 2 ? last : '')))));
   if (ABOUT.guides.length) host.append(abSection('Guides', abList(ABOUT.guides.map(g => [abLink(g.title, g.url), ' (' + g.source + ')']))));   // links only: no player, nothing fetched
   host.append(abSection('Credits and licenses', ...aboutCredits()));
